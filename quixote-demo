@@ -43,6 +43,5 @@ back
 go ./srcdir
 find __init__.pyc
 back
-# @@CTB 'go' apparently doesn't add to the browser stack.
 
 echo SUCCESS!

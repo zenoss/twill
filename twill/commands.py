@@ -22,7 +22,7 @@ import urllib2
 
 from mechanize import Browser
 from errors import TwillAssertionError
-from utils import trunc, print_form, set_form_control_value
+from utils import trunc, print_form, set_form_control_value, journey
 
 #
 # _BrowserState
@@ -34,22 +34,22 @@ class _BrowserState:
     """
     def __init__(self):
         self._browser = Browser()
-        self._last_res = None
+        self._last_result = None
 
     def go(self, url):
         """
         Visit given URL.
         """
-        self._last_res = self._browser.open(url)
-        print '==> at', self._last_res.geturl()
+        self._last_result = journey(self._browser.open, url)
+        print '==> at', self._last_result.get_url()
 
     def back(self):
         """
         Return to previous page, if possible.
         """
-        self._last_res = self._browser.back()
-        if self._last_res:
-            print '==> at', self._last_res.geturl()
+        self._last_result = journey(self._browser.back)
+        if self._last_result:
+            print '==> at', self._last_result.get_url()
         else:
             print '(no current URL)'
             
@@ -57,20 +57,19 @@ class _BrowserState:
         """
         Get the HTTP status code received for the current page.
         """
-        return self._last_res.wrapped.code
+        return self._last_result.get_http_code()
 
     def get_html(self):
         """
         Get the HTML for the current page.
         """
-        self._last_res.seek(0)
-        return self._last_res.read()
+        return self._last_result.get_page()
 
     def get_url(self):
         """
         Get the URL of the current page.
         """
-        return self._last_res.geturl()
+        return journey(self._last_result.get_url)
 
     def find_link(self, pattern):
         """
@@ -89,8 +88,11 @@ class _BrowserState:
         """
         Follow the given link.
         """
-        self._last_res = self._browser.follow_link(link)
-        print '==> at', self._last_res.geturl()
+        try:
+            self._last_result = journey(self._browser.follow_link, link)
+            print '==> at', self._last_result.get_url()
+        except urllib2.HTTPError, e:
+            raise
 
     def set_agent_string(self, agent):
         """
@@ -180,8 +182,8 @@ class _BrowserState:
         #### control if you've already got one in mind, because the
         #### 'predicate' function doesn't get passed through Browser.click().
         
-        self._last_res = self._browser.open(ctl._click(self._browser.form,
-                                                       None, urllib2.Request))
+        control = ctl._click(self._browser.form, None, urllib2.Request)
+        self._last_result = journey(self._browser.open, control)
         
 state = _BrowserState()
 

@@ -14,5 +14,3 @@ show
 
 code 200
 find testpass
-
-import urllib2
