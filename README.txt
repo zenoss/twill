@@ -67,7 +67,8 @@ Availability
 
 Version 0.5 (at about the same level of functionality as PBP 0.3) is
 available for download here_.  The latest development version can be
-found at twill-latest.tar.gz_.
+found at twill-latest.tar.gz_.  There's a darcs repository for the
+project at http://darcs.idyll.org/~t/projects/twill/.
 
 .. _here: .
 .. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
@@ -95,6 +96,8 @@ I'm scratching my own itch with twill at the moment, so development of
 the core functionality will proceed sporadically.  I'd like to focus
 on the IPython interface, because once that works then extending twill
 will be really easy.
+
+Contributions are welcome & will be duly acknowledged!
 
 Acknowledgements and Credits
 ----------------------------
