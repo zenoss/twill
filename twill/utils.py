@@ -1,4 +1,9 @@
+"""
+Various ugly utility functions for twill.
+"""
+
 import ClientForm
+import urllib2
 
 class ResultWrapper:
     """
@@ -29,14 +34,18 @@ def journey(func, *args, **kwargs):
 
     This function may be more than a bit ugly & confusing, my apologies.
 
-    Idea stolen from PBP, which used lambda functions waaaaay too much.
+    Idea stolen straight from PBP, which used lambda functions waaaaay
+    too much.
     """
-    result = func(*args, **kwargs)
+    try:
+        result = func(*args, **kwargs)
 
-    new_result = ResultWrapper(result.wrapped.code, # HTTP response code
-                               result.geturl(), #  URL
-                               result.read() # HTML
-                               )
+        new_result = ResultWrapper(result.wrapped.code, # HTTP response code
+                                   result.geturl(), #  URL
+                                   result.read() # HTML
+                                   )
+    except urllib2.HTTPError, e:
+        new_result = ResultWrapper(e.code)
 
     return new_result
 

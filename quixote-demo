@@ -7,15 +7,13 @@ follow simple
 code 200
 back
 
-# @CTB this doesn't work, because an HTTPerror is raised.  Fine...
-#follow error
-#code 500
-#back
+follow error
+code 500
+back
 
-# @CTB this doesn't work, because an HTTPerror is raised.  Fine...
-#follow publish_error
-#code 400
-#back
+follow publish_error
+code 400
+back
 
 follow 12
 follow factorial
