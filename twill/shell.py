@@ -1,5 +1,8 @@
-from IPython.Shell import IPShellEmbed
+import sys
+from IPython.Shell import IPShell, IPShellEmbed
+from IPython.ipmaker import make_IPython
 from errors import TwillAssertionError
+import code
 
 class AutoShell:
     """
@@ -8,17 +11,17 @@ class AutoShell:
     Ideas:
       * on exception, drop into interactive shell.
     """
-    def __init__(self):
-        self.ipshell = IPShellEmbed()
+    def __init__(self, argv=sys.argv):
+        self.ipshell = IPShellEmbed(argv)
         self.IP = self.ipshell.IP
-        self.IP.ctb_autoquote = True
+        self.last_was_incomplete = False
 
-        self.execute("from twill.commands import *")
+        self.IP.push("from twill.commands import *")
+        self.IP.push("import twill.install_prefilter")
 
     def execute(self, cmd):
-	line = self.IP.prefilter(cmd, None)
-        self.IP.push(line)
-        # @CTB catch exceptions here.
+        line = self.IP.prefilter(cmd, self.last_was_incomplete)
+        self.last_was_incomplete = self.IP.push(line)
 
     def execute_file(self, filename):
         for line in open(filename).readlines():
