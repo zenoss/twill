@@ -13,13 +13,16 @@ __all__ = ['go',
            'showform',
            'submit',
            'formvalue',
-           'fv']
+           'fv',
+           'formclear']
 
 import re
 
+import urllib2
+
 from mechanize import Browser
 from errors import TwillAssertionError
-from utils import trunc
+from utils import trunc, print_form, set_form_control_value
 
 #
 # _BrowserState
@@ -45,8 +48,11 @@ class _BrowserState:
         Return to previous page, if possible.
         """
         self._last_res = self._browser.back()
-        print '==> at', self._last_res.geturl()
-
+        if self._last_res:
+            print '==> at', self._last_res.geturl()
+        else:
+            print '(no current URL)'
+            
     def get_code(self):
         """
         Get the HTTP status code received for the current page.
@@ -94,46 +100,88 @@ class _BrowserState:
         # self._browser.set_persistent_headers([("User-agent", agent)])
 
     def showforms(self):
+        """
+        Pretty-print all of the forms.
+        """
         for n, f in enumerate(self._browser.forms()):
-            if f.name:
-                print 'Form name=%s' % (f.name,)
-            else:
-                print 'Form #%d' % (n + 1,)
+            print_form(n, f)
 
-            if f.controls:
-                print "## __Name______ __Type___ __ID________ __Value__________________"
-                
-            clickies = [c for c in f.controls if c.is_of_kind('clickable')]
-            nonclickies = [c for c in f.controls if c not in clickies]
-            
-            for field in nonclickies:
-                if hasattr(field, 'possible_items'):
-                    value_displayed = "%s of %s" % (field.value,
-                                                    field.possible_items())
-                else:
-                    value_displayed = "%s" % (field.value,)
-                strings = ("  ",
-                           "%-12s %-9s" % (trunc(str(field.name), 12),
-                                           trunc(field.type, 9)),
-                           "%-12s" % (trunc(field.id or "(None)", 12),),
-                           trunc(value_displayed, 40),
-                           )
-                for s in strings:
-                    print s,
-                    
-            for n, field in enumerate(clickies):
-                strings = ("%-2s" % (n+1,),
-                           "%-12s %-9s" % (trunc(field.name, 12),
-                                           trunc(field.type, 9)),
-                           "%-12s" % (trunc(field.id or "(None)", 12),),
-                           trunc(field.value, 40),
-                           )
-                for s in strings:
-                    print s,
+    def get_form(self, formname):
+        """
+        Return the first form that matches 'formname'.
+        """
+        # first try regexps
+        regexp = re.compile(formname)
+        for f in self._browser.forms():
+            if f.name and regexp.search(f.name):
+                return f
+
+        # ok, try number
+        try:
+            formnum = int(formname)
+            return self._browser.forms()[formnum - 1]
+        except ValueError:
+            pass
+        except IndexError:
+            pass
+
+        return None
+
+    def get_form_field(self, form, fieldname):
+        """
+        Return the control that matches 'fieldname'.  Must be
+        a *unique* regexp/exact string match.
+        """
+        found = None
         
+        regexp = re.compile(fieldname)
 
-    def submit(self):
-        self._last_res = self._browser.submit()
+        matches = [ ctl for ctl in form.controls \
+                    if regexp.search(str(ctl.name)) ]
+
+        if matches:
+            if len(matches) == 1:
+                found = matches[0]
+            else:
+                print '-- -- fieldname "%s" matches multiple controls' % \
+                      (fieldname,)
+                found = None
+
+        if found is None:
+            # try num
+            clickies = [c for c in form.controls if c.is_of_kind('clickable')]
+            try:
+                fieldnum = int(fieldname)
+                found = clickies[fieldnum]
+            except ValueError:
+                pass
+            except IndexError:
+                pass
+
+        print '-- -- found form control:', found.name, found.type, found.value
+        
+        return found
+
+    def clicked(self, form, field):
+        def choose_this_form(test_form, this_form=form):
+            if test_form is this_form:
+                return True
+            
+            return False
+
+        self._browser.select_form(predicate=choose_this_form)
+
+    def submit(self, fieldname):
+        assert self._browser.form
+        
+        ctl = self.get_form_field(self._browser.form, fieldname)
+        
+        #### @CTB ARGH.  There's no way, currently, to select a specific
+        #### control if you've already got one in mind, because the
+        #### 'predicate' function doesn't get passed through Browser.click().
+        
+        self._last_res = self._browser.open(ctl._click(self._browser.form,
+                                                       None, urllib2.Request))
         
 state = _BrowserState()
 
@@ -214,11 +262,11 @@ def agent(what):
     agent = agent_map.get(what, what)
     state.set_agent_string(agent)
 
-def submit(*noargs):
+def submit(submit_button):
     """
     Submit.
     """
-    state.submit()
+    state.submit(submit_button)
 
 def showform(*noargs):
     """
@@ -226,31 +274,41 @@ def showform(*noargs):
     """
     state.showforms()
 
-def formvalue(formname, fieldname, command, value=None):
+def formclear(formname):
     """
-    formvalue <formname> <field> clear         -- clear all values
-    formvalue <formname> <field> set <value>   -- set value
+    Run 'clear' on all of the controls in this form.
+    """
+    form = state.get_form(formname)
+    for control in form.controls:
+        if control.readonly:
+            continue
+
+        control.clear()
+
+def formvalue(formname, fieldname, value):
+    """
+    formvalue <formname> <field> <value>   -- set value.
 
     There are some ambiguities in the way formvalue deals with lists:
     'set' will *add* the given value to a multilist.
 
-    Formvalue ignors read-only fields completely; if they're readonly,
+    Formvalue ignores read-only fields completely; if they're readonly,
     nothing is done.
     """
-    print formname, fieldname, command
+    print formname, fieldname, value
     if value:
         print value
 
     form = state.get_form(formname)
-    control = state.find_form_field(form, field)
+    control = state.get_form_field(form, fieldname)
+    print '-- got form field', control.name
+
+    state.clicked(form, control)
 
     if control.readonly:
         return
 
-    if command == 'clear':
-        control.clear()
-    else:
-        pass
+    set_form_control_value(control, value)
 
 fv = formvalue
 
