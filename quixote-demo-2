@@ -1,0 +1,13 @@
+go http://issola.caltech.edu/~t/qwsgi/qwsgi-demo.cgi/
+
+go ./widgets
+showform
+
+formclear 1
+fv 1 name test
+fv 1 password testpass
+fv 1 confirm yes
+showform
+
+submit 0
+show
