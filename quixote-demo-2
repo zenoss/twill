@@ -11,3 +11,8 @@ showform
 
 submit 0
 show
+
+code 200
+find testpass
+
+import urllib2
