@@ -2,6 +2,7 @@
 
 # export:
 __all__ = ['go',
+           'reload',
            'code',
            'follow',
            'find',
@@ -21,6 +22,7 @@ import re
 import urllib2
 
 from mechanize import Browser
+import ClientCookie
 from errors import TwillAssertionError
 from utils import trunc, print_form, set_form_control_value, journey
 
@@ -36,12 +38,28 @@ class _BrowserState:
         self._browser = Browser()
         self._last_result = None
 
+        # create & set a cookie jar.
+        policy = ClientCookie.DefaultCookiePolicy(rfc2965=True)
+        cj = ClientCookie.LWPCookieJar(policy=policy)
+        self._browser.set_cookiejar(cj)
+        
+        # browser.set_cookiejar(cj) is broken; need to call
+        # browser._set_handler directly.  the problem is that bool(cj)
+        # returns false (?!).
+        #self._browser._set_handler("_cookies", handle=True, obj=cj)
+        self.cj = cj
+        
+
     def go(self, url):
         """
         Visit given URL.
         """
         self._last_result = journey(self._browser.open, url)
         print '==> at', self._last_result.get_url()
+
+    def reload(self):
+        self._last_result = journey(self._browser.reload)
+        print '==> reloaded'
 
     def back(self):
         """
@@ -194,6 +212,12 @@ def go(url):
     Visit the URL given.
     """
     state.go(url)
+
+def reload(*noargs):
+    """
+    Reload the current URL.
+    """
+    state.reload()
 
 def code(should_be):
     """
