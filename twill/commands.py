@@ -16,38 +16,20 @@ __all__ = ['go',
            'fv']
 
 import re
+
 from mechanize import Browser
 from errors import TwillAssertionError
-
-def trunc(s, length):
-    """
-    Truncate a string s to length length, by cutting off the last 
-    (length-4) characters and replacing them with ' ...'
-    """
-    if not s:
-        return ''
-    
-    if len(s) > length:
-        return s[:length-4] + ' ...'
-    
-    return s
+from utils import trunc
 
 #
 # _BrowserState
 #
 
-_state_init = 0
 class _BrowserState:
     """
     Wrap mechanize behavior in a simple stateful way.
     """
     def __init__(self):
-        global _state_init
-        if _state_init:
-            raise "error, can only create one of me"
-
-        _state_init = 1
-        
         self._browser = Browser()
         self._last_res = None
 
@@ -63,6 +45,7 @@ class _BrowserState:
         Return to previous page, if possible.
         """
         self._last_res = self._browser.back()
+        print '==> at', self._last_res.geturl()
 
     def get_code(self):
         """
@@ -204,13 +187,13 @@ def notfind(what):
     if regexp.search(page):
         raise TwillAssertionError("match to '%s'" % (what,))
 
-def back():
+def back(*noargs):
     """
     Return to the previous page.
     """
     state.back()
 
-def show():
+def show(*noargs):
     """
     Show the HTML for the current page.
     """
@@ -231,13 +214,13 @@ def agent(what):
     agent = agent_map.get(what, what)
     state.set_agent_string(agent)
 
-def submit(*nada):
+def submit(*noargs):
     """
     Submit.
     """
     state.submit()
 
-def showform(*nada):
+def showform(*noargs):
     """
     Show all of the forms on the current page.
     """
