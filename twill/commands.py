@@ -11,22 +11,25 @@ __all__ = ['go',
            'echo',
            'agent',
            'showform',
-           'submit']
+           'submit',
+           'formvalue',
+           'fv']
 
 import re
 from mechanize import Browser
+from errors import TwillAssertionError
 
-def trunc(s, length, end=1):
-    """Truncate a string s to length length, by cutting off the last 
+def trunc(s, length):
+    """
+    Truncate a string s to length length, by cutting off the last 
     (length-4) characters and replacing them with ' ...'
-    With end=0, truncate from the front instead.
     """
     if not s:
         return ''
+    
     if len(s) > length:
-        if end:
-            return s[:length-4] + ' ...'
-        return '... ' + s[len(s)-length+4:]
+        return s[:length-4] + ' ...'
+    
     return s
 
 #
@@ -163,7 +166,10 @@ def code(should_be):
     """
     Check to make sure the response code for the last page is what it should be.
     """
-    assert state.get_code() == int(should_be)
+    should_be = int(should_be)
+    if state.get_code() != int(should_be):
+        raise TwillAssertionError("code is %d, != %d" % (state.get_code(),
+                                                         should_be))
 
 def follow(what):
     """
@@ -176,47 +182,94 @@ def follow(what):
         state.follow_link(links)
         return
 
-    assert 0, "no links match '%s'" % (what,)
+    raise TwillAssertionError("no links match to '%s'" % (what,))
 
 def find(what):
+    """
+    Succeed if the regular expression is on the page.
+    """
     regexp = re.compile(what)
     page = state.get_html()
 
-    assert regexp.search(page)
+    if not regexp.search(page):
+        raise TwillAssertionError("no match to '%s'" % (what,))
 
 def notfind(what):
+    """
+    Fail if the regular expression is on the page.
+    """
     regexp = re.compile(what)
     page = state.get_html()
 
-    assert not regexp.search(page)
+    if regexp.search(page):
+        raise TwillAssertionError("match to '%s'" % (what,))
 
 def back():
+    """
+    Return to the previous page.
+    """
     state.back()
 
 def show():
+    """
+    Show the HTML for the current page.
+    """
     print state.get_html()
 
 def echo(*strs):
+    """
+    Echo the arguments to the screen.
+    """
     for s in strs:
         print s,
 
 def agent(what):
+    """
+    Set the agent string -- does nothing, currently.
+    """
     what = what.strip()
     agent = agent_map.get(what, what)
     state.set_agent_string(agent)
 
 def submit(*nada):
+    """
+    Submit.
+    """
     state.submit()
 
-###
+def showform(*nada):
+    """
+    Show all of the forms on the current page.
+    """
+    state.showforms()
 
-def formvalue():
-    pass
+def formvalue(formname, fieldname, command, value=None):
+    """
+    formvalue <formname> <field> clear         -- clear all values
+    formvalue <formname> <field> set <value>   -- set value
+
+    There are some ambiguities in the way formvalue deals with lists:
+    'set' will *add* the given value to a multilist.
+
+    Formvalue ignors read-only fields completely; if they're readonly,
+    nothing is done.
+    """
+    print formname, fieldname, command
+    if value:
+        print value
+
+    form = state.get_form(formname)
+    control = state.find_form_field(form, field)
+
+    if control.readonly:
+        return
+
+    if command == 'clear':
+        control.clear()
+    else:
+        pass
 
 fv = formvalue
-
-def showform(*nada):
-    state.showforms()
 
 ####
 

@@ -1,4 +1,5 @@
 from IPython.Shell import IPShellEmbed
+from errors import TwillAssertionError
 
 class AutoShell:
     """
@@ -17,6 +18,7 @@ class AutoShell:
     def execute(self, cmd):
 	line = self.IP.prefilter(cmd, None)
         self.IP.push(line)
+        # @CTB catch exceptions here.
 
     def execute_file(self, filename):
         for line in open(filename).readlines():
