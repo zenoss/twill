@@ -2,8 +2,6 @@
 twill: an extensible scriptlet language for testing web apps
 ============================================================
 
-CTB/Feb 2005
-
 .. contents::
 
 What is 'twill'?
@@ -39,24 +37,27 @@ this:
    code 200
    find testpass
 
-The primary use for twill/PBP is to do fairly simpleminded (but still
-very useful!) automated testing of Web applications.
+The primary use for twill (as with PBP) is to do automated testing of
+Web applications via a straightforward declarative language.  In
+addition to basic Web crawling, I wanted to be able to extend the
+language via Python, and I also wanted to be able to record things
+with maxq_.  Hence, twill.
 
-twill is based on PBP in concept, and (like PBP) is essentially a thin
-shell around the mechanize_ package for Python browser emulation.
-Unlike PBP, which implements its own scripting interface on top of
-Twisted, twill is an even thinner shell around IPython_.  This means
-that you can extend twill in a number of very simple ways.
-Eventually, it should be possible to put straight Python code into the
-scripts, although at the moment the IPython stuff is more than a bit
-hacky & will break indentation.
+twill is essentially a thin shell around the mechanize_ package.  It
+also utilizes IPython_ for various shell magic.  At the heart of twill,
+there is basically one short module that implements all of the major
+functionality.
+
+twill is *very* small at the moment, and I'm hoping to keep the core
+of it very simple.
 
 .. _PBP: http://pbp.berlios.de/
+.. _maxq: http://maxq.tigris.org/
 .. _mechanize: http://wwwsearch.sf.net/
 .. _IPython: http://ipython.scipy.org/
 
-Why?
-----
+Why Reimplement PBP?
+--------------------
 
 PBP is a great idea, but Cory Dodt (the author of PBP) is focusing on
 other things at the moment, and I needed a solid scripting language
@@ -65,37 +66,37 @@ for Web testing.  Plus, I wanted to play with IPython and mechanize.
 Availability
 ------------
 
-Version 0.5 (at about the same level of functionality as PBP 0.3) is
-available for download here_.  The latest development version can be
-found at twill-latest.tar.gz_.  There's a darcs repository for the
-project at http://darcs.idyll.org/~t/projects/twill/.
+Version 0.6 ("everything works, more or less") is available for
+download here_.  The latest development version can be found at
+twill-latest.tar.gz_.  There's a darcs repository for the project at
+http://darcs.idyll.org/~t/projects/twill/.
 
-.. _here: .
+.. _here: http://darcs.idyll.org/~t/projects/twill-0.6.tar.gz
 .. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
 
-Note that you'll need to make one modification to IPython 0.6.10 to get this
-to work; sorry.
+Documentation
+-------------
 
-::
-
-   On line 1556 of IPython/iplib.py, change
-
-        if pre == self.ESC_QUOTE:
-
-   to
-
-        if pre == self.ESC_QUOTE or hasattr(self, 'ctb_autoquote'):
-
-I'm still figuring out how to make this work automatically...
-
+There are some examples under the ``examples/`` subdirectory.  Included
+in the examples is a test of the Quixote demo site, and a script for
+clearing out SourceForge Mailman lists.  The latter script makes use of the
+(very simple!) extension feature, if you're interested...
 
 Future Plans
 ------------
 
 I'm scratching my own itch with twill at the moment, so development of
-the core functionality will proceed sporadically.  I'd like to focus
-on the IPython interface, because once that works then extending twill
-will be really easy.
+the core functionality will proceed sporadically.  Right now I'm
+starting to integrate it into my own projects, so expect some of the
+following, soon:
+
+ * maxq recorder;
+
+ * better handling of script execution;
+
+ * more clever wrapping of mechanize;
+
+ * bug fixes galore.
 
 Contributions are welcome & will be duly acknowledged!
 
@@ -105,4 +106,9 @@ Acknowledgements and Credits
 Cory Dodt had a great idea with PBP, and I thank him for his insight.
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython.
 Grig Gheorghiu was strangely enthusiastic about the simple demo I
-showed him.  Thanks, guys...
+showed him.  John J. Lee has promptly and enthusiastically checked in
+patches to mechanize.  Thanks, guys...
+
+::
+
+   CTB 4/05

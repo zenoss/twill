@@ -6,8 +6,10 @@ sys.path.insert(0, thisdir)             # @@CTB
 wwwsearchlib = os.path.join(thisdir, 'wwwsearch.zip')
 sys.path.insert(0, wwwsearchlib)
 
-# the only thing we really need.
-from shell import AutoShell
+# the only two things we really need.
+from shell import AutoShell, execute_file
+
+# convenience function or two...
 
 import commands
 def get_browser_state():

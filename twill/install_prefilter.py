@@ -1,23 +1,8 @@
-import code
+from autoquote import autoquote_if_necessary
 
 def prefilter_autoquote_fn(self, line, continuation):
     if not continuation:
-        try:
-            code.compile_command(line)
-        except SyntaxError, e:
-            l = line.split()
-            cmd, rest = l[0], l[1:]
-            rest = [ '"%s"' % (i.strip("\"'"),) for i in rest ]
-            
-            newcmd = cmd + "(" + ",".join(rest) + ")"
-            print 'newcmd:', newcmd
-
-            try:
-                code.compile_command(newcmd)
-                line = newcmd
-            except:
-                pass
-            
+        line = autoquote_if_necessary("", line)
 
     return self._prefilter(line, continuation)
             

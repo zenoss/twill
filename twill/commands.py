@@ -163,8 +163,8 @@ class _BrowserState:
             if len(matches) == 1:
                 found = matches[0]
             else:
-                print '-- -- fieldname "%s" matches multiple controls' % \
-                      (fieldname,)
+                #print '-- -- fieldname "%s" matches multiple controls' % \
+                #      (fieldname,)
                 found = None
 
         if found is None:
@@ -178,7 +178,7 @@ class _BrowserState:
             except IndexError:
                 pass
 
-        print '-- -- found form control:', found.name, found.type, found.value
+        #print '-- -- found form control:', found.name, found.type, found.value
         
         return found
 

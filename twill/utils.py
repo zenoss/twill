@@ -3,7 +3,7 @@ Various ugly utility functions for twill.
 """
 
 import ClientForm
-import urllib2
+import urllib2, re
 
 class ResultWrapper:
     """
