@@ -11,9 +11,22 @@ from twill import AutoShell, execute_file
 
 if __name__ == '__main__':
     if len(sys.argv[1:]):
+        success = []
+        failure = []
         for filename in sys.argv[1:]:
             print '>> EXECUTING FILE', filename
-    
-            execute_file(filename)
+
+            try:
+                execute_file(filename)
+                success.append(filename)
+            except:
+                failure.append(filename)
+
+        print '--'
+        print '%d of %d files SUCCEEDED.' % (len(success), len(sys.argv) - 1)
+        if len(failure):
+            print 'Failed:\n\t',
+            print "\n\t".join(failure)
+                                                
     else:
         AutoShell().interact()

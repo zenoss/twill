@@ -82,6 +82,22 @@ in the examples is a test of the Quixote demo site, and a script for
 clearing out SourceForge Mailman lists.  The latter script makes use of the
 (very simple!) extension feature, if you're interested...
 
+To install twill, just run
+
+::
+
+   python setup.py install
+
+To run twill, type 'twill-sh' and try
+
+::
+
+   go http://www.python.org/
+   show
+
+You can also run scripts (e.g. the files in ``examples/``) directly by
+specifying them on the command line.
+
 Future Plans
 ------------
 
