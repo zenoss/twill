@@ -4,7 +4,7 @@ twill shell.
 """
 
 import sys
-from twill import AutoShell, execute_file
+from twill import TwillCommandLoop, execute_file
 
 # If run from the command line, find & run any scripts put on the command
 # line.  If none, drop into an interactive AutoShell.
@@ -30,4 +30,4 @@ if __name__ == '__main__':
             print "\n\t".join(failure)
                                                 
     else:
-        AutoShell().interact()
+	TwillCommandLoop().cmdloop("\n Welcome to twill!\n")

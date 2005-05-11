@@ -1,118 +1,59 @@
 """
-Interactive and file execution stuff.
+A cmd.Cmd interpreter for twill.
 """
 
-import sys
-import code, re
+import cmd
+from twill import commands, parse
 
-from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
-     alphas, alphanums, ParseException, ZeroOrMore, restOfLine, Combine
+class _command_loop_metaclass(type):
+    def __init__(cls, cls_name, cls_bases, cls_dict):
+        super(_command_loop_metaclass, cls).__init__(cls_name,
+                                                     cls_bases,
+                                                     cls_dict)
 
-from IPython.Shell import IPShell, IPShellEmbed
-from errors import TwillAssertionError
+        #
+        # create 'do_' functions for all of the commands.
+        #
+        
+        for command in commands.__all__:
+            name = 'do_%s' % (command,)
+            fn = getattr(commands, command)
+            
+            def do_cmd(self, rest_of_line, cmd=command):
+                globals_dict, locals_dict = parse.get_twill_glocals()
+        
+                args = parse.arguments.parseString(rest_of_line)
+                args = parse.process_args(args,globals_dict,locals_dict)
 
-class AutoShell:
-    """
-    Execute commands one at at time in an IPython shell.
+                parse.execute_command(cmd, args, globals_dict, locals_dict)
+                
+            setattr(cls, name, do_cmd)
 
-    Ideas:
-      * on exception, drop into interactive shell.
-    """
-    def __init__(self, argv=sys.argv):
-        self.ipshell = IPShellEmbed(argv)
-        self.IP = self.ipshell.IP
-        self.last_was_incomplete = False
+            def help_cmd(self, message=fn.__doc__):
+                print message
 
-        self.IP.push("from twill.commands import *")
-        self.IP.push("import twill.install_prefilter")
+            name = 'help_%s' % (command,)
+            setattr(cls, name, help_cmd)
 
-    def execute(self, cmd):
-        line = self.IP.prefilter(cmd, self.last_was_incomplete)
-        self.last_was_incomplete = self.IP.push(line)
+        ## TODO, command completion coolness.
 
-    def interact(self):
-        self.ipshell()
-
-### pyparsing stuff
-
-# valid Python identifier:
-command = Combine(Word(alphas + "_", max=1) + Word(alphanums + "_"))
-
-# arguments to it.
-arguments = OneOrMore(Word(printables) ^ quotedString)
-
-# comment line.
-comment = Word('#', max=1) + restOfLine
-
-full_command = comment ^ (command + Optional(arguments))
-
-def parse_command(line, globals_dict, locals_dict):
-    res = full_command.parseString(line)
-    command = res[0]
+class TwillCommandLoop(object, cmd.Cmd):
+    __metaclass__ = _command_loop_metaclass
     
-    newargs = []
-    for arg in res[1:]:
-        # strip quotes from quoted strings.
-        # don't use string.strip, which will remove more than one...
-        if arg[0] == arg[-1] and arg[0] in "\"'":
-            newargs.append(arg[1:-1])
-        elif arg[0:2] == '__':
-            val = eval(arg, globals_dict, locals_dict)
-            newargs.append(val)
-        else:
-            newargs.append(arg)
+    def __init__(self):
+        cmd.Cmd.__init__(self)
+        parse._init_twill_glocals()
+        self.use_raw_input = False
+        self._set_prompt()
 
-    return (command, newargs)
+    def emptyline(self):
+        pass
 
-global_dict = local_dict = None
+    def _set_prompt(self):
+        url = commands.state.url()
+        self.prompt = "current page: %s\n>> " % (url,)
 
-def _init_twill_glocals():
-    global global_dict, local_dict
-
-    global_dict = {}
-    local_dict = {}
-    exec "from twill.commands import *" in global_dict, local_dict
-
-def get_twill_glocals():
-    global global_dict, local_dict
-
-    return global_dict, local_dict
-
-def execute_file(filename, init_glocals = True):
-    """
-    Execute commands from a file.
-    """
-    finished = 0
-
-    # initialize global/local dictionaries.
-    if init_glocals:
-        _init_twill_glocals()
+    def postcmd(self, stop, line):
+        self._set_prompt()
         
-    lines = open(filename).readlines()
-
-    for line in lines:
-        if not line.strip():            # skip empty lines
-            continue
-        
-        cmd, args = parse_command(line, global_dict, local_dict)
-
-        if cmd == '#':                  # skip comments
-            continue
-
-        # execute command.
-        local_dict['__args__'] = args
-
-        eval_str = "%s(*__args__)" % (cmd,)
-
-        try:
-            eval(eval_str, global_dict, local_dict)
-        except TwillAssertionError, e:
-            sys.stderr.write('''\
-Oops!  Twill assertion error while executing
- 
-    %s
-''' % (cmd,))
-            raise
-        except Exception, e:
-            sys.stderr.write('EXCEPTION while executing \n\n\t%s\n' % (cmd,))
-            raise
+        return stop

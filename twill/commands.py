@@ -49,7 +49,11 @@ class _BrowserState:
         # returns false (?!).
         #self._browser._set_handler("_cookies", handle=True, obj=cj)
         self.cj = cj
-        
+
+    def url(self):
+        if self._last_result:
+            return self._last_result.get_url()
+        return " *empty page* "
 
     def go(self, url):
         """
@@ -278,7 +282,6 @@ def echo(*strs):
     """
     Echo the arguments to the screen.
     """
-    print strs
     strs = map(str, strs)
     s = " ".join(strs)
     print s

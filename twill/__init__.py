@@ -7,7 +7,8 @@ wwwsearchlib = os.path.join(thisdir, 'wwwsearch.zip')
 sys.path.insert(0, wwwsearchlib)
 
 # the only two things we really need.
-from shell import AutoShell, execute_file
+from shell import TwillCommandLoop
+from parse import execute_file
 
 # convenience function or two...
 
