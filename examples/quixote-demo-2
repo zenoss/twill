@@ -4,7 +4,7 @@ go ./widgets
 showform
 
 formclear 1
-fv 1 name test
+fv 1 name "test word"
 fv 1 password testpass
 fv 1 confirm yes
 showform

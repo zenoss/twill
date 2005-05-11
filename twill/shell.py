@@ -10,7 +10,6 @@ from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
 
 from IPython.Shell import IPShell, IPShellEmbed
 from errors import TwillAssertionError
-from autoquote import autoquote_if_necessary
 
 class AutoShell:
     """
