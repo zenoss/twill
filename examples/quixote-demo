@@ -39,7 +39,7 @@ back
 # can't "follow srcdir" because there's another link on the page
 # that actually goes to srcdir/pages.ptl instead...
 go ./srcdir
-find __init__.pyc
+find '__init__.pyc'
 back
 
 echo SUCCESS!

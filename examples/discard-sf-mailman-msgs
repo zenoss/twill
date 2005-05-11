@@ -1,13 +1,9 @@
-#password = raw_input("password? ")
-
-import sys
-sys.path.append('./extensions/')
-from mailman_sf import *
+extend_with mailman_sf
 
 go https://lists.sourceforge.net/lists/admindb/pywx-discuss
-formvalue("1", "adminpw", password)
 
-formvalue 1 adminpw !smythy
+getpassword "Enter list password: "
+formvalue 1 adminpw __password__
 submit 0
 code 200
 

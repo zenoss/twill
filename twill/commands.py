@@ -1,7 +1,8 @@
 #! /usr/bin/env python2.4
 
 # export:
-__all__ = ['go',
+__all__ = ['extend_with',
+           'go',
            'reload',
            'code',
            'follow',
@@ -15,11 +16,11 @@ __all__ = ['go',
            'submit',
            'formvalue',
            'fv',
-           'formclear']
+           'formclear',
+           'getinput',
+           'getpassword']
 
-import re
-
-import urllib2
+import re, getpass, urllib2
 
 from mechanize import Browser
 import ClientCookie
@@ -213,7 +214,7 @@ def go(url):
     """
     state.go(url)
 
-def reload(*noargs):
+def reload():
     """
     Reload the current URL.
     """
@@ -261,13 +262,13 @@ def notfind(what):
     if regexp.search(page):
         raise TwillAssertionError("match to '%s'" % (what,))
 
-def back(*noargs):
+def back():
     """
     Return to the previous page.
     """
     state.back()
 
-def show(*noargs):
+def show():
     """
     Show the HTML for the current page.
     """
@@ -277,8 +278,10 @@ def echo(*strs):
     """
     Echo the arguments to the screen.
     """
-    for s in strs:
-        print s,
+    print strs
+    strs = map(str, strs)
+    s = " ".join(strs)
+    print s
 
 def agent(what):
     """
@@ -294,7 +297,7 @@ def submit(submit_button):
     """
     state.submit(submit_button)
 
-def showform(*noargs):
+def showform():
     """
     Show all of the forms on the current page.
     """
@@ -337,6 +340,37 @@ def formvalue(formname, fieldname, value):
     set_form_control_value(control, value)
 
 fv = formvalue
+
+def extend_with(module_name):
+    """
+    Import contents of given module.
+    """
+    from twill.shell import get_twill_glocals
+    global_dict, local_dict = get_twill_glocals()
+    
+    exec "from %s import *" % (module_name,) in global_dict, local_dict
+
+def getinput(prompt):
+    """
+    Get input, store it in '__input__'.
+    """
+    from twill.shell import get_twill_glocals
+    global_dict, local_dict = get_twill_glocals()
+
+    inp = raw_input(prompt)
+
+    local_dict['__input__'] = inp
+
+def getpassword(prompt):
+    """
+    Get a password ("invisible input"), store it in '__password__'.
+    """
+    from twill.shell import get_twill_glocals
+    global_dict, local_dict = get_twill_glocals()
+
+    inp = getpass.getpass(prompt)
+
+    local_dict['__password__'] = inp
 
 ####
 
