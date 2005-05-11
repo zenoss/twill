@@ -5,6 +5,9 @@ Interactive and file execution stuff.
 import sys
 import code, re
 
+from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
+     alphanums, ParseException, ZeroOrMore, restOfLine
+
 from IPython.Shell import IPShell, IPShellEmbed
 from errors import TwillAssertionError
 from autoquote import autoquote_if_necessary
@@ -31,10 +34,31 @@ class AutoShell:
     def interact(self):
         self.ipshell()
 
+### pyparsing stuff
+
+arguments = OneOrMore(Word(printables) ^ quotedString)
+comment = Word('#', max=1) + restOfLine
+
+full_command = comment ^ (Word(alphanums) + Optional(arguments))
+
+def parse_command(line):
+    res = full_command.parseString(line)
+    command = res[0]
+    
+    newargs = []
+    for arg in res[1:]:
+        # strip quotes from quoted strings.
+        # don't use string.strip, which will remove more than one...
+        if arg[0] == arg[-1] and arg[0] in "\"'":
+            newargs.append(arg[1:-1])
+        else:
+            newargs.append(arg)
+
+    return (command, newargs)
+
 def execute_file(filename):
     """
-    Execute commands from a file, rewriting them into valid Python by
-    autoquoting as necessary.
+    Execute commands from a file.
     """
     finished = 0
 
@@ -46,36 +70,20 @@ def execute_file(filename):
         
     lines = open(filename).readlines()
 
-    # first, compile into code blocks.   this will get rid of any
-    # out & out syntax errors.
-    
-    code_objs = []
-    full_cmd = ""
     for line in lines:
-        line = autoquote_if_necessary(full_cmd, line)
+        if not line.strip():            # skip empty lines
+            continue
         
-        full_cmd += line
-        codeobj = code.compile_command(full_cmd, filename)
-        
-        if codeobj is None:         # incomplete command; punt.
-            pass
-        else:
-            code_objs.append((codeobj, full_cmd)) # save, clear, move on.
-            full_cmd = ""
+        cmd, args = parse_command(line)
 
-    # now, EXECUTE.
+        if cmd == '#':                  # skip comments
+            continue
 
-    for (codeobj, cmd) in code_objs:
+        # execute command.
+        callable = eval(cmd, global_dict, local_dict)
+
         try:
-            # hack to support no-arg functions... @CTB how bad is this, really?
-            if re.match('^[a-zA-Z_][a-zA-Z0-9_]+$', cmd):
-                name = cmd.strip()
-                val = global_dict.get(name)
-                val = local_dict.get(name, val)
-                if callable(val):
-                    codeobj = code.compile_command(name + "()")
-
-            exec codeobj in global_dict, local_dict
+            callable(*args)
         except TwillAssertionError, e:
             sys.stderr.write('''\
 Oops!  Twill assertion error while executing

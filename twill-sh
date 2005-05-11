@@ -21,6 +21,7 @@ if __name__ == '__main__':
                 success.append(filename)
             except:
                 failure.append(filename)
+		raise
 
         print '--'
         print '%d of %d files SUCCEEDED.' % (len(success), len(sys.argv) - 1)
