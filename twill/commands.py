@@ -1,4 +1,8 @@
-#! /usr/bin/env python2.4
+"""
+Implementation of all of the individual 'twill' commands.
+
+
+"""
 
 # export:
 __all__ = ['extend_with',
@@ -12,7 +16,7 @@ __all__ = ['extend_with',
            'show',
            'echo',
            'agent',
-           'showform',
+           'showforms',
            'submit',
            'formvalue',
            'fv',
@@ -214,19 +218,25 @@ state = _BrowserState()
 
 def go(url):
     """
+    >> go <url>
+    
     Visit the URL given.
     """
     state.go(url)
 
 def reload():
     """
+    >> reload
+    
     Reload the current URL.
     """
     state.reload()
 
 def code(should_be):
     """
-    Check to make sure the response code for the last page is what it should be.
+    >> code <int>
+    
+    Check to make sure the response code for the last page is as given.
     """
     should_be = int(should_be)
     if state.get_code() != int(should_be):
@@ -235,6 +245,8 @@ def code(should_be):
 
 def follow(what):
     """
+    >> follow <regexp>
+    
     Find the first matching link on the page & visit it.
     """
     regexp = re.compile(what)
@@ -248,6 +260,8 @@ def follow(what):
 
 def find(what):
     """
+    >> find <regexp>
+    
     Succeed if the regular expression is on the page.
     """
     regexp = re.compile(what)
@@ -258,6 +272,8 @@ def find(what):
 
 def notfind(what):
     """
+    >> notfind <regexp>
+    
     Fail if the regular expression is on the page.
     """
     regexp = re.compile(what)
@@ -268,18 +284,24 @@ def notfind(what):
 
 def back():
     """
+    >> back
+    
     Return to the previous page.
     """
     state.back()
 
 def show():
     """
+    >> show
+    
     Show the HTML for the current page.
     """
     print state.get_html()
 
 def echo(*strs):
     """
+    >> echo <list> <of> <strings>
+    
     Echo the arguments to the screen.
     """
     strs = map(str, strs)
@@ -288,6 +310,8 @@ def echo(*strs):
 
 def agent(what):
     """
+    >> agent <agent>
+    
     Set the agent string -- does nothing, currently.
     """
     what = what.strip()
@@ -296,18 +320,24 @@ def agent(what):
 
 def submit(submit_button):
     """
+    >> submit <buttonspec>
+    
     Submit.
     """
     state.submit(submit_button)
 
-def showform():
+def showforms():
     """
+    >> showforms
+    
     Show all of the forms on the current page.
     """
     state.showforms()
 
 def formclear(formname):
     """
+    >> formclear <formname>
+    
     Run 'clear' on all of the controls in this form.
     """
     form = state.get_form(formname)
@@ -319,13 +349,17 @@ def formclear(formname):
 
 def formvalue(formname, fieldname, value):
     """
-    formvalue <formname> <field> <value>   -- set value.
+    >> formvalue <formname> <field> <value>
+
+    Set value of a form field.
 
     There are some ambiguities in the way formvalue deals with lists:
     'set' will *add* the given value to a multilist.
 
     Formvalue ignores read-only fields completely; if they're readonly,
     nothing is done.
+
+    Available as 'fv' as well.
     """
     print formname, fieldname, value
     if value:
@@ -346,6 +380,8 @@ fv = formvalue
 
 def extend_with(module_name):
     """
+    >> extend_with <module>
+    
     Import contents of given module.
     """
     from twill.shell import get_twill_glocals
@@ -355,6 +391,7 @@ def extend_with(module_name):
 
 def getinput(prompt):
     """
+    >> getinput <prompt>
     Get input, store it in '__input__'.
     """
     from twill.shell import get_twill_glocals
@@ -366,6 +403,8 @@ def getinput(prompt):
 
 def getpassword(prompt):
     """
+    >> getpassword <prompt>
+    
     Get a password ("invisible input"), store it in '__password__'.
     """
     from twill.shell import get_twill_glocals
