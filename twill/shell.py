@@ -30,9 +30,11 @@ class _command_loop_metaclass(type):
             
             def do_cmd(self, rest_of_line, cmd=command):
                 globals_dict, locals_dict = parse.get_twill_glocals()
-        
-                args = parse.arguments.parseString(rest_of_line)
-                args = parse.process_args(args,globals_dict,locals_dict)
+
+                args = []
+                if rest_of_line.strip() != "":
+                    args = parse.arguments.parseString(rest_of_line)
+                    args = parse.process_args(args,globals_dict,locals_dict)
 
                 parse.execute_command(cmd, args, globals_dict, locals_dict)
                 
@@ -82,3 +84,13 @@ class TwillCommandLoop(object, cmd.Cmd):
         self._set_prompt()
         
         return stop
+
+    def do_EOF(self, *args):
+        raise SystemExit()
+
+    def default(self, line):
+        line = line.strip()
+        if line[0] == '#':              # ignore comments
+            return
+
+        cmd.Cmd.default(self, line)

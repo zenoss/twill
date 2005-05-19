@@ -22,7 +22,9 @@ __all__ = ['extend_with',
            'fv',
            'formclear',
            'getinput',
-           'getpassword']
+           'getpassword',
+           'save_cookies',
+           'load_cookies']
 
 import re, getpass, urllib2
 
@@ -48,10 +50,6 @@ class _BrowserState:
         cj = ClientCookie.LWPCookieJar(policy=policy)
         self._browser.set_cookiejar(cj)
         
-        # browser.set_cookiejar(cj) is broken; need to call
-        # browser._set_handler directly.  the problem is that bool(cj)
-        # returns false (?!).
-        #self._browser._set_handler("_cookies", handle=True, obj=cj)
         self.cj = cj
 
     def url(self):
@@ -211,6 +209,12 @@ class _BrowserState:
         
         control = ctl._click(self._browser.form, None, urllib2.Request)
         self._last_result = journey(self._browser.open, control)
+
+    def save_cookies(self, filename):
+        self.cj.save(filename, ignore_discard=True, ignore_expires=True)
+
+    def load_cookies(self, filename):
+        self.cj.load(filename, ignore_discard=True, ignore_expires=True)
         
 state = _BrowserState()
 
@@ -413,6 +417,12 @@ def getpassword(prompt):
     inp = getpass.getpass(prompt)
 
     local_dict['__password__'] = inp
+
+def save_cookies(filename):
+    state.save_cookies(filename)
+
+def load_cookies(filename):
+    state.load_cookies(filename)
 
 ####
 
