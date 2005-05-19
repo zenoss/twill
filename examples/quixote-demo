@@ -29,11 +29,11 @@ find PATH_INFO
 back
 
 follow widgets
-showform
+showforms
 back
 
 follow form_demo
-showform
+showforms
 back
 
 # can't "follow srcdir" because there's another link on the page

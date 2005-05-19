@@ -2,6 +2,8 @@
 Code parsing and evaluation for the twill mini-language.
 """
 
+import sys
+from errors import TwillAssertionError
 from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
      alphas, alphanums, ParseException, ZeroOrMore, restOfLine, Combine
 
