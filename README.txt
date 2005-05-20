@@ -189,6 +189,11 @@ Right now it's very easy to extend: just build a Python module that
 exports the functions you want to call and run ``extend_with
 <modulename>``.
 
+Miscellaneous Implementation Details
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ * twill ignores robots.txt.
+
 .. _PBP: http://pbp.berlios.de/
 .. _maxq: http://maxq.tigris.org/
 .. _mechanize: http://wwwsearch.sf.net/
