@@ -46,6 +46,8 @@ with maxq_.  Hence, twill.
 Command Reference
 -----------------
 
+The following commands are built into twill.
+
 Browsing
 ~~~~~~~~
 
@@ -111,16 +113,42 @@ Other commands
 **getpassword** *<prompt>* -- get *silent* keyboard input and store
 it in ``__password__``.
 
-Availability
-------------
+Requirements, Availability and Licensing
+----------------------------------------
+
+twill is developed in python 2.3, and should work fine with python 2.4.
+You don't need any other software; both pyparsing_ and mechanize_ are
+required but included with twill.
 
 Version 0.7 ("more things work") is available for
 download here_.  The latest development version can be found at
 twill-latest.tar.gz_.  There's a darcs repository for the project at
 http://darcs.idyll.org/~t/projects/twill/.
 
+Licensing
+~~~~~~~~~
+
+twill is licensed under the `GNU LGPL`_, although I am amenable to
+changing to an MIT-like license in the future.  All code currently
+contained in twill is Copyright (C) 2005, C. Titus Brown
+<titus@caltech.edu>.
+
+In plain English: I own the code, but you're welcome to use it as-is,
+as well as use it/subsume it into other projects.  Either way you are
+currently obligated to make your changes to twill publicly available,
+in source code form, assuming that you are distributing those changes
+in any *other* form (e.g. as part of another package).  You do *not*
+need to provide the source to packages that use twill, and you are
+not obligated to publish your own private changes, or scripts, or
+extensions, or...
+
+pyparsing_ and mechanize_ are both included with twill, but are under
+their own licenses.  (Both are currently more lenient than the LGPL,
+so you should have no problems.)
+
 .. _here: http://darcs.idyll.org/~t/projects/twill-0.7.tar.gz
 .. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
+.. _GNU LGPL: http://www.gnu.org/copyleft/lesser.html
 
 Installation and Examples
 -------------------------
@@ -149,17 +177,17 @@ clearing out SourceForge Mailman lists.  The latter script makes use of the
 Implementation and Extending Twill
 ----------------------------------
 
-twill is essentially a thin shell around the mechanize_ package.
-All twill commands are implemented in the ``commands.py`` file,
-and pyparsing_ does the work of parsing the input and converting
-it into Python commands (see ``parse.py``).  Interactive shell work and
-readline support is implemented via the `cmd`_ module (in the
-Python distribution).
-
 twill is pretty small at the moment, and I'm hoping to keep the core
-of it very simple.  Right now it's very easy to extend: just build
-a Python module that exports the functions you want to call and
-run ``extend_with <modulename>``.
+of it very simple.  twill is essentially a thin shell around the
+mechanize_ package.  All twill commands are implemented in the
+``commands.py`` file, and pyparsing_ does the work of parsing the
+input and converting it into Python commands (see ``parse.py``).
+Interactive shell work and readline support is implemented via the
+`cmd`_ module (from the standard Python library).
+
+Right now it's very easy to extend: just build a Python module that
+exports the functions you want to call and run ``extend_with
+<modulename>``.
 
 .. _PBP: http://pbp.berlios.de/
 .. _maxq: http://maxq.tigris.org/

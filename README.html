@@ -23,12 +23,15 @@
 <li><a class="reference" href="#other-commands" id="id8" name="id8">Other commands</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#availability" id="id9" name="id9">Availability</a></li>
-<li><a class="reference" href="#installation-and-examples" id="id10" name="id10">Installation and Examples</a></li>
-<li><a class="reference" href="#implementation-and-extending-twill" id="id11" name="id11">Implementation and Extending Twill</a></li>
-<li><a class="reference" href="#why-reimplement-pbp" id="id12" name="id12">Why Reimplement PBP?</a></li>
-<li><a class="reference" href="#future-plans" id="id13" name="id13">Future Plans</a></li>
-<li><a class="reference" href="#acknowledgements-and-credits" id="id14" name="id14">Acknowledgements and Credits</a></li>
+<li><a class="reference" href="#requirements-availability-and-licensing" id="id9" name="id9">Requirements, Availability and Licensing</a><ul>
+<li><a class="reference" href="#licensing" id="id10" name="id10">Licensing</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#installation-and-examples" id="id11" name="id11">Installation and Examples</a></li>
+<li><a class="reference" href="#implementation-and-extending-twill" id="id12" name="id12">Implementation and Extending Twill</a></li>
+<li><a class="reference" href="#why-reimplement-pbp" id="id13" name="id13">Why Reimplement PBP?</a></li>
+<li><a class="reference" href="#future-plans" id="id14" name="id14">Future Plans</a></li>
+<li><a class="reference" href="#acknowledgements-and-credits" id="id15" name="id15">Acknowledgements and Credits</a></li>
 </ul>
 </div>
 <div class="section" id="what-is-twill">
@@ -69,6 +72,7 @@ with <a class="reference" href="http://maxq.tigris.org/">maxq</a>.  Hence, twill
 </div>
 <div class="section" id="command-reference">
 <h1><a class="toc-backref" href="#id2" name="command-reference">Command Reference</a></h1>
+<p>The following commands are built into twill.</p>
 <div class="section" id="browsing">
 <h2><a class="toc-backref" href="#id3" name="browsing">Browsing</a></h2>
 <p><strong>go</strong> <em>&lt;url&gt;</em> -- visit the given URL.</p>
@@ -113,15 +117,36 @@ given form to the given value.</p>
 it in <tt class="docutils literal"><span class="pre">__password__</span></tt>.</p>
 </div>
 </div>
-<div class="section" id="availability">
-<h1><a class="toc-backref" href="#id9" name="availability">Availability</a></h1>
+<div class="section" id="requirements-availability-and-licensing">
+<h1><a class="toc-backref" href="#id9" name="requirements-availability-and-licensing">Requirements, Availability and Licensing</a></h1>
+<p>twill is developed in python 2.3, and should work fine with python 2.4.
+You don't need any other software; both <a class="reference" href="http://pyparsing.sourceforge.net/">pyparsing</a> and <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> are
+required but included with twill.</p>
 <p>Version 0.7 (&quot;more things work&quot;) is available for
 download <a class="reference" href="http://darcs.idyll.org/~t/projects/twill-0.7.tar.gz">here</a>.  The latest development version can be found at
 <a class="reference" href="http://darcs.idyll.org/~t/projects/twill-latest.tar.gz">twill-latest.tar.gz</a>.  There's a darcs repository for the project at
 <a class="reference" href="http://darcs.idyll.org/~t/projects/twill/">http://darcs.idyll.org/~t/projects/twill/</a>.</p>
+<div class="section" id="licensing">
+<h2><a class="toc-backref" href="#id10" name="licensing">Licensing</a></h2>
+<p>twill is licensed under the <a class="reference" href="http://www.gnu.org/copyleft/lesser.html">GNU LGPL</a>, although I am amenable to
+changing to an MIT-like license in the future.  All code currently
+contained in twill is Copyright (C) 2005, C. Titus Brown
+&lt;<a class="reference" href="mailto:titus&#64;caltech.edu">titus&#64;caltech.edu</a>&gt;.</p>
+<p>In plain English: I own the code, but you're welcome to use it as-is,
+as well as use it/subsume it into other projects.  Either way you are
+currently obligated to make your changes to twill publicly available,
+in source code form, assuming that you are distributing those changes
+in any <em>other</em> form (e.g. as part of another package).  You do <em>not</em>
+need to provide the source to packages that use twill, and you are
+not obligated to publish your own private changes, or scripts, or
+extensions, or...</p>
+<p><a class="reference" href="http://pyparsing.sourceforge.net/">pyparsing</a> and <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> are both included with twill, but are under
+their own licenses.  (Both are currently more lenient than the LGPL,
+so you should have no problems.)</p>
+</div>
 </div>
 <div class="section" id="installation-and-examples">
-<h1><a class="toc-backref" href="#id10" name="installation-and-examples">Installation and Examples</a></h1>
+<h1><a class="toc-backref" href="#id11" name="installation-and-examples">Installation and Examples</a></h1>
 <p>To install twill, just run</p>
 <pre class="literal-block">
 python setup.py install
@@ -139,26 +164,26 @@ clearing out SourceForge Mailman lists.  The latter script makes use of the
 (very simple!) extension feature, if you're interested...</p>
 </div>
 <div class="section" id="implementation-and-extending-twill">
-<h1><a class="toc-backref" href="#id11" name="implementation-and-extending-twill">Implementation and Extending Twill</a></h1>
-<p>twill is essentially a thin shell around the <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> package.
-All twill commands are implemented in the <tt class="docutils literal"><span class="pre">commands.py</span></tt> file,
-and <a class="reference" href="http://pyparsing.sourceforge.net/">pyparsing</a> does the work of parsing the input and converting
-it into Python commands (see <tt class="docutils literal"><span class="pre">parse.py</span></tt>).  Interactive shell work and
-readline support is implemented via the <a class="reference" href="http://docs.python.org/lib/module-cmd.html">cmd</a> module (in the
-Python distribution).</p>
+<h1><a class="toc-backref" href="#id12" name="implementation-and-extending-twill">Implementation and Extending Twill</a></h1>
 <p>twill is pretty small at the moment, and I'm hoping to keep the core
-of it very simple.  Right now it's very easy to extend: just build
-a Python module that exports the functions you want to call and
-run <tt class="docutils literal"><span class="pre">extend_with</span> <span class="pre">&lt;modulename&gt;</span></tt>.</p>
+of it very simple.  twill is essentially a thin shell around the
+<a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> package.  All twill commands are implemented in the
+<tt class="docutils literal"><span class="pre">commands.py</span></tt> file, and <a class="reference" href="http://pyparsing.sourceforge.net/">pyparsing</a> does the work of parsing the
+input and converting it into Python commands (see <tt class="docutils literal"><span class="pre">parse.py</span></tt>).
+Interactive shell work and readline support is implemented via the
+<a class="reference" href="http://docs.python.org/lib/module-cmd.html">cmd</a> module (from the standard Python library).</p>
+<p>Right now it's very easy to extend: just build a Python module that
+exports the functions you want to call and run <tt class="docutils literal"><span class="pre">extend_with</span>
+<span class="pre">&lt;modulename&gt;</span></tt>.</p>
 </div>
 <div class="section" id="why-reimplement-pbp">
-<h1><a class="toc-backref" href="#id12" name="why-reimplement-pbp">Why Reimplement PBP?</a></h1>
+<h1><a class="toc-backref" href="#id13" name="why-reimplement-pbp">Why Reimplement PBP?</a></h1>
 <p>PBP is a great idea, but Cory Dodt (the author of PBP) is focusing on
 other things at the moment, and I needed a solid scripting language
 for Web testing.  Plus, I wanted to play with mechanize.</p>
 </div>
 <div class="section" id="future-plans">
-<h1><a class="toc-backref" href="#id13" name="future-plans">Future Plans</a></h1>
+<h1><a class="toc-backref" href="#id14" name="future-plans">Future Plans</a></h1>
 <p>I'm scratching my own itch with twill at the moment, so development of
 the core functionality will proceed sporadically.  Right now I'm
 starting to integrate it into my own projects, so expect some of the
@@ -173,7 +198,7 @@ following, soon:</p>
 <p>Contributions are welcome &amp; will be duly acknowledged!</p>
 </div>
 <div class="section" id="acknowledgements-and-credits">
-<h1><a class="toc-backref" href="#id14" name="acknowledgements-and-credits">Acknowledgements and Credits</a></h1>
+<h1><a class="toc-backref" href="#id15" name="acknowledgements-and-credits">Acknowledgements and Credits</a></h1>
 <p>Cory Dodt had a great idea with PBP, and I thank him for his insight.
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython
 (since abandoned in favor of <a class="reference" href="http://docs.python.org/lib/module-cmd.html">cmd</a>.)  Grig Gheorghiu was strangely
