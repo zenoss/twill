@@ -1,8 +1,0 @@
-agent ie5
-go http://www.idyll.org/
-find idyll
-notfind brown
-follow ~t/
-
-go http://scipy.net/mailman/listinfo/ipython-dev
-showform
