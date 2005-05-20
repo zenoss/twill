@@ -43,44 +43,79 @@ addition to basic Web crawling, I wanted to be able to extend the
 language via Python, and I also wanted to be able to record things
 with maxq_.  Hence, twill.
 
-twill is essentially a thin shell around the mechanize_ package.  It
-also utilizes IPython_ for various shell magic.  At the heart of twill,
-there is basically one short module that implements all of the major
-functionality.
+Command Reference
+-----------------
 
-twill is *very* small at the moment, and I'm hoping to keep the core
-of it very simple.
+Browsing
+~~~~~~~~
 
-.. _PBP: http://pbp.berlios.de/
-.. _maxq: http://maxq.tigris.org/
-.. _mechanize: http://wwwsearch.sf.net/
-.. _IPython: http://ipython.scipy.org/
+**go** *<url>* -- visit the given URL.
 
-Why Reimplement PBP?
---------------------
+**back** -- return to the previous URL.
 
-PBP is a great idea, but Cory Dodt (the author of PBP) is focusing on
-other things at the moment, and I needed a solid scripting language
-for Web testing.  Plus, I wanted to play with IPython and mechanize.
+**reload** -- reload the current URL.
+
+**follow** *<link name>* -- follow the given link.
+
+
+Assertions
+~~~~~~~~~~
+
+**code** *<code>* -- assert that the last page loaded had this HTTP status,
+e.g. ``code 200`` asserts that the page loaded fine.
+
+**find** *<regexp>* -- assert that the page contains this regexp.
+
+**notfind** *<regexp>* -- assert that the page *does not* contain this regexp.
+
+Display
+~~~~~~~
+
+**show** -- show the current page's HTML.
+
+**echo** *<string>* -- echo the string to the screen via 'print'.
+
+Forms
+~~~~~
+
+**showforms** -- show all of the forms on the page.
+
+**submit** *<n>* -- click the n'th submit button.  (Doesn't quite work predictably yet...)
+
+**formvalue** *<formnum> <fieldname> <value>* --- set the given field in the
+given form to the given value.
+
+**fv** -- abbreviation for 'formvalue'
+
+**formclear** -- clear all values in the form.
+
+Other commands
+~~~~~~~~~~~~~~
+
+**extend_with** *<module>* -- import commands from Python module.
+
+**save_cookies** *<filename>* -- save current cookie jar into a file.
+
+**load_cookies** *<filename>* -- replace current cookie jar with file contents.
+
+**getinput** *<prompt>* -- get keyboard input and store it in ``__input__``.
+
+**getpassword** *<prompt>* -- get *silent* keyboard input and store
+it in ``__password__``.
 
 Availability
 ------------
 
-Version 0.6 ("everything works, more or less") is available for
+Version 0.7 ("more things work") is available for
 download here_.  The latest development version can be found at
 twill-latest.tar.gz_.  There's a darcs repository for the project at
 http://darcs.idyll.org/~t/projects/twill/.
 
-.. _here: http://darcs.idyll.org/~t/projects/twill-0.6.tar.gz
+.. _here: http://darcs.idyll.org/~t/projects/twill-0.7.tar.gz
 .. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
 
-Documentation
--------------
-
-There are some examples under the ``examples/`` subdirectory.  Included
-in the examples is a test of the Quixote demo site, and a script for
-clearing out SourceForge Mailman lists.  The latter script makes use of the
-(very simple!) extension feature, if you're interested...
+Installation and Examples
+-------------------------
 
 To install twill, just run
 
@@ -98,6 +133,39 @@ To run twill, type 'twill-sh' and try
 You can also run scripts (e.g. the files in ``examples/``) directly by
 specifying them on the command line.
 
+There are several examples under the ``examples/`` subdirectory.  Included
+in the examples is a test of the Quixote demo site, and a script for
+clearing out SourceForge Mailman lists.  The latter script makes use of the
+(very simple!) extension feature, if you're interested...
+
+Implementation and Extending Twill
+----------------------------------
+
+twill is essentially a thin shell around the mechanize_ package.
+All twill commands are implemented in the ``commands.py`` file,
+and pyparsing_ does the work of translating from the input into
+the commands (see ``parse.py``).  Interactive shell work and
+readline support is implemented via the `cmd`_ module from the
+Python distribution.
+
+twill is pretty small at the moment, and I'm hoping to keep the core
+of it very simple.  Right now it's very easy to extend: just build
+a Python module that exports the functions you want to call and
+run ``extend_with <modulename>``.
+
+.. _PBP: http://pbp.berlios.de/
+.. _maxq: http://maxq.tigris.org/
+.. _mechanize: http://wwwsearch.sf.net/
+.. _pyparsing: http://pyparsing.sourceforge.net/
+.. _cmd: http://docs.python.org/lib/module-cmd.html
+
+Why Reimplement PBP?
+--------------------
+
+PBP is a great idea, but Cory Dodt (the author of PBP) is focusing on
+other things at the moment, and I needed a solid scripting language
+for Web testing.  Plus, I wanted to play with mechanize.
+
 Future Plans
 ------------
 
@@ -107,8 +175,6 @@ starting to integrate it into my own projects, so expect some of the
 following, soon:
 
  * maxq recorder;
-
- * better handling of script execution;
 
  * more clever wrapping of mechanize;
 
@@ -120,11 +186,13 @@ Acknowledgements and Credits
 ----------------------------
 
 Cory Dodt had a great idea with PBP, and I thank him for his insight.
-Ian Bicking gave me the idea of reimplementing PBP on top of IPython.
-Grig Gheorghiu was strangely enthusiastic about the simple demo I
-showed him.  John J. Lee has promptly and enthusiastically checked in
-patches to mechanize.  Thanks, guys...
+Ian Bicking gave me the idea of reimplementing PBP on top of IPython
+(since abandoned in favor of `cmd`.)  Grig Gheorghiu was strangely
+enthusiastic about the simple demo I showed him.  John J. Lee has
+promptly and enthusiastically checked in patches to mechanize.
+Michele Simionato is an early adopter who has helped quite a bit.
+Thanks, guys...
 
 ::
 
-   CTB 4/05
+   CTB 5/05

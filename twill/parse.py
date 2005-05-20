@@ -9,7 +9,7 @@ from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
 
 ### pyparsing stuff
 
-# valid Python identifier:
+# basically, a valid Python identifier:
 command = Combine(Word(alphas + "_", max=1) + Word(alphanums + "_"))
 
 # arguments to it.
@@ -20,7 +20,30 @@ comment = Word('#', max=1) + restOfLine
 
 full_command = comment ^ (command + Optional(arguments))
 
+### initialization and global/local dicts
+
+global_dict = local_dict = None
+
+def _init_twill_glocals():
+    global global_dict, local_dict
+
+    global_dict = {}
+    local_dict = {}
+    exec "from twill.commands import *" in global_dict, local_dict
+
+def get_twill_glocals():
+    global global_dict, local_dict
+
+    return global_dict, local_dict
+
+### command/argument handling.
+
 def process_args(args, globals_dict, locals_dict):
+    """
+    Take a list of string arguments parsed via pyparsing, unquote
+    those that are quoted, and evaluate the special variables ('__*').
+    Return a new list.
+    """
     newargs = []
     for arg in args:
         # strip quotes from quoted strings.
@@ -36,7 +59,14 @@ def process_args(args, globals_dict, locals_dict):
     return newargs
 
 def execute_command(cmd, args, globals_dict, locals_dict):
+    """
+    Actually execute the command.
+
+    Side effects: __args__ is set to the argument tuple, __cmd__ is set to
+    the command.
+    """
     # execute command.
+    locals_dict['__cmd__'] = cmd
     locals_dict['__args__'] = args
 
     eval_str = "%s(*__args__)" % (cmd,)
@@ -44,26 +74,16 @@ def execute_command(cmd, args, globals_dict, locals_dict):
     return eval(eval_str, global_dict, local_dict)
 
 def parse_command(line, globals_dict, locals_dict):
+    """
+    Parse command.
+    """
+
     res = full_command.parseString(line)
     command = res[0]
 
     newargs = process_args(res[1:], globals_dict, locals_dict)
 
     return (command, newargs)
-
-global_dict = local_dict = None
-
-def _init_twill_glocals():
-    global global_dict, local_dict
-
-    global_dict = {}
-    local_dict = {}
-    exec "from twill.commands import *" in global_dict, local_dict
-
-def get_twill_glocals():
-    global global_dict, local_dict
-
-    return global_dict, local_dict
 
 def execute_file(filename, init_glocals = True):
     """

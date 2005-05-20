@@ -179,8 +179,6 @@ class _BrowserState:
             if len(matches) == 1:
                 found = matches[0]
             else:
-                #print '-- -- fieldname "%s" matches multiple controls' % \
-                #      (fieldname,)
                 found = None
 
         if found is None:
@@ -194,8 +192,6 @@ class _BrowserState:
             except IndexError:
                 pass
 
-        #print '-- -- found form control:', found.name, found.type, found.value
-        
         return found
 
     def clicked(self, form, field):
@@ -374,13 +370,8 @@ def formvalue(formname, fieldname, value):
 
     Available as 'fv' as well.
     """
-    print formname, fieldname, value
-    if value:
-        print value
-
     form = state.get_form(formname)
     control = state.get_form_field(form, fieldname)
-    print '-- got form field', control.name
 
     state.clicked(form, control)
 
