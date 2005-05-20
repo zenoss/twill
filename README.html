@@ -175,9 +175,11 @@ of it very simple.  twill is essentially a thin shell around the
 input and converting it into Python commands (see <tt class="docutils literal"><span class="pre">parse.py</span></tt>).
 Interactive shell work and readline support is implemented via the
 <a class="reference" href="http://docs.python.org/lib/module-cmd.html">cmd</a> module (from the standard Python library).</p>
-<p>Right now it's very easy to extend: just build a Python module that
+<p>Right now twill is very easy to extend: just build a Python module that
 exports the functions you want to call and run <tt class="docutils literal"><span class="pre">extend_with</span>
 <span class="pre">&lt;modulename&gt;</span></tt>.</p>
+<p>twill also provides a simple wrapper for <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> functionality,
+in the <cite>commands.py</cite> module.</p>
 <div class="section" id="miscellaneous-implementation-details">
 <h2><a class="toc-backref" href="#id13" name="miscellaneous-implementation-details">Miscellaneous Implementation Details</a></h2>
 <blockquote>

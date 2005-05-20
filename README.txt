@@ -185,9 +185,13 @@ input and converting it into Python commands (see ``parse.py``).
 Interactive shell work and readline support is implemented via the
 `cmd`_ module (from the standard Python library).
 
-Right now it's very easy to extend: just build a Python module that
+Right now twill is very easy to extend: just build a Python module that
 exports the functions you want to call and run ``extend_with
 <modulename>``.
+
+twill also provides a simple wrapper for mechanize_ functionality, in
+the `commands.py` module, that may be useful for twill extensions as
+well as for other toolkits.
 
 Miscellaneous Implementation Details
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
