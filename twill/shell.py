@@ -11,6 +11,11 @@ them.
 import cmd
 from twill import commands, parse, __version__
 
+try:
+    import readline
+except:
+    readline = None
+
 class _command_loop_metaclass(type):
     """
     A metaclass to automatically create do_ and help_ functions
@@ -76,10 +81,22 @@ class TwillCommandLoop(object, cmd.Cmd):
         self.use_raw_input = False
         self._set_prompt()
 
+        # import readline history, if available.
+        if readline:
+            try:
+                readline.read_history_file('.twill-history')
+            except IOError:
+                pass
+
     def _set_prompt(self):
         "Set the prompt to the current page."
         url = commands.state.url()
         self.prompt = "current page: %s\n>> " % (url,)
+
+    def precmd(self, line):
+        "Run before each command; save."
+        print line
+        return line
 
     def postcmd(self, stop, line):
         "Run after each command; set prompt."
@@ -107,6 +124,9 @@ class TwillCommandLoop(object, cmd.Cmd):
 
     def do_EOF(self, *args):
         "Exit on CTRL-D"
+        if readline:
+            readline.write_history_file('.twill-history')
+            
         raise SystemExit()
 
     def help_help(self):

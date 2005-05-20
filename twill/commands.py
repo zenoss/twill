@@ -24,7 +24,9 @@ __all__ = ['extend_with',
            'getinput',
            'getpassword',
            'save_cookies',
-           'load_cookies']
+           'load_cookies',
+           'clear_cookies',
+           'show_cookies']
 
 import re, getpass, urllib2
 
@@ -36,10 +38,10 @@ from errors import TwillAssertionError
 from utils import trunc, print_form, set_form_control_value, journey
 
 #
-# _BrowserState
+# _TwillBrowserState
 #
 
-class _BrowserState:
+class _TwillBrowserState:
     """
     Wrap mechanize behavior in a simple stateful way.
     """
@@ -156,9 +158,9 @@ class _BrowserState:
         try:
             formnum = int(formname)
             return self._browser.forms()[formnum - 1]
-        except ValueError:
+        except ValueError:              # int() failed
             pass
-        except IndexError:
+        except IndexError:              # formnum was incorrect
             pass
 
         return None
@@ -187,14 +189,18 @@ class _BrowserState:
             try:
                 fieldnum = int(fieldname)
                 found = clickies[fieldnum]
-            except ValueError:
+            except ValueError:          # int() failed
                 pass
-            except IndexError:
+            except IndexError:          # fieldnum was incorrect
                 pass
 
         return found
 
     def clicked(self, form, field):
+        
+        # construct a function to choose a particular form; select_form
+        # can use this to pick out a precise form.
+        
         def choose_this_form(test_form, this_form=form):
             if test_form is this_form:
                 return True
@@ -220,8 +226,19 @@ class _BrowserState:
 
     def load_cookies(self, filename):
         self.cj.load(filename, ignore_discard=True, ignore_expires=True)
+
+    def clear_cookies(self):
+        self.cj.clear()
+
+    def show_cookies(self):
+        print '\nThere are %d cookie(s) in the cookiejar.\n' % (len(self.cj,))
+        if len(self.cj):
+            for cookie in self.cj:
+                print '\t', cookie
+
+            print ''
         
-state = _BrowserState()
+state = _TwillBrowserState()
 
 ###
 
@@ -327,11 +344,13 @@ def agent(what):
     agent = agent_map.get(what, what)
     state.set_agent_string(agent)
 
-def submit(submit_button):
+def submit(submit_button="0"):
     """
-    >> submit <buttonspec>
+    >> submit [<buttonspec>]
     
-    Submit.
+    Submit the current form (the one last clicked on) by clicking on the
+    n'th submission button.  If no "buttonspec" is given, submit the current
+    form by using the last clicked submit button.
     """
     state.submit(submit_button)
 
@@ -419,12 +438,38 @@ def getpassword(prompt):
     local_dict['__password__'] = inp
 
 def save_cookies(filename):
+    """
+    >> save_cookies <filename>
+
+    Save all of the current cookies to the given file.
+    """
     state.save_cookies(filename)
 
 def load_cookies(filename):
+    """
+    >> load_cookies <filename>
+
+    Clear the cookie jar and load cookies from the given file.
+    """
     state.load_cookies(filename)
 
-####
+def clear_cookies():
+    """
+    >> clear_cookies
+
+    Clear the cookie jar.
+    """
+    state.clear_cookies()
+
+def show_cookies():
+    """
+    >> show_cookies
+
+    Show all of the cookies in the cookie jar.
+    """
+    state.show_cookies()
+
+#### doesn't really work just yet.
 
 agent_map = dict(
     ie5='Mozilla/4.0 (compatible; MSIE 5.0; Windows NT 5.1)',

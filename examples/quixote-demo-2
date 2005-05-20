@@ -9,7 +9,7 @@ fv 1 password testpass
 fv 1 confirm yes
 showforms
 
-submit 0
+submit
 show
 
 code 200

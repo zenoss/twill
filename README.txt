@@ -64,9 +64,10 @@ Assertions
 **code** *<code>* -- assert that the last page loaded had this HTTP status,
 e.g. ``code 200`` asserts that the page loaded fine.
 
-**find** *<regexp>* -- assert that the page contains this regexp.
+**find** *<regexp>* -- assert that the page contains this regular expression.
 
-**notfind** *<regexp>* -- assert that the page *does not* contain this regexp.
+**notfind** *<regexp>* -- assert that the page *does not* contain this
+regular expression.
 
 Display
 ~~~~~~~
@@ -89,14 +90,21 @@ given form to the given value.
 
 **formclear** -- clear all values in the form.
 
-Other commands
-~~~~~~~~~~~~~~
-
-**extend_with** *<module>* -- import commands from Python module.
+Cookies
+~~~~~~~
 
 **save_cookies** *<filename>* -- save current cookie jar into a file.
 
 **load_cookies** *<filename>* -- replace current cookie jar with file contents.
+
+**clear_cookies** -- clear all of the current cookies.
+
+**show_cookies** -- show all of the current cookies.
+
+Other commands
+~~~~~~~~~~~~~~
+
+**extend_with** *<module>* -- import commands from Python module.
 
 **getinput** *<prompt>* -- get keyboard input and store it in ``__input__``.
 
@@ -143,10 +151,10 @@ Implementation and Extending Twill
 
 twill is essentially a thin shell around the mechanize_ package.
 All twill commands are implemented in the ``commands.py`` file,
-and pyparsing_ does the work of translating from the input into
-the commands (see ``parse.py``).  Interactive shell work and
-readline support is implemented via the `cmd`_ module from the
-Python distribution.
+and pyparsing_ does the work of parsing the input and converting
+it into Python commands (see ``parse.py``).  Interactive shell work and
+readline support is implemented via the `cmd`_ module (in the
+Python distribution).
 
 twill is pretty small at the moment, and I'm hoping to keep the core
 of it very simple.  Right now it's very easy to extend: just build
@@ -174,7 +182,7 @@ the core functionality will proceed sporadically.  Right now I'm
 starting to integrate it into my own projects, so expect some of the
 following, soon:
 
- * maxq recorder;
+ * maxq recorder, PBP --> twill update;
 
  * more clever wrapping of mechanize;
 
@@ -187,7 +195,7 @@ Acknowledgements and Credits
 
 Cory Dodt had a great idea with PBP, and I thank him for his insight.
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython
-(since abandoned in favor of `cmd`.)  Grig Gheorghiu was strangely
+(since abandoned in favor of cmd_.)  Grig Gheorghiu was strangely
 enthusiastic about the simple demo I showed him.  John J. Lee has
 promptly and enthusiastically checked in patches to mechanize.
 Michele Simionato is an early adopter who has helped quite a bit.
