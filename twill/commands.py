@@ -226,19 +226,26 @@ class _TwillBrowserState:
             self._last_submit = control
 
     def submit(self, fieldname):
-        assert self._browser.form
+        form = self._browser.form
+        assert form
 
         # no fieldname?  see if we can use the last submit button clicked...
         if not fieldname:
             if self._last_submit:
                 ctl = self._last_submit
             else:
-                # @CTB fail
-                ctl = None
+                # get first submit button in form.
+                submits = [ c for c in form.controls \
+                            if isinstance(c, ClientForm.SubmitControl) ]
+                ctl = submits[0]
+                
         else:
             # fieldname given; find it.
             ctl = self.get_form_field(self._browser.form, fieldname)
 
+        print 'Note: submit is using submit button: name="%s", value="%s"' % \
+              (ctl.name, ctl.value)
+        
         # got the submit control, now go there.
         control = ctl._click(self._browser.form, None, urllib2.Request)
         self._last_result = journey(self._browser.open, control)

@@ -84,7 +84,8 @@ Forms
 **showforms** -- show all of the forms on the page.
 
 **submit** *[<n>]* -- click the n'th submit button, if given; otherwise
-submit via the last submission button clicked.
+submit via the last submission button clicked; if nothing clicked, use
+the first submit button on the form.
 
 **formvalue** *<formnum> <fieldname> <value>* --- set the given field in the
 given form to the given value.  For read-only form widgets/controls, the
