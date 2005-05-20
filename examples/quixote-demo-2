@@ -7,6 +7,7 @@ formclear 1
 fv 1 name "test word"
 fv 1 password testpass
 fv 1 confirm yes
+fv 1 Submit yes
 showforms
 
 submit

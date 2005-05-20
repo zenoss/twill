@@ -33,7 +33,7 @@ import re, getpass, urllib2
 from mechanize import Browser
 from mechanize._mechanize import BrowserStateError
 
-import ClientCookie
+import ClientCookie, ClientForm
 from errors import TwillAssertionError
 from utils import trunc, print_form, set_form_control_value, journey
 
@@ -197,30 +197,49 @@ class _TwillBrowserState:
             except IndexError:          # fieldnum was incorrect
                 pass
 
+        if found is None:
+            # try value, for readonly controls like submit keys
+            clickies = [ c for c in form.controls if c.value == fieldname \
+                         and c.readonly ]
+            if len(clickies) == 1:
+                found = clickies[0]
+
         return found
 
-    def clicked(self, form, field):
-        
-        # construct a function to choose a particular form; select_form
-        # can use this to pick out a precise form.
-        
-        def choose_this_form(test_form, this_form=form):
-            if test_form is this_form:
-                return True
-            
-            return False
+    def clicked(self, form, control):
 
-        self._browser.select_form(predicate=choose_this_form)
+        if self._browser.form != form:
+            # construct a function to choose a particular form; select_form
+            # can use this to pick out a precise form.
+
+            def choose_this_form(test_form, this_form=form):
+                if test_form is this_form:
+                    return True
+
+                return False
+
+            self._browser.select_form(predicate=choose_this_form)
+            self._last_submit = None
+
+        # record the last submit button clicked.
+        if isinstance(control, ClientForm.SubmitControl):
+            self._last_submit = control
 
     def submit(self, fieldname):
         assert self._browser.form
-        
-        ctl = self.get_form_field(self._browser.form, fieldname)
-        
-        #### @CTB ARGH.  There's no way, currently, to select a specific
-        #### control if you've already got one in mind, because the
-        #### 'predicate' function doesn't get passed through Browser.click().
-        
+
+        # no fieldname?  see if we can use the last submit button clicked...
+        if not fieldname:
+            if self._last_submit:
+                ctl = self._last_submit
+            else:
+                # @CTB fail
+                ctl = None
+        else:
+            # fieldname given; find it.
+            ctl = self.get_form_field(self._browser.form, fieldname)
+
+        # got the submit control, now go there.
         control = ctl._click(self._browser.form, None, urllib2.Request)
         self._last_result = journey(self._browser.open, control)
 
@@ -347,7 +366,7 @@ def agent(what):
     agent = agent_map.get(what, what)
     state.set_agent_string(agent)
 
-def submit(submit_button="0"):
+def submit(submit_button=None):
     """
     >> submit [<buttonspec>]
     
@@ -395,12 +414,15 @@ def formvalue(formname, fieldname, value):
     form = state.get_form(formname)
     control = state.get_form_field(form, fieldname)
 
-    state.clicked(form, control)
+    if control:
+        state.clicked(form, control)
+        if control.readonly:
+            return
 
-    if control.readonly:
-        return
-
-    set_form_control_value(control, value)
+        set_form_control_value(control, value)
+    else:
+        print 'NO SUCH FIELD FOUND'
+        # @CTB
 
 fv = formvalue
 
