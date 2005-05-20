@@ -53,8 +53,11 @@ class _TwillBrowserState:
         policy = ClientCookie.DefaultCookiePolicy(rfc2965=True)
         cj = ClientCookie.LWPCookieJar(policy=policy)
         self._browser.set_cookiejar(cj)
-        
+
         self.cj = cj
+
+        # ignore robots.txt
+        self._browser.set_handle_robots(None)
 
     def url(self):
         if self._last_result:
