@@ -25,7 +25,7 @@ this:
    fv 1 name test
    fv 1 password testpass
    fv 1 confirm yes
-   showform
+   showforms
 
    # submit form
    submit 0
@@ -83,10 +83,12 @@ Forms
 
 **showforms** -- show all of the forms on the page.
 
-**submit** *<n>* -- click the n'th submit button.  (Doesn't quite work predictably yet...)
+**submit** *[<n>]* -- click the n'th submit button, if given; otherwise
+submit via the last submission button clicked.
 
 **formvalue** *<formnum> <fieldname> <value>* --- set the given field in the
-given form to the given value.
+given form to the given value.  For read-only form widgets/controls, the
+click may be recorded for use by **submit**, but the value is not changed.
 
 **fv** -- abbreviation for 'formvalue'
 
@@ -216,14 +218,13 @@ Future Plans
 
 I'm scratching my own itch with twill at the moment, so development of
 the core functionality will proceed sporadically.  Right now I'm
-starting to integrate it into my own projects, so expect some of the
-following, soon:
+starting to integrate it into my own projects, so expect many bug
+fixes, soon...
 
- * maxq recorder, PBP --> twill update;
+TODO:
 
- * more clever wrapping of mechanize;
-
- * bug fixes galore.
+ 1. test & document the fieldname spec for fv; put into shell help.
+ 2. unit testing?
 
 Contributions are welcome & will be duly acknowledged!
 
@@ -234,10 +235,9 @@ Cory Dodt had a great idea with PBP, and I thank him for his insight.
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython
 (since abandoned in favor of cmd_.)  Grig Gheorghiu was strangely
 enthusiastic about the simple demo I showed him.  John J. Lee has
-promptly and enthusiastically checked in patches to mechanize.
-Michele Simionato is an early adopter who has helped quite a bit.
-Thanks, guys...
+promptly and enthusiastically checked in my various patches to
+mechanize.  Michele Simionato is an early adopter who has helped quite
+a bit.  Thanks, guys...
 
-::
-
-   CTB 5/05
+This document was written by C. Titus Brown, titus@caltech.edu.
+Last updated May '05.

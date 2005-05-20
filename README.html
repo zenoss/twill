@@ -55,7 +55,7 @@ formclear 1
 fv 1 name test
 fv 1 password testpass
 fv 1 confirm yes
-showform
+showforms
 
 # submit form
 submit 0
@@ -99,9 +99,11 @@ regular expression.</p>
 <div class="section" id="forms">
 <h2><a class="toc-backref" href="#id6" name="forms">Forms</a></h2>
 <p><strong>showforms</strong> -- show all of the forms on the page.</p>
-<p><strong>submit</strong> <em>&lt;n&gt;</em> -- click the n'th submit button.  (Doesn't quite work predictably yet...)</p>
+<p><strong>submit</strong> <em>[&lt;n&gt;]</em> -- click the n'th submit button, if given; otherwise
+submit via the last submission button clicked.</p>
 <p><strong>formvalue</strong> <em>&lt;formnum&gt; &lt;fieldname&gt; &lt;value&gt;</em> --- set the given field in the
-given form to the given value.</p>
+given form to the given value.  For read-only form widgets/controls, the
+click may be recorded for use by <strong>submit</strong>, but the value is not changed.</p>
 <p><strong>fv</strong> -- abbreviation for 'formvalue'</p>
 <p><strong>formclear</strong> -- clear all values in the form.</p>
 </div>
@@ -178,8 +180,9 @@ Interactive shell work and readline support is implemented via the
 <p>Right now twill is very easy to extend: just build a Python module that
 exports the functions you want to call and run <tt class="docutils literal"><span class="pre">extend_with</span>
 <span class="pre">&lt;modulename&gt;</span></tt>.</p>
-<p>twill also provides a simple wrapper for <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> functionality,
-in the <cite>commands.py</cite> module.</p>
+<p>twill also provides a simple wrapper for <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> functionality, in
+the <cite>commands.py</cite> module, that may be useful for twill extensions as
+well as for other toolkits.</p>
 <div class="section" id="miscellaneous-implementation-details">
 <h2><a class="toc-backref" href="#id13" name="miscellaneous-implementation-details">Miscellaneous Implementation Details</a></h2>
 <blockquote>
@@ -199,14 +202,14 @@ for Web testing.  Plus, I wanted to play with mechanize.</p>
 <h1><a class="toc-backref" href="#id15" name="future-plans">Future Plans</a></h1>
 <p>I'm scratching my own itch with twill at the moment, so development of
 the core functionality will proceed sporadically.  Right now I'm
-starting to integrate it into my own projects, so expect some of the
-following, soon:</p>
+starting to integrate it into my own projects, so expect many bug
+fixes, soon...</p>
+<p>TODO:</p>
 <blockquote>
-<ul class="simple">
-<li>maxq recorder, PBP --&gt; twill update;</li>
-<li>more clever wrapping of mechanize;</li>
-<li>bug fixes galore.</li>
-</ul>
+<ol class="arabic simple">
+<li>test &amp; document the fieldname spec for fv; put into shell help.</li>
+<li>unit testing?</li>
+</ol>
 </blockquote>
 <p>Contributions are welcome &amp; will be duly acknowledged!</p>
 </div>
@@ -216,12 +219,11 @@ following, soon:</p>
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython
 (since abandoned in favor of <a class="reference" href="http://docs.python.org/lib/module-cmd.html">cmd</a>.)  Grig Gheorghiu was strangely
 enthusiastic about the simple demo I showed him.  John J. Lee has
-promptly and enthusiastically checked in patches to mechanize.
-Michele Simionato is an early adopter who has helped quite a bit.
-Thanks, guys...</p>
-<pre class="literal-block">
-CTB 5/05
-</pre>
+promptly and enthusiastically checked in my various patches to
+mechanize.  Michele Simionato is an early adopter who has helped quite
+a bit.  Thanks, guys...</p>
+<p>This document was written by C. Titus Brown, <a class="reference" href="mailto:titus&#64;caltech.edu">titus&#64;caltech.edu</a>.
+Last updated May '05.</p>
 </div>
 </div>
 </body>
