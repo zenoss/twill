@@ -9,7 +9,7 @@ them.
 """
 
 import cmd
-from twill import commands, parse
+from twill import commands, parse, __version__
 
 class _command_loop_metaclass(type):
     """
@@ -36,7 +36,10 @@ class _command_loop_metaclass(type):
                     args = parse.arguments.parseString(rest_of_line)
                     args = parse.process_args(args,globals_dict,locals_dict)
 
-                parse.execute_command(cmd, args, globals_dict, locals_dict)
+                try:
+                    parse.execute_command(cmd, args, globals_dict, locals_dict)
+                except Exception, e:
+                    print '\nERROR: %s\n' % (str(e),)
                 
             name = 'do_%s' % (command,)
             setattr(cls, name, do_cmd)
@@ -62,7 +65,7 @@ class TwillCommandLoop(object, cmd.Cmd):
     """
     Command-line interpreter for twill commands.
 
-    Note: all of the do_ and help_ functions are dynamically created
+    Note: most of the do_ and help_ functions are dynamically created
     by the metaclass.
     """
     __metaclass__ = _command_loop_metaclass
@@ -73,24 +76,55 @@ class TwillCommandLoop(object, cmd.Cmd):
         self.use_raw_input = False
         self._set_prompt()
 
-    def emptyline(self):
-        pass
-
     def _set_prompt(self):
+        "Set the prompt to the current page."
         url = commands.state.url()
         self.prompt = "current page: %s\n>> " % (url,)
 
     def postcmd(self, stop, line):
+        "Run after each command; set prompt."
         self._set_prompt()
         
         return stop
 
-    def do_EOF(self, *args):
-        raise SystemExit()
-
     def default(self, line):
+        "Called when unknown command is executed."
+
+        # empty lines ==> emptyline(); here we just want to remove
+        # leading whitespace.
         line = line.strip()
-        if line[0] == '#':              # ignore comments
+
+        # ignore comments.
+        if line[0] == '#':
             return
 
+        # raise objection, if not a comment.
         cmd.Cmd.default(self, line)
+        
+    def emptyline(self):
+        "Ignore empty lines."
+        pass
+
+    def do_EOF(self, *args):
+        "Exit on CTRL-D"
+        raise SystemExit()
+
+    def help_help(self):
+        print "\nWhat do YOU think the command 'help' does?!?\n"
+
+    def do_version(self, *args):
+        print "\ntwill version %s.\n" % (__version__,)
+        print "See http://www.idyll.org/~t/www-tools/twill.html for more info."
+        print ""
+
+    def help_version(self):
+        print "\nPrint version information.\n"
+
+    def do_exit(self, *args):
+        raise SystemExit()
+
+    def help_exit(self):
+        print "\nExit twill.\n"
+
+    do_quit = do_exit
+    help_quit = help_exit

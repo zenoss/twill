@@ -29,6 +29,8 @@ __all__ = ['extend_with',
 import re, getpass, urllib2
 
 from mechanize import Browser
+from mechanize._mechanize import BrowserStateError
+
 import ClientCookie
 from errors import TwillAssertionError
 from utils import trunc, print_form, set_form_control_value, journey
@@ -72,11 +74,18 @@ class _BrowserState:
         """
         Return to previous page, if possible.
         """
-        self._last_result = journey(self._browser.back)
+        back_url = self._browser.back
+        try:
+            self._last_result = journey(back_url)
+        except AttributeError:
+            self._last_result = None
+        except BrowserStateError:
+            self._last_result = None
+        
         if self._last_result:
-            print '==> at', self._last_result.get_url()
+            print '==> back to', self._last_result.get_url()
         else:
-            print '(no current URL)'
+            print '==> no previous URL; ignoring.'
             
     def get_code(self):
         """
