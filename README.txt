@@ -60,7 +60,7 @@ it for:
 
  * interacting with Mailman lists;
 
-Send me an e-mail if you have ideas.
+Send me an e-mail if you have additional ideas.
 
 Command Reference
 -----------------
@@ -212,7 +212,7 @@ exports the functions you want to call and run ``extend_with
 <modulename>``.
 
 twill also provides a simple wrapper for mechanize_ functionality, in
-the `commands.py` module, that may be useful for twill extensions as
+the `commands.py` module.  This may be useful for twill extensions as
 well as for other toolkits.
 
 Miscellaneous Implementation Details
