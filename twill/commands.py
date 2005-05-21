@@ -439,7 +439,7 @@ def extend_with(module_name):
     
     Import contents of given module.
     """
-    from twill.shell import get_twill_glocals
+    from twill.parse import get_twill_glocals
     global_dict, local_dict = get_twill_glocals()
     
     exec "from %s import *" % (module_name,) in global_dict, local_dict
@@ -449,7 +449,7 @@ def getinput(prompt):
     >> getinput <prompt>
     Get input, store it in '__input__'.
     """
-    from twill.shell import get_twill_glocals
+    from twill.parse import get_twill_glocals
     global_dict, local_dict = get_twill_glocals()
 
     inp = raw_input(prompt)
@@ -462,7 +462,7 @@ def getpassword(prompt):
     
     Get a password ("invisible input"), store it in '__password__'.
     """
-    from twill.shell import get_twill_glocals
+    from twill.parse import get_twill_glocals
     global_dict, local_dict = get_twill_glocals()
 
     inp = getpass.getpass(prompt)

@@ -43,6 +43,25 @@ addition to basic Web crawling, I wanted to be able to extend the
 language via Python, and I also wanted to be able to record things
 with maxq_.  Hence, twill.
 
+Use cases
+~~~~~~~~~
+
+Here are some of things that I'm using twill for, or that I plan to use
+it for:
+
+ * checking that Web sites are alive;
+
+ * testing functionality in my Quixote extensions;
+
+ * demonstrating specific problems with my (and other) Web sites;
+
+ * regression testing of Web projects, and making sure that existing
+   projects work like they should;
+
+ * interacting with Mailman lists;
+
+Send me an e-mail if you have ideas.
+
 Command Reference
 -----------------
 
@@ -131,19 +150,19 @@ http://darcs.idyll.org/~t/projects/twill/.
 Licensing
 ~~~~~~~~~
 
-twill is licensed under the `GNU LGPL`_, although I am amenable to
+twill 0.7 is licensed under the `GNU LGPL`_, although I am amenable to
 changing to an MIT-like license in the future.  All code currently
 contained in twill is Copyright (C) 2005, C. Titus Brown
 <titus@caltech.edu>.
 
-In plain English: I own the code, but you're welcome to use it as-is,
-as well as use it/subsume it into other projects.  Either way you are
-currently obligated to make your changes to twill publicly available,
-in source code form, assuming that you are distributing those changes
-in any *other* form (e.g. as part of another package).  You do *not*
-need to provide the source to packages that use twill, and you are
-not obligated to publish your own private changes, or scripts, or
-extensions, or...
+In plain English: I own the code, but you're welcome to use it and
+even subsume it into other projects.  Either way you are currently
+obligated to make any changes to twill publicly available, in source
+code form, if and only if you are distributing those changes in some
+*other* form (e.g. as part of another package).  You do *not* need to
+provide the source to packages that use twill, and you are not
+obligated to publish your own private changes to twill, or twill scripts,
+or twill extensions.
 
 pyparsing_ and mechanize_ are both included with twill, but are under
 their own licenses.  (Both are currently more lenient than the LGPL,
@@ -200,6 +219,7 @@ Miscellaneous Implementation Details
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  * twill ignores robots.txt.
+ * twill does not understand javascript
 
 .. _PBP: http://pbp.berlios.de/
 .. _maxq: http://maxq.tigris.org/
@@ -225,7 +245,10 @@ fixes, soon...
 TODO:
 
  1. test & document the fieldname spec for fv; put into shell help.
- 2. unit testing?
+ 2. unit testing in Python.
+ 3. command-line option for initial URL, + command-line option to
+    fork server before executing twill.  (or special test script,
+    whatever.)
 
 Contributions are welcome & will be duly acknowledged!
 
@@ -234,7 +257,7 @@ Acknowledgements and Credits
 
 Cory Dodt had a great idea with PBP, and I thank him for his insight.
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython
-(since abandoned in favor of cmd_.)  Grig Gheorghiu was strangely
+(since abandoned in favor of cmd_).  Grig Gheorghiu was strangely
 enthusiastic about the simple demo I showed him.  John J. Lee has
 promptly and enthusiastically checked in my various patches to
 mechanize.  Michele Simionato is an early adopter who has helped quite
