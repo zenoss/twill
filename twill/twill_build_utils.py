@@ -38,8 +38,8 @@ class twill_build_py(build_py):
         # easy, we just copy it somewhere under self.build_lib (the build
         # directory for Python source).
         outfile = self.get_module_outfile(self.build_lib, package, module)
-        if module_file.endswith(".ptl"): # XXX hack for PTL
-            outfile = outfile[0:outfile.rfind('.')] + ".ptl"
+        if module_file.endswith(".zip"): # XXX hack for PTL
+            outfile = outfile[0:outfile.rfind('.')] + ".zip"
         dir = os.path.dirname(outfile)
         self.mkpath(dir)
         return self.copy_file(module_file, outfile, preserve_mode=0)
