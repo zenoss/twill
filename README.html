@@ -30,14 +30,17 @@
 <li><a class="reference" href="#licensing" id="id11" name="id11">Licensing</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#installation-and-examples" id="id12" name="id12">Installation and Examples</a></li>
-<li><a class="reference" href="#implementation-and-extending-twill" id="id13" name="id13">Implementation and Extending Twill</a><ul>
-<li><a class="reference" href="#miscellaneous-implementation-details" id="id14" name="id14">Miscellaneous Implementation Details</a></li>
+<li><a class="reference" href="#installation-and-examples" id="id12" name="id12">Installation and Examples</a><ul>
+<li><a class="reference" href="#recording-scripts" id="id13" name="id13">Recording scripts</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#why-reimplement-pbp" id="id15" name="id15">Why Reimplement PBP?</a></li>
-<li><a class="reference" href="#future-plans" id="id16" name="id16">Future Plans</a></li>
-<li><a class="reference" href="#acknowledgements-and-credits" id="id17" name="id17">Acknowledgements and Credits</a></li>
+<li><a class="reference" href="#implementation-and-extending-twill" id="id14" name="id14">Implementation and Extending Twill</a><ul>
+<li><a class="reference" href="#miscellaneous-implementation-details" id="id15" name="id15">Miscellaneous Implementation Details</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#why-reimplement-pbp" id="id16" name="id16">Why Reimplement PBP?</a></li>
+<li><a class="reference" href="#future-plans" id="id17" name="id17">Future Plans</a></li>
+<li><a class="reference" href="#acknowledgements-and-credits" id="id18" name="id18">Acknowledgements and Credits</a></li>
 </ul>
 </div>
 <div class="section" id="what-is-twill">
@@ -187,9 +190,18 @@ specifying them on the command line.</p>
 in the examples is a test of the Quixote demo site, and a script for
 clearing out SourceForge Mailman lists.  The latter script makes use of the
 (very simple!) extension feature, if you're interested...</p>
+<div class="section" id="recording-scripts">
+<h2><a class="toc-backref" href="#id13" name="recording-scripts">Recording scripts</a></h2>
+<p>Writing twill scripts is boring.  One simple way to get at least a
+rough initial script is to use the <a class="reference" href="http://maxq.tigris.org/">maxq</a> recorder to generate a twill
+script.  <a class="reference" href="http://maxq.tigris.org/">maxq</a> acts as an HTTP proxy and records all HTTP traffic; I
+have written a simple twill script generator for it.  The script
+generator and installation docs are included in the twill distribution
+under the directory <tt class="docutils literal"><span class="pre">maxq/</span></tt>.</p>
+</div>
 </div>
 <div class="section" id="implementation-and-extending-twill">
-<h1><a class="toc-backref" href="#id13" name="implementation-and-extending-twill">Implementation and Extending Twill</a></h1>
+<h1><a class="toc-backref" href="#id14" name="implementation-and-extending-twill">Implementation and Extending Twill</a></h1>
 <p>twill is pretty small at the moment, and I'm hoping to keep the core
 of it very simple.  twill is essentially a thin shell around the
 <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> package.  All twill commands are implemented in the
@@ -204,7 +216,7 @@ exports the functions you want to call and run <tt class="docutils literal"><spa
 the <cite>commands.py</cite> module.  This may be useful for twill extensions as
 well as for other toolkits.</p>
 <div class="section" id="miscellaneous-implementation-details">
-<h2><a class="toc-backref" href="#id14" name="miscellaneous-implementation-details">Miscellaneous Implementation Details</a></h2>
+<h2><a class="toc-backref" href="#id15" name="miscellaneous-implementation-details">Miscellaneous Implementation Details</a></h2>
 <blockquote>
 <ul class="simple">
 <li>twill ignores robots.txt.</li>
@@ -214,13 +226,13 @@ well as for other toolkits.</p>
 </div>
 </div>
 <div class="section" id="why-reimplement-pbp">
-<h1><a class="toc-backref" href="#id15" name="why-reimplement-pbp">Why Reimplement PBP?</a></h1>
+<h1><a class="toc-backref" href="#id16" name="why-reimplement-pbp">Why Reimplement PBP?</a></h1>
 <p>PBP is a great idea, but Cory Dodt (the author of PBP) is focusing on
 other things at the moment, and I needed a solid scripting language
 for Web testing.  Plus, I wanted to play with mechanize.</p>
 </div>
 <div class="section" id="future-plans">
-<h1><a class="toc-backref" href="#id16" name="future-plans">Future Plans</a></h1>
+<h1><a class="toc-backref" href="#id17" name="future-plans">Future Plans</a></h1>
 <p>I'm scratching my own itch with twill at the moment, so development of
 the core functionality will proceed sporadically.  Right now I'm
 starting to integrate it into my own projects, so expect many bug
@@ -238,7 +250,7 @@ whatever.)</li>
 <p>Contributions are welcome &amp; will be duly acknowledged!</p>
 </div>
 <div class="section" id="acknowledgements-and-credits">
-<h1><a class="toc-backref" href="#id17" name="acknowledgements-and-credits">Acknowledgements and Credits</a></h1>
+<h1><a class="toc-backref" href="#id18" name="acknowledgements-and-credits">Acknowledgements and Credits</a></h1>
 <p>Cory Dodt had a great idea with PBP, and I thank him for his insight.
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython
 (since abandoned in favor of <a class="reference" href="http://docs.python.org/lib/module-cmd.html">cmd</a>).  Grig Gheorghiu was strangely

@@ -196,6 +196,16 @@ in the examples is a test of the Quixote demo site, and a script for
 clearing out SourceForge Mailman lists.  The latter script makes use of the
 (very simple!) extension feature, if you're interested...
 
+Recording scripts
+~~~~~~~~~~~~~~~~~
+
+Writing twill scripts is boring.  One simple way to get at least a
+rough initial script is to use the maxq_ recorder to generate a twill
+script.  maxq_ acts as an HTTP proxy and records all HTTP traffic; I
+have written a simple twill script generator for it.  The script
+generator and installation docs are included in the twill distribution
+under the directory ``maxq/``.
+
 Implementation and Extending Twill
 ----------------------------------
 
