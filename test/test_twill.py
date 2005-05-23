@@ -42,6 +42,8 @@ You are logged in as "%s".
 <a href="./increment">increment</a> | <a href="./incrementfail">incrementfail</a>
 <p>
 <a href="logout">log out</a>
+<p>
+(<a href="test spaces">test spaces</a>)
 """ % (session.id, session.n, session.user)
 
 class TwillTest(Directory):
@@ -49,7 +51,7 @@ class TwillTest(Directory):
     Do some simple session manipulations.
     """
     _q_exports = ['logout', 'increment', 'incrementfail', "", 'restricted',
-                  'login']
+                  'login', ('test spaces', 'test_spaces') ]
 
     def __init__(self):
         self.restricted = Restricted()
@@ -57,6 +59,9 @@ class TwillTest(Directory):
     def _q_index(self):
         session = get_session()
         return message(session)
+
+    def test_spaces(self):
+        return "success"
 
     def increment(self):
         session = get_session()

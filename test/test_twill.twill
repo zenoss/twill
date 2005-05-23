@@ -69,6 +69,7 @@ fv 1 submit me
 submit
 
 code 200
+show
 find 'You are logged in as "test"'
 find 'this is visit #2'
 
@@ -118,3 +119,11 @@ show
 code 200
 find __password__
 echo 'found"' __password__ '"on the page, hooray!'
+
+### test space transform.
+
+go ./
+code 200
+
+follow "test spaces"
+code 200

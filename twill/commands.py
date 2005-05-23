@@ -68,6 +68,7 @@ class _TwillBrowserState:
         """
         Visit given URL.
         """
+        url = url.replace(' ', '%20')
         self._last_result = journey(self._browser.open, url)
         print '==> at', self._last_result.get_url()
 
