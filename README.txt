@@ -18,7 +18,7 @@ this:
 
    # go to the widgets sub-page
    go ./widgets
-   showform
+   showforms
 
    # fill out the form
    formclear 1
@@ -259,6 +259,8 @@ TODO:
  3. command-line option for initial URL, + command-line option to
     fork server before executing twill.  (or special test script,
     whatever.)
+ 4. formfile <formspec> <fieldspec> <filename>
+ 5. twill-sh -i as in python -i
 
 Contributions are welcome & will be duly acknowledged!
 
@@ -272,6 +274,9 @@ enthusiastic about the simple demo I showed him.  John J. Lee has
 promptly and enthusiastically checked in my various patches to
 mechanize.  Michele Simionato is an early adopter who has helped quite
 a bit.  Thanks, guys...
+
+Bug reports have come in from the following fine people: Chris Miles
+and MATSUNO Tokuhiro.
 
 This document was written by C. Titus Brown, titus@caltech.edu.
 Last updated May '05.
