@@ -95,7 +95,6 @@ class TwillCommandLoop(object, cmd.Cmd):
 
     def precmd(self, line):
         "Run before each command; save."
-        print line
         return line
 
     def postcmd(self, stop, line):
