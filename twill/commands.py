@@ -26,7 +26,8 @@ __all__ = ['extend_with',
            'save_cookies',
            'load_cookies',
            'clear_cookies',
-           'show_cookies']
+           'show_cookies',
+           ]
 
 import re, getpass, urllib2
 
@@ -48,6 +49,7 @@ class _TwillBrowserState:
     def __init__(self):
         self._browser = Browser()
         self._last_result = None
+        self._last_submit = None
 
         # create & set a cookie jar.
         policy = ClientCookie.DefaultCookiePolicy(rfc2965=True)
@@ -69,6 +71,9 @@ class _TwillBrowserState:
         Visit given URL.
         """
         url = url.replace(' ', '%20')
+        if url.find('://') == -1:
+            url = 'http://%s' % (url,)  # mimic browser behavior
+        
         self._last_result = journey(self._browser.open, url)
         print '==> at', self._last_result.get_url()
 
@@ -247,8 +252,15 @@ class _TwillBrowserState:
             self._last_submit = control
 
     def submit(self, fieldname):
+        if not self._browser._forms:
+            raise Exception("no forms on this page!")
+        
         form = self._browser.form
-        assert form
+        if form is None:
+            if len(self._browser._forms) == 1:
+                form = self._browser._forms[0]
+            else:
+                raise Exception("more than one form; you must select one (use 'fv') before submitting")
 
         # no fieldname?  see if we can use the last submit button clicked...
         if not fieldname:
@@ -258,6 +270,10 @@ class _TwillBrowserState:
                 # get first submit button in form.
                 submits = [ c for c in form.controls \
                             if isinstance(c, ClientForm.SubmitControl) ]
+                    
+                if not len(submits):
+                    raise Exception('no submission buttons!')
+                
                 ctl = submits[0]
                 
         else:

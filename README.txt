@@ -135,6 +135,13 @@ Other commands
 **getpassword** *<prompt>* -- get *silent* keyboard input and store
 it in ``__password__``.
 
+Special variables
+~~~~~~~~~~~~~~~~~
+
+**__input__** -- result of last **getinput**
+
+**__password__** -- result of last **getpassword**
+
 Requirements, Availability and Licensing
 ----------------------------------------
 
@@ -262,6 +269,7 @@ TODO:
  4. formfile <formspec> <fieldspec> <filename>
  5. twill-sh -i as in python -i
  6. twill-sh silence
+ 7. __url__
 
 Contributions are welcome & will be duly acknowledged!
 
