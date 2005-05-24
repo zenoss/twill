@@ -31,7 +31,7 @@ __all__ = ['extend_with',
 import re, getpass, urllib2
 
 from mechanize import Browser
-from mechanize._mechanize import BrowserStateError
+from mechanize._mechanize import BrowserStateError, LinkNotFoundError
 
 import ClientCookie, ClientForm
 from errors import TwillAssertionError
@@ -116,11 +116,31 @@ class _TwillBrowserState:
         Find the first link with a URL, link text, or name matching the
         given pattern.
         """
-        l = self._browser.find_link(url_regex=pattern)
-        if not l:
-            l = self._browser.find_link(text_regex=pattern)
-        if not l:
-            l = self._browser.find_link(name_regex=pattern)
+
+        #
+        # first, try to find a link matching that regexp.
+        #
+        
+        try:
+            l = self._browser.find_link(url_regex=pattern)
+        except LinkNotFoundError:
+
+            #
+            # then, look for a text match.
+            #
+            
+            try:
+                l = self._browser.find_link(text_regex=pattern)
+            except LinkNotFoundError:
+                
+                #
+                # finally, look for a name match.
+                #
+                
+                try:
+                    l = self._browser.find_link(name_regex=pattern)
+                except LinkNotFoundError:
+                    l = None
 
         return l
 

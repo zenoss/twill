@@ -261,6 +261,7 @@ TODO:
     whatever.)
  4. formfile <formspec> <fieldspec> <filename>
  5. twill-sh -i as in python -i
+ 6. twill-sh silence
 
 Contributions are welcome & will be duly acknowledged!
 

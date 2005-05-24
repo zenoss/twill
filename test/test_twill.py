@@ -43,7 +43,7 @@ You are logged in as "%s".
 <p>
 <a href="logout">log out</a>
 <p>
-(<a href="test spaces">test spaces</a>)
+(<a href="test spaces">test spaces</a> / <a href="test_spaces">test spaces2</a>)
 """ % (session.id, session.n, session.user)
 
 class TwillTest(Directory):
@@ -51,7 +51,7 @@ class TwillTest(Directory):
     Do some simple session manipulations.
     """
     _q_exports = ['logout', 'increment', 'incrementfail', "", 'restricted',
-                  'login', ('test spaces', 'test_spaces') ]
+                  'login', ('test spaces', 'test_spaces'), 'test_spaces' ]
 
     def __init__(self):
         self.restricted = Restricted()

@@ -125,5 +125,11 @@ echo 'found"' __password__ '"on the page, hooray!'
 go ./
 code 200
 
+# test links with spaces in the URL
 follow "test spaces"
+code 200
+
+# test links with spaces in the link text
+back
+follow "test spaces2"
 code 200

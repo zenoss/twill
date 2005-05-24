@@ -1,3 +1,8 @@
+2005-05-24  Titus Brown  <t@issola.caltech.edu>
+
+	* Fixed problem with spaces in link *text*.  (Actually a more
+	general bug that caused link searches to fail in most cases.)
+
 2005-05-23  Titus Brown  <t@issola.caltech.edu>
 
 	* Fixed problem with spaces in links/URLs.
