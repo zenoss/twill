@@ -1,4 +1,12 @@
+2005-05-25  Titus Brown  <t@issola.caltech.edu>
+
+	* added reset_state; run it on each execute_file.
+
 2005-05-24  Titus Brown  <t@issola.caltech.edu>
+
+	* 'go domainname' now works as expected.
+
+	* Made various form-related submit() errors clearer.
 
 	* Fixed problem with spaces in link *text*.  (Actually a more
 	general bug that caused link searches to fail in most cases.)

@@ -128,6 +128,8 @@ Cookies
 Other commands
 ~~~~~~~~~~~~~~
 
+**reset_state** -- reset the browser.
+
 **extend_with** *<module>* -- import commands from Python module.
 
 **getinput** *<prompt>* -- get keyboard input and store it in ``__input__``.
@@ -270,6 +272,7 @@ TODO:
  5. twill-sh -i as in python -i
  6. twill-sh silence
  7. __url__
+ 8. submit on forms w/o submit button? (helgon...)
 
 Contributions are welcome & will be duly acknowledged!
 
@@ -284,8 +287,8 @@ promptly and enthusiastically checked in my various patches to
 mechanize.  Michele Simionato is an early adopter who has helped quite
 a bit.  Thanks, guys...
 
-Bug reports have come in from the following fine people: Chris Miles
-and MATSUNO Tokuhiro.
+Bug reports have come in from the following fine people: Chris Miles,
+MATSUNO Tokuhiro, and Elvelind Grandin.
 
 This document was written by C. Titus Brown, titus@caltech.edu.
 Last updated May '05.

@@ -6,6 +6,7 @@ import sys
 from errors import TwillAssertionError
 from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
      alphas, alphanums, ParseException, ZeroOrMore, restOfLine, Combine
+from twill.commands import reset_state
 
 ### pyparsing stuff
 
@@ -94,6 +95,9 @@ def execute_file(filename, init_glocals = True):
     # initialize global/local dictionaries.
     if init_glocals:
         _init_twill_glocals()
+
+    # reset browser
+    reset_state()
         
     lines = open(filename).readlines()
 

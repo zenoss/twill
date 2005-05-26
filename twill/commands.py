@@ -5,7 +5,8 @@ Implementation of all of the individual 'twill' commands.
 """
 
 # export:
-__all__ = ['extend_with',
+__all__ = ['reset_state',
+           'extend_with',
            'go',
            'reload',
            'code',
@@ -305,6 +306,15 @@ class _TwillBrowserState:
             print ''
         
 state = _TwillBrowserState()
+
+def reset_state():
+    """
+    >> reset_state
+
+    Reset the browser completely.
+    """
+    global state
+    state = _TwillBrowserState()
 
 ###
 
