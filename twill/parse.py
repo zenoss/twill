@@ -101,7 +101,10 @@ def execute_file(filename, init_glocals = True):
         
     lines = open(filename).readlines()
 
+    n = 0
     for line in lines:
+        n += 1
+        
         if not line.strip():            # skip empty lines
             continue
         
@@ -114,10 +117,11 @@ def execute_file(filename, init_glocals = True):
             execute_command(cmd, args, global_dict, local_dict)
         except TwillAssertionError, e:
             sys.stderr.write('''\
-Oops!  Twill assertion error while executing
+Oops!  Twill assertion error on line %d of '%s' while executing
  
-    %s
-''' % (cmd,))
+ >> %s
+    
+''' % (n, filename, line.strip(),))
             raise
         except Exception, e:
             sys.stderr.write('EXCEPTION while executing \n\n\t%s\n' % (cmd,))

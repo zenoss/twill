@@ -273,6 +273,8 @@ TODO:
  6. twill-sh silence
  7. __url__
  8. submit on forms w/o submit button? (helgon...)
+ 9. execute directories/directory trees?
+ 10. switch between executing all files & stopping on first error.
 
 Contributions are welcome & will be duly acknowledged!
 

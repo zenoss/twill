@@ -1,3 +1,12 @@
+2005-05-26  Titus Brown  <t@issola.caltech.edu>
+
+	* all files specified on command-line now executed.
+
+	* emacs backup files (filename~) now skipped by twill-sh.
+
+	* error output on script execution now includes line number &
+	filename.
+
 2005-05-25  Titus Brown  <t@issola.caltech.edu>
 
 	* added reset_state; run it on each execute_file.

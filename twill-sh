@@ -27,6 +27,10 @@ if __name__ == '__main__':
         success = []
         failure = []
         for filename in sys.argv[1:]:
+            if filename[-1] == '~':
+                print 'SKIPPING backup file:', filename
+                continue
+                
             print '>> EXECUTING FILE', filename
 
             try:
@@ -34,10 +38,10 @@ if __name__ == '__main__':
                 success.append(filename)
             except:
                 failure.append(filename)
-		raise
 
         print '--'
-        print '%d of %d files SUCCEEDED.' % (len(success), len(sys.argv) - 1)
+        print '%d of %d files SUCCEEDED.' % (len(success),
+                                             len(success) + len(failure),)
         if len(failure):
             print 'Failed:\n\t',
             print "\n\t".join(failure)
