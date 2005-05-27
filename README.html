@@ -36,12 +36,14 @@
 </ul>
 </li>
 <li><a class="reference" href="#implementation-and-extending-twill" id="id15" name="id15">Implementation and Extending Twill</a><ul>
-<li><a class="reference" href="#miscellaneous-implementation-details" id="id16" name="id16">Miscellaneous Implementation Details</a></li>
+<li><a class="reference" href="#extending-twill" id="id16" name="id16">Extending twill</a></li>
+<li><a class="reference" href="#using-twill-in-other-python-programs" id="id17" name="id17">Using twill in other Python programs</a></li>
+<li><a class="reference" href="#miscellaneous-implementation-details" id="id18" name="id18">Miscellaneous Implementation Details</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#why-reimplement-pbp" id="id17" name="id17">Why Reimplement PBP?</a></li>
-<li><a class="reference" href="#future-plans" id="id18" name="id18">Future Plans</a></li>
-<li><a class="reference" href="#acknowledgements-and-credits" id="id19" name="id19">Acknowledgements and Credits</a></li>
+<li><a class="reference" href="#why-reimplement-pbp" id="id19" name="id19">Why Reimplement PBP?</a></li>
+<li><a class="reference" href="#future-plans" id="id20" name="id20">Future Plans</a></li>
+<li><a class="reference" href="#acknowledgements-and-credits" id="id21" name="id21">Acknowledgements and Credits</a></li>
 </ul>
 </div>
 <div class="section" id="what-is-twill">
@@ -216,14 +218,32 @@ of it very simple.  twill is essentially a thin shell around the
 input and converting it into Python commands (see <tt class="docutils literal"><span class="pre">parse.py</span></tt>).
 Interactive shell work and readline support is implemented via the
 <a class="reference" href="http://docs.python.org/lib/module-cmd.html">cmd</a> module (from the standard Python library).</p>
-<p>Right now twill is very easy to extend: just build a Python module that
-exports the functions you want to call and run <tt class="docutils literal"><span class="pre">extend_with</span>
-<span class="pre">&lt;modulename&gt;</span></tt>.</p>
+<div class="section" id="extending-twill">
+<h2><a class="toc-backref" href="#id16" name="extending-twill">Extending twill</a></h2>
+<p>Right now twill is very easy to extend: just build a Python module
+that exports the functions you want to call, place it in the
+PYTHONPATH, and run <tt class="docutils literal"><span class="pre">extend_with</span> <span class="pre">&lt;modulename&gt;</span></tt>.  See
+<tt class="docutils literal"><span class="pre">extensions/mailman_sf.py</span></tt> for an extension that helps deal
+with mailman lists on SourceForge; this extension is used by
+<tt class="docutils literal"><span class="pre">examples/discard-sf-mailman-msgs</span></tt>.</p>
+<p>Notes:</p>
+<blockquote>
+<ul class="simple">
+<li>If your extension raises <tt class="docutils literal"><span class="pre">SystemExit</span></tt>, twill will stop
+processing the script.  This is a useful way to build in
+conditionals, e.g. see the <tt class="docutils literal"><span class="pre">discard-sf-mailman-msgs</span></tt> example
+script.</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="using-twill-in-other-python-programs">
+<h2><a class="toc-backref" href="#id17" name="using-twill-in-other-python-programs">Using twill in other Python programs</a></h2>
 <p>twill also provides a simple wrapper for <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> functionality, in
 the <cite>commands.py</cite> module.  This may be useful for twill extensions as
 well as for other toolkits.</p>
+</div>
 <div class="section" id="miscellaneous-implementation-details">
-<h2><a class="toc-backref" href="#id16" name="miscellaneous-implementation-details">Miscellaneous Implementation Details</a></h2>
+<h2><a class="toc-backref" href="#id18" name="miscellaneous-implementation-details">Miscellaneous Implementation Details</a></h2>
 <blockquote>
 <ul class="simple">
 <li>twill ignores robots.txt.</li>
@@ -233,13 +253,13 @@ well as for other toolkits.</p>
 </div>
 </div>
 <div class="section" id="why-reimplement-pbp">
-<h1><a class="toc-backref" href="#id17" name="why-reimplement-pbp">Why Reimplement PBP?</a></h1>
+<h1><a class="toc-backref" href="#id19" name="why-reimplement-pbp">Why Reimplement PBP?</a></h1>
 <p>PBP is a great idea, but Cory Dodt (the author of PBP) is focusing on
 other things at the moment, and I needed a solid scripting language
 for Web testing.  Plus, I wanted to play with mechanize.</p>
 </div>
 <div class="section" id="future-plans">
-<h1><a class="toc-backref" href="#id18" name="future-plans">Future Plans</a></h1>
+<h1><a class="toc-backref" href="#id20" name="future-plans">Future Plans</a></h1>
 <p>I'm scratching my own itch with twill at the moment, so development of
 the core functionality will proceed sporadically.  Right now I'm
 starting to integrate it into my own projects, so expect many bug
@@ -264,7 +284,7 @@ whatever.)</li>
 <p>Contributions are welcome &amp; will be duly acknowledged!</p>
 </div>
 <div class="section" id="acknowledgements-and-credits">
-<h1><a class="toc-backref" href="#id19" name="acknowledgements-and-credits">Acknowledgements and Credits</a></h1>
+<h1><a class="toc-backref" href="#id21" name="acknowledgements-and-credits">Acknowledgements and Credits</a></h1>
 <p>Cory Dodt had a great idea with PBP, and I thank him for his insight.
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython
 (since abandoned in favor of <a class="reference" href="http://docs.python.org/lib/module-cmd.html">cmd</a>).  Grig Gheorghiu was strangely

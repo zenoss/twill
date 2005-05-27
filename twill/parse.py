@@ -115,6 +115,9 @@ def execute_file(filename, init_glocals = True):
 
         try:
             execute_command(cmd, args, global_dict, local_dict)
+        except SystemExit:
+            # abort script execution, if a SystemExit is raised.
+            return
         except TwillAssertionError, e:
             sys.stderr.write('''\
 Oops!  Twill assertion error on line %d of '%s' while executing

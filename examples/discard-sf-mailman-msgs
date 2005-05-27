@@ -1,11 +1,21 @@
+# load in the mailman_sf extensions module ('extensions/' must be
+# in your PYTHONPATH).
+
 extend_with mailman_sf
 
+# unfortunately we have to hard-code in the mailing list name for
+# the moment.  not sure how to do substitutions here.
 go https://lists.sourceforge.net/lists/admindb/pywx-discuss
 
+# fill out the page with the list password.
 getpassword "Enter list password: "
 formvalue 1 adminpw __password__
 submit 0
 code 200
 
+# if there aren't any messages on the page, exit.
+exit_if_empty
+
+# if not empty, discard all messages & submit
 discard_all_messages
 submit 0

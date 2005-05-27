@@ -3,9 +3,16 @@ import re
 
 # export:
 __all__ = ['discard_all_messages',
+           'exit_if_empty'
            ]
 
-def discard_all_messages(*noargs):
+def exit_if_empty():
+    state = twill.get_browser_state()
+    form = state.get_form("1")
+    if not form:
+        raise SystemExit()
+    
+def discard_all_messages():
     formvalue_by_regexp_setall("1", "^\d+$", "3")
 
 def formvalue_by_regexp_setall(formname, fieldname, value):

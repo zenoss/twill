@@ -226,9 +226,25 @@ input and converting it into Python commands (see ``parse.py``).
 Interactive shell work and readline support is implemented via the
 `cmd`_ module (from the standard Python library).
 
-Right now twill is very easy to extend: just build a Python module that
-exports the functions you want to call and run ``extend_with
-<modulename>``.
+Extending twill
+~~~~~~~~~~~~~~~
+
+Right now twill is very easy to extend: just build a Python module
+that exports the functions you want to call, place it in the
+PYTHONPATH, and run ``extend_with <modulename>``.  See
+``extensions/mailman_sf.py`` for an extension that helps deal
+with mailman lists on SourceForge; this extension is used by
+``examples/discard-sf-mailman-msgs``.
+
+Notes:
+
+  * If your extension raises ``SystemExit``, twill will stop
+    processing the script.  This is a useful way to build in
+    conditionals, e.g. see the ``discard-sf-mailman-msgs`` example
+    script.
+    
+Using twill in other Python programs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 twill also provides a simple wrapper for mechanize_ functionality, in
 the `commands.py` module.  This may be useful for twill extensions as
