@@ -291,6 +291,10 @@ TODO:
  8. submit on forms w/o submit button? (helgon...)
  9. execute directories/directory trees?
  10. switch between executing all files & stopping on first error.
+ 11. cookie "1" vs 1, in cookielib.
+ 12. 'go' for relative URLs; doc until fix.
+ 13. fix spaces-in-URLs problem more generally;
+ 14. "fv 1 n value" doesn't work, n ==> number does.  ??
 
 Contributions are welcome & will be duly acknowledged!
 
@@ -310,3 +314,4 @@ MATSUNO Tokuhiro, and Elvelind Grandin.
 
 This document was written by C. Titus Brown, titus@caltech.edu.
 Last updated May '05.
+12.
