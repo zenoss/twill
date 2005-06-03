@@ -286,7 +286,7 @@ class _TwillBrowserState:
               (ctl.name, ctl.value)
         
         # got the submit control, now go there.
-        control = ctl._click(self._browser.form, None, urllib2.Request)
+        control = ctl._click(self._browser.form, True, urllib2.Request)
         self._last_result = journey(self._browser.open, control)
 
     def save_cookies(self, filename):
