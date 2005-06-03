@@ -16,6 +16,7 @@ __all__ = ['reset_state',
            'back',
            'show',
            'echo',
+           'sleep',
            'agent',
            'showforms',
            'submit',
@@ -30,7 +31,7 @@ __all__ = ['reset_state',
            'show_cookies',
            ]
 
-import re, getpass, urllib2
+import re, getpass, urllib2, time
 
 from mechanize import Browser
 from mechanize._mechanize import BrowserStateError, LinkNotFoundError
@@ -409,6 +410,15 @@ def echo(*strs):
     strs = map(str, strs)
     s = " ".join(strs)
     print s
+
+def sleep(interval="1"):
+    """
+    >> sleep [<interval>]
+
+    Sleep for the specified amount of time.
+    If no interval is given, sleep for 1 second.
+    """
+    time.sleep(float(interval))
 
 def agent(what):
     """
