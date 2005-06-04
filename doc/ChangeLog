@@ -1,3 +1,16 @@
+2005-06-04  Titus Brown  <t@issola.caltech.edu>
+
+	* better error reporting on all exceptions while executing
+	  file.
+
+	* Fixed a relative URL issue: twill now tries several URLs in order,
+	  only prepending 'http://' when it's tried other URLs first.  Added
+	  test.
+
+	* Added Joeri van Ruth's patches: new sleep command, and transmit
+	  value of submit buttons on form submission.  Added tests for the
+	  latter.  Documented.
+
 2005-05-26  Titus Brown  <t@issola.caltech.edu>
 
 	* all files specified on command-line now executed.

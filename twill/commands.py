@@ -73,10 +73,23 @@ class _TwillBrowserState:
         Visit given URL.
         """
         url = url.replace(' ', '%20')
-        if url.find('://') == -1:
-            url = 'http://%s' % (url,)  # mimic browser behavior
+
+        try_urls = [ url, ]
+
+        # if this is an absolute URL that is just missing the 'http://' at
+        # the beginning, try fixing that.
         
-        self._last_result = journey(self._browser.open, url)
+        if url.find('://') == -1:
+            full_url = 'http://%s' % (url,)  # mimic browser behavior
+            try_urls.append(full_url)
+
+        for u in try_urls:
+            try:
+                self._last_result = journey(self._browser.open, u)
+                break
+            except Exception, e:
+                pass
+            
         print '==> at', self._last_result.get_url()
 
     def reload(self):
@@ -411,7 +424,7 @@ def echo(*strs):
     s = " ".join(strs)
     print s
 
-def sleep(interval="1"):
+def sleep(interval=1):
     """
     >> sleep [<interval>]
 

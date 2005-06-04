@@ -5,6 +5,11 @@
 go http://issola.caltech.edu:8080/
 code 200
 
+clear_cookies
+
+go issola.caltech.edu:8080/
+code 200
+
 # intro page.
 
 find "Your session ID is None"
@@ -58,14 +63,14 @@ go ./login
 # test formclear
 fv 1 username test
 formclear 1
-fv 1 submit me
+fv 1 "submit me" click
 submit
 code 200
 find "Log in:"
 
 
 fv 1 username test
-fv 1 submit me
+fv 1 "submit me" click
 submit
 
 code 200
@@ -102,6 +107,7 @@ go ./login
 
 getinput "Enter some (weird) input: "
 fv 1 username __input__
+fv 1 "submit me" click
 submit
 
 code 200
@@ -111,6 +117,7 @@ echo 'found"' __input__ '"on the page, hooray!'
 
 getpassword "Enter your (weird) secret identity: "
 go ./login
+fv 1 "submit me" click
 fv 1 username __password__
 submit
 

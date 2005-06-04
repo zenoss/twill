@@ -128,6 +128,8 @@ Cookies
 Other commands
 ~~~~~~~~~~~~~~
 
+**sleep** *[<seconds>]* -- sleep the given number of seconds.  Defaults to 1 second.
+
 **reset_state** -- reset the browser.
 
 **extend_with** *<module>* -- import commands from Python module.
@@ -295,6 +297,8 @@ TODO:
  12. 'go' for relative URLs; doc until fix.
  13. fix spaces-in-URLs problem more generally;
  14. "fv 1 n value" doesn't work, n ==> number does.  ??
+ 15. HTTP basic auth
+ 16. Paul McGuire's pyparsing suggestions
 
 Contributions are welcome & will be duly acknowledged!
 
@@ -311,6 +315,8 @@ a bit.  Thanks, guys...
 
 Bug reports have come in from the following fine people: Chris Miles,
 MATSUNO Tokuhiro, and Elvelind Grandin.
+
+Patches have been submitted by: Joeri van Ruth.
 
 This document was written by C. Titus Brown, titus@caltech.edu.
 Last updated May '05.

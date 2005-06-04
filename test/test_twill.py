@@ -84,17 +84,21 @@ class TwillTest(Directory):
                                               value='')
         submit_widget = widget.SubmitWidget(name='submit',
                                             value='submit me')
+        submit_widget2 = widget.SubmitWidget(name='nosubmit2',
+                                             value="don't submit")
+        
         if request.form:
+            assert not submit_widget2.parse(request)
             username = username_widget.parse(request)
             if username:
                 session = get_session()
                 session.set_user(username)
                 return redirect('./')
                 
-        else:
-            return "<form method=POST>Log in: %s<p>%s</form>" % \
-                   (username_widget.render(),
-                    submit_widget.render(),)
+        return "<form method=POST>Log in: %s<p>%s<p>%s</form>" % \
+               (username_widget.render(),
+                submit_widget2.render(),
+                submit_widget.render(),)
 
     def logout(self):
         # expire session

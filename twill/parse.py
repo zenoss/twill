@@ -127,5 +127,6 @@ Oops!  Twill assertion error on line %d of '%s' while executing
 ''' % (n, filename, line.strip(),))
             raise
         except Exception, e:
-            sys.stderr.write('EXCEPTION while executing \n\n\t%s\n' % (cmd,))
+            sys.stderr.write("EXCEPTION raised at line %d of '%s'\n\n\t%s\n" % (n, filename, line.strip(),))
+            sys.stderr.write(str(e))
             raise
