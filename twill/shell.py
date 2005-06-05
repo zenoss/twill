@@ -75,11 +75,10 @@ class TwillCommandLoop(object, cmd.Cmd):
     """
     __metaclass__ = _command_loop_metaclass
     
-    def __init__(self):
+    def __init__(self, **kw):
         cmd.Cmd.__init__(self)
         parse._init_twill_glocals()
         self.use_raw_input = False
-        self._set_prompt()
 
         # import readline history, if available.
         if readline:
@@ -87,6 +86,11 @@ class TwillCommandLoop(object, cmd.Cmd):
                 readline.read_history_file('.twill-history')
             except IOError:
                 pass
+
+        if kw.get('initial_url'):
+            commands.go(kw['initial_url'])
+            
+        self._set_prompt()
 
     def _set_prompt(self):
         "Set the prompt to the current page."

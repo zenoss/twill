@@ -185,6 +185,15 @@ so you should have no problems.)
 .. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
 .. _GNU LGPL: http://www.gnu.org/copyleft/lesser.html
 
+Mailing list
+~~~~~~~~~~~~
+
+There is a `twill mailing list`_ for discussion and help purposes;
+for announcements, either subscribe to the twill list or monitor
+``comp.lang.python.announce``.
+
+.. _twill mailing list: http://lists.idyll.org/listinfo/twill
+
 Installation and Examples
 -------------------------
 
@@ -204,10 +213,13 @@ To run twill, type 'twill-sh' and try
 You can also run scripts (e.g. the files in ``examples/``) directly by
 specifying them on the command line.
 
-There are several examples under the ``examples/`` subdirectory.  Included
-in the examples is a test of the Quixote demo site, and a script for
-clearing out SourceForge Mailman lists.  The latter script makes use of the
-(very simple!) extension feature, if you're interested...
+See the output of 'twill-sh -h' for help on command line options.
+
+There are several example scripts under the ``examples/``
+subdirectory.  Included in the examples is a test of the Quixote demo
+site, and a script for clearing out SourceForge Mailman lists.  The
+latter script makes use of the (very simple!) extension feature, if
+you're interested...
 
 Recording scripts
 ~~~~~~~~~~~~~~~~~
@@ -285,23 +297,24 @@ TODO:
 
  1. test & document the fieldname spec for fv; put into shell help.
  2. unit testing in Python.
- 3. command-line option for initial URL, + command-line option to
-    fork server before executing twill.  (or special test script,
-    whatever.)
+
+ 3. command-line option to fork server before executing twill.  (or
+    special test script, whatever.)
  4. formfile <formspec> <fieldspec> <filename>
- 5. twill-sh -i as in python -i
- 6. twill-sh silence
+ 5. twill-sh -i as in python -i (DONE)
+ 6. twill-sh silence (DONE)
  7. submit on forms w/o submit button? (helgon...)
  8. execute directories/directory trees?
- 9. switch between executing all files & stopping on first error.
- 10. cookie "1" vs 1, in cookielib.
- 11. "fv 1 n value" doesn't work, n ==> number does.  ??
- 12. HTTP basic auth
+ 9. switch between executing all files & stopping on first error. (DONE)
+ 10. "fv 1 n value" doesn't work, n ==> number does.  ??
+ 11. HTTP basic auth
+ 12. command-line option for initial URL. (DONE)
 
 Longer term fixes & cleanups:
 
  1. fix spaces-in-URLs problem more generally (in urllib2).
  2. Paul McGuire's pyparsing suggestions
+ 3. cookie "1" vs 1, in cookielib.
 
 Contributions are welcome & will be duly acknowledged!
 

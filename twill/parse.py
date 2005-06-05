@@ -39,6 +39,8 @@ def _init_twill_glocals():
     local_dict = {}
     exec "from twill.commands import *" in global_dict, local_dict
 
+    local_dict['__url__'] = commands.state.url()
+
 def get_twill_glocals():
     global global_dict, local_dict
 
@@ -94,18 +96,24 @@ def parse_command(line, globals_dict, locals_dict):
 
     return (command, args)
 
-def execute_file(filename, init_glocals = True):
+def execute_file(filename, **kw):
     """
     Execute commands from a file.
     """
     finished = 0
 
     # initialize global/local dictionaries.
-    if init_glocals:
+    if kw.get('init_glocals', True):
         _init_twill_glocals()
 
     # reset browser
     commands.reset_state()
+
+    # go to a specific URL?
+    init_url = kw.get('initial_url')
+    if init_url:
+        commands.go(init_url)
+        local_dict['__url__'] = commands.state.url()
         
     lines = open(filename).readlines()
 
