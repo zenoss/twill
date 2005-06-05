@@ -5,21 +5,28 @@ Code parsing and evaluation for the twill mini-language.
 import sys
 from errors import TwillAssertionError
 from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
-     alphas, alphanums, ParseException, ZeroOrMore, restOfLine, Combine
-from twill.commands import reset_state
+     alphas, alphanums, ParseException, ZeroOrMore, restOfLine, Combine, \
+     removeQuotes, Literal
+
+import twill.commands as commands
 
 ### pyparsing stuff
 
 # basically, a valid Python identifier:
-command = Combine(Word(alphas + "_", max=1) + Word(alphanums + "_"))
+command = Word(alphas + "_", alphanums + "_")
 
 # arguments to it.
-arguments = OneOrMore(Word(printables) ^ quotedString)
+arguments = OneOrMore(
+    quotedString.setParseAction(removeQuotes) |
+    Word(printables)
+    )
 
 # comment line.
-comment = Word('#', max=1) + restOfLine
+comment = Literal('#') + restOfLine
 
-full_command = comment ^ (command + Optional(arguments))
+full_command = comment ^ command + Optional(arguments)
+#full_command = command + Optional(arguments)
+#full_command.ignore(comment)
 
 ### initialization and global/local dicts
 
@@ -72,19 +79,20 @@ def execute_command(cmd, args, globals_dict, locals_dict):
 
     eval_str = "%s(*__args__)" % (cmd,)
 
+    # set __url__
+    locals_dict['__url__'] = commands.state.url()
+
     return eval(eval_str, global_dict, local_dict)
 
 def parse_command(line, globals_dict, locals_dict):
     """
     Parse command.
     """
-
     res = full_command.parseString(line)
     command = res[0]
+    args = process_args(res[1:], globals_dict, locals_dict)
 
-    newargs = process_args(res[1:], globals_dict, locals_dict)
-
-    return (command, newargs)
+    return (command, args)
 
 def execute_file(filename, init_glocals = True):
     """
@@ -97,7 +105,7 @@ def execute_file(filename, init_glocals = True):
         _init_twill_glocals()
 
     # reset browser
-    reset_state()
+    commands.reset_state()
         
     lines = open(filename).readlines()
 

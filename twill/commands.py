@@ -64,9 +64,10 @@ class _TwillBrowserState:
         self._browser.set_handle_robots(None)
 
     def url(self):
-        if self._last_result:
-            return self._last_result.get_url()
-        return " *empty page* "
+        if self._last_result is None:
+            return " *empty page* "
+
+        return self._last_result.get_url()
 
     def go(self, url):
         """

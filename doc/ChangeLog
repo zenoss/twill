@@ -1,5 +1,10 @@
 2005-06-04  Titus Brown  <t@issola.caltech.edu>
 
+	* added __url__ ==> current URL.
+
+	* added some of Paul McGuire's suggestions for cleaning up the
+	  pyparsing code.
+
 	* better error reporting on all exceptions while executing
 	  file.
 

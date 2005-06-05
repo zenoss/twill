@@ -146,6 +146,8 @@ Special variables
 
 **__password__** -- result of last **getpassword**
 
+**__url__** -- current URL
+
 Requirements, Availability and Licensing
 ----------------------------------------
 
@@ -289,16 +291,17 @@ TODO:
  4. formfile <formspec> <fieldspec> <filename>
  5. twill-sh -i as in python -i
  6. twill-sh silence
- 7. __url__
- 8. submit on forms w/o submit button? (helgon...)
- 9. execute directories/directory trees?
- 10. switch between executing all files & stopping on first error.
- 11. cookie "1" vs 1, in cookielib.
- 12. 'go' for relative URLs; doc until fix.
- 13. fix spaces-in-URLs problem more generally;
- 14. "fv 1 n value" doesn't work, n ==> number does.  ??
- 15. HTTP basic auth
- 16. Paul McGuire's pyparsing suggestions
+ 7. submit on forms w/o submit button? (helgon...)
+ 8. execute directories/directory trees?
+ 9. switch between executing all files & stopping on first error.
+ 10. cookie "1" vs 1, in cookielib.
+ 11. "fv 1 n value" doesn't work, n ==> number does.  ??
+ 12. HTTP basic auth
+
+Longer term fixes & cleanups:
+
+ 1. fix spaces-in-URLs problem more generally (in urllib2).
+ 2. Paul McGuire's pyparsing suggestions
 
 Contributions are welcome & will be duly acknowledged!
 
@@ -316,8 +319,7 @@ a bit.  Thanks, guys...
 Bug reports have come in from the following fine people: Chris Miles,
 MATSUNO Tokuhiro, and Elvelind Grandin.
 
-Patches have been submitted by: Joeri van Ruth.
+Patches have been submitted by: Joeri van Ruth and Paul McGuire.
 
 This document was written by C. Titus Brown, titus@caltech.edu.
 Last updated May '05.
-12.
