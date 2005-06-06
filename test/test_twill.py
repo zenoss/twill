@@ -51,7 +51,8 @@ class TwillTest(Directory):
     Do some simple session manipulations.
     """
     _q_exports = ['logout', 'increment', 'incrementfail', "", 'restricted',
-                  'login', ('test spaces', 'test_spaces'), 'test_spaces' ]
+                  'login', ('test spaces', 'test_spaces'), 'test_spaces',
+                  'simpleform']
 
     def __init__(self):
         self.restricted = Restricted()
@@ -99,6 +100,18 @@ class TwillTest(Directory):
                (username_widget.render(),
                 submit_widget2.render(),
                 submit_widget.render(),)
+
+    def simpleform(self):
+        """
+        no submit button...
+        """
+        request = get_request()
+        
+        w1 = widget.StringWidget(name='n', value='')
+        w2 = widget.StringWidget(name='n2', value='')
+        
+        return "%s %s <form method=POST><input type=text name=n><input type=text name=n2></form>" % (w1.parse(request),
+                                                         w2.parse(request),)
 
     def logout(self):
         # expire session

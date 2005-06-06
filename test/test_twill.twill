@@ -147,3 +147,10 @@ echo '__noinput__'
 
 # comments at end of line!
 go ./ ##### this is a test
+
+# submit-button-less form
+go ./simpleform
+fv 1 n testa
+fv 1 n2 testb
+submit
+find "testa testb"

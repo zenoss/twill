@@ -1,5 +1,10 @@
 2005-06-06  Titus Brown  <t@issola.caltech.edu>
 
+	* Now checks for exact matches to fieldnames before trying out
+	  regexps.
+
+	* Submit w/o submit buttons now working.
+
 	* Fixed quoted handling of __stuff__.
 
 	* More intelligent pyparsing stuff from Paul McGuire; in particular,

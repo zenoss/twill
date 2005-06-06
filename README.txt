@@ -303,10 +303,10 @@ TODO:
  4. formfile <formspec> <fieldspec> <filename>
  5. twill-sh -i as in python -i (DONE)
  6. twill-sh silence (DONE)
- 7. submit on forms w/o submit button? (helgon...)
+ 7. submit on forms w/o submit button? (helgon...) (DONE)
  8. execute directories/directory trees?
  9. switch between executing all files & stopping on first error. (DONE)
- 10. "fv 1 n value" doesn't work, n ==> number does.  ??
+ 10. "fv 1 n value" doesn't work, n ==> number does.  (FIXED)
  11. HTTP basic auth
  12. command-line option for initial URL. (DONE)
 
