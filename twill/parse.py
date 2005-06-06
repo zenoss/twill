@@ -14,19 +14,20 @@ import twill.commands as commands
 
 # basically, a valid Python identifier:
 command = Word(alphas + "_", alphanums + "_")
+command.setName("command")
 
 # arguments to it.
 arguments = OneOrMore(
-    quotedString.setParseAction(removeQuotes) |
-    Word(printables)
+    quotedString |
+    Word(printables.replace('#', ''), printables) # ignore comments
     )
+arguments.setName("arguments")
 
 # comment line.
 comment = Literal('#') + restOfLine
+comment = comment.suppress()
 
-full_command = comment ^ command + Optional(arguments)
-#full_command = command + Optional(arguments)
-#full_command.ignore(comment)
+full_command = comment ^ (command + Optional(arguments) + Optional(comment))
 
 ### initialization and global/local dicts
 
@@ -40,6 +41,8 @@ def _init_twill_glocals():
     exec "from twill.commands import *" in global_dict, local_dict
 
     local_dict['__url__'] = commands.state.url()
+
+###
 
 def get_twill_glocals():
     global global_dict, local_dict
@@ -68,6 +71,8 @@ def process_args(args, globals_dict, locals_dict):
 
     return newargs
 
+###
+
 def execute_command(cmd, args, globals_dict, locals_dict):
     """
     Actually execute the command.
@@ -86,15 +91,22 @@ def execute_command(cmd, args, globals_dict, locals_dict):
 
     return eval(eval_str, global_dict, local_dict)
 
+###
+
 def parse_command(line, globals_dict, locals_dict):
     """
     Parse command.
     """
     res = full_command.parseString(line)
-    command = res[0]
-    args = process_args(res[1:], globals_dict, locals_dict)
+    if res:
+        command = res[0]
+        args = process_args(res[1:], globals_dict, locals_dict)
 
-    return (command, args)
+        return (command, args)
+
+    return None, None                   # e.g. a comment
+
+###
 
 def execute_file(filename, **kw):
     """
@@ -125,8 +137,7 @@ def execute_file(filename, **kw):
             continue
         
         cmd, args = parse_command(line, global_dict, local_dict)
-
-        if cmd == '#':                  # skip comments
+        if cmd is None:
             continue
 
         try:

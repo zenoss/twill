@@ -140,3 +140,10 @@ code 200
 back
 follow "test spaces2"
 code 200
+
+# test quoted handling
+echo __input__
+echo '__noinput__'
+
+# comments at end of line!
+go ./ ##### this is a test

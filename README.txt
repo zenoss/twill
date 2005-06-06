@@ -65,7 +65,8 @@ Send me an e-mail if you have additional ideas.
 Command Reference
 -----------------
 
-The following commands are built into twill.
+The following commands are built into twill.  Note that all text after
+a '#' is ignored as a comment, unless it's in a quoted string.
 
 Browsing
 ~~~~~~~~
@@ -297,7 +298,6 @@ TODO:
 
  1. test & document the fieldname spec for fv; put into shell help.
  2. unit testing in Python.
-
  3. command-line option to fork server before executing twill.  (or
     special test script, whatever.)
  4. formfile <formspec> <fieldspec> <filename>
