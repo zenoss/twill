@@ -127,7 +127,12 @@ def execute_file(filename, **kw):
         commands.go(init_url)
         local_dict['__url__'] = commands.state.url()
         
-    lines = open(filename).readlines()
+    # read the input lines
+    if filename == "-":
+        input = sys.stdin
+    else:
+        input = open(filename)
+    lines = input.readlines()
 
     n = 0
     for line in lines:
