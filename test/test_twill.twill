@@ -2,12 +2,12 @@
 #### the commands in twill.  The only things not tested are the commands
 #### that only print stuff out.
 
-go http://issola.caltech.edu:8080/
+go http://localhost:8080/
 code 200
 
 clear_cookies
 
-go issola.caltech.edu:8080/
+go localhost:8080/
 code 200
 
 # intro page.

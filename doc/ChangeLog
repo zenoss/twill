@@ -1,3 +1,10 @@
+2005-06-08  Titus Brown  <t@issola.caltech.edu>
+
+	* Added 'test/README.txt' for testing docs.
+
+	* Applied Joeri van Ruth's patch to make '-' as a filename
+	  read from stdin.
+
 2005-06-06  Titus Brown  <t@issola.caltech.edu>
 
 	* Now checks for exact matches to fieldnames before trying out
