@@ -1,9 +1,10 @@
 ANNOUNCING twill v0.7.1.
 
 twill is a simple Web scripting language built on top of Python and
-mechanize.  It's designed for automated testing of Web sites, but it
-may be useful for anybody who needs to deal with Web sites (especially
-those using logins and cookies) in a non-interactive manner.
+John J. Lee's 'mechanize'.  It's designed for automated testing of Web
+sites, but it should prove useful for anybody who needs to interact
+with Web sites (especially those using logins and cookies) on the
+command line or via a script.
 
 twill is a reimplementation of Cory Dodt's PBP.
 
@@ -56,9 +57,13 @@ twill does not understand JavaScript, I'm sorry to say.
 
 Notable bug fixes and features:
 
+ * file upload & HTTP basic authentication;
+
  * submit w/o submit buttons now works;
 
  * better error reporting;
 
  * 'quiet', 'interact after scripts', and 'fail-immediately'
    command-line options.
+
+ * '-' <== stdin on command line.
