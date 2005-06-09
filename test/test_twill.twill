@@ -154,3 +154,10 @@ fv 1 n testa
 fv 1 n2 testb
 submit
 find "testa testb"
+
+# file upload
+go ./upload_file
+formfile 1 upload ../README.txt
+submit
+code 200
+find "twill: an extensible scriptlet language"

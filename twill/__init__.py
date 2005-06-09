@@ -10,7 +10,7 @@
 # please see the included LICENSE.txt file for more information, or
 # contact Titus directly.
 
-__version__ = "0.7"
+__version__ = "0.7.1"
 
 # add the wwwsearch stuff from the zip file.
 import sys, os.path

@@ -1,5 +1,9 @@
 2005-06-08  Titus Brown  <t@issola.caltech.edu>
 
+	* Added 'add_auth' command for HTTP basic authentication.
+
+	* Added 'formfile' command for file uploads.
+
 	* Added 'test/README.txt' for testing docs.
 
 	* Applied Joeri van Ruth's patch to make '-' as a filename

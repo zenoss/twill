@@ -115,6 +115,8 @@ click may be recorded for use by **submit**, but the value is not changed.
 
 **formclear** -- clear all values in the form.
 
+**formfile** *<formspec> <fieldspec> <filename> [ <content_type> ]* -- attach a file to a file upload button by filename.
+
 Cookies
 ~~~~~~~
 
@@ -140,6 +142,8 @@ Other commands
 **getpassword** *<prompt>* -- get *silent* keyboard input and store
 it in ``__password__``.
 
+**add_auth** *<realm> <uri> <user> <password>* -- add HTTP Basic Authentication information for the given realm/URI combination.
+
 Special variables
 ~~~~~~~~~~~~~~~~~
 
@@ -156,16 +160,16 @@ twill is developed in python 2.3, and should work fine with python 2.4.
 You don't need any other software; both pyparsing_ and mechanize_ are
 required but included with twill.
 
-Version 0.7 ("more things work") is available for
-download here_.  The latest development version can be found at
-twill-latest.tar.gz_.  There's a darcs repository for the project at
-http://darcs.idyll.org/~t/projects/twill/.
+Version 0.7.1 ("most of the obvious bugs have been fixed") is
+available for download here_.  The latest development version can be
+found at twill-latest.tar.gz_.  There's a darcs repository for the
+project at http://darcs.idyll.org/~t/projects/twill/.
 
 Licensing
 ~~~~~~~~~
 
-twill 0.7 is licensed under the `GNU LGPL`_, although I am amenable to
-changing to an MIT-like license in the future.  All code currently
+twill 0.7.1 is licensed under the `GNU LGPL`_, although I am amenable
+to changing to an MIT-like license in the future.  All code currently
 contained in twill is Copyright (C) 2005, C. Titus Brown
 <titus@caltech.edu>.
 
@@ -182,7 +186,7 @@ pyparsing_ and mechanize_ are both included with twill, but are under
 their own licenses.  (Both are currently more lenient than the LGPL,
 so you should have no problems.)
 
-.. _here: http://darcs.idyll.org/~t/projects/twill-0.7.tar.gz
+.. _here: http://darcs.idyll.org/~t/projects/twill-0.7.1.tar.gz
 .. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
 .. _GNU LGPL: http://www.gnu.org/copyleft/lesser.html
 
@@ -300,21 +304,14 @@ TODO:
  2. unit testing in Python.
  3. command-line option to fork server before executing twill.  (or
     special test script, whatever.)
- 4. formfile <formspec> <fieldspec> <filename>
- 5. twill-sh -i as in python -i (DONE)
- 6. twill-sh silence (DONE)
- 7. submit on forms w/o submit button? (helgon...) (DONE)
- 8. execute directories/directory trees?
- 9. switch between executing all files & stopping on first error. (DONE)
- 10. "fv 1 n value" doesn't work, n ==> number does.  (FIXED)
- 11. HTTP basic auth
- 12. command-line option for initial URL. (DONE)
+ 4. execute directories/directory trees?
 
 Longer term fixes & cleanups:
 
  1. fix spaces-in-URLs problem more generally (in urllib2).
  2. Paul McGuire's pyparsing suggestions
  3. cookie "1" vs 1, in cookielib.
+ 4. Test HTTP basic auth.
 
 Contributions are welcome & will be duly acknowledged!
 
@@ -335,4 +332,4 @@ MATSUNO Tokuhiro, and Elvelind Grandin.
 Patches have been submitted by: Joeri van Ruth and Paul McGuire.
 
 This document was written by C. Titus Brown, titus@caltech.edu.
-Last updated May '05.
+Last updated June '05.

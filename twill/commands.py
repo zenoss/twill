@@ -23,12 +23,14 @@ __all__ = ['reset_state',
            'formvalue',
            'fv',
            'formclear',
+           'formfile',
            'getinput',
            'getpassword',
            'save_cookies',
            'load_cookies',
            'clear_cookies',
            'show_cookies',
+           'add_auth',
            ]
 
 import re, getpass, urllib2, time
@@ -62,6 +64,11 @@ class _TwillBrowserState:
 
         # ignore robots.txt
         self._browser.set_handle_robots(None)
+
+        # create an HTTP auth handler
+        creds = urllib2.HTTPPasswordMgr()
+        self.creds = creds
+        self._browser.set_credentials(creds)
 
     def url(self):
         if self._last_result is None:
@@ -307,7 +314,7 @@ class _TwillBrowserState:
             # submit w/button
             print 'Note: submit is using submit button: name="%s", value="%s"' % \
                   (ctl.name, ctl.value)
-            control = ctl._click(self._browser.form, True, urllib2.Request)
+            control = ctl._click(form, True, urllib2.Request)
         else:
             # submit w/o submit button.
             control = form._click(None, None, None, 0, None, urllib2.Request)
@@ -512,9 +519,33 @@ def formvalue(formname, fieldname, value):
         set_form_control_value(control, value)
     else:
         print 'NO SUCH FIELD FOUND / MULTIPLE MATCHES TO NAME'
-        # @CTB
+        assert 0
 
 fv = formvalue
+
+def formfile(formname, fieldname, filename, content_type=None):
+    """
+    >> formfile <form> <field> <filename> [ <content_type> ]
+
+    Upload a file via an "upload file" form field.
+    """
+    form = state.get_form(formname)
+    control = state.get_form_field(form, fieldname)
+
+    if control:
+        if not control.is_of_kind('file'):
+            print 'ERROR: field is not a file upload field!'
+            assert 0
+            
+        state.clicked(form, control)
+        fp = open(filename)
+        control.add_file(fp, content_type, filename)
+
+        print '\nAdded file "%s" to file upload field "%s"\n' % (filename,
+                                                                 control.name,)
+    else:
+        print 'NO SUCH FIELD FOUND / MULTIPLE MATCHES TO NAME'
+        assert 0
 
 def extend_with(module_name):
     """
@@ -583,6 +614,19 @@ def show_cookies():
     Show all of the cookies in the cookie jar.
     """
     state.show_cookies()
+
+def add_auth(realm, uri, user, passwd):
+    """
+    >> add_auth <realm> <uri> <user> <passwd>
+
+    Add HTTP Basic Authentication information for the given realm/uri.
+    """
+    creds = state.creds
+    creds.add_password(realm, uri, user, passwd)
+
+    print "Added auth info: realm '%s' / URI '%s' / user '%s'" % (realm,
+                                                                  uri,
+                                                                  user,)
 
 #### doesn't really work just yet.
 

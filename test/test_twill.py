@@ -52,7 +52,7 @@ class TwillTest(Directory):
     """
     _q_exports = ['logout', 'increment', 'incrementfail', "", 'restricted',
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
-                  'simpleform']
+                  'simpleform', 'upload_file']
 
     def __init__(self):
         self.restricted = Restricted()
@@ -120,6 +120,14 @@ class TwillTest(Directory):
 
         # redirect to index page.
         return redirect(get_path(1) + '/')
+
+    def upload_file(self):
+        request = get_request()
+        if request.form:
+            contents = request.form['upload'].fp.read()
+            return contents
+        else:
+            return "<form enctype=multipart/form-data method=POST> <input type=file name=upload> <input type=submit value=submit> </form>"
 
 class Restricted(AccessControlled, Directory):
     _q_exports = [""]
