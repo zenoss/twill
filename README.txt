@@ -305,6 +305,7 @@ TODO:
  3. command-line option to fork server before executing twill.  (or
     special test script, whatever.)
  4. execute directories/directory trees?
+ 5. record scripts
 
 Longer term fixes & cleanups:
 

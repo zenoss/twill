@@ -1,3 +1,7 @@
+2005-08-20  Titus Brown  <t@issola.caltech.edu>
+
+	* Updated pyparsing.py to 1.3.2.
+
 2005-06-08  Titus Brown  <t@issola.caltech.edu>
 
 	* Added 'add_auth' command for HTTP basic authentication.

@@ -10,7 +10,7 @@ To run the tests,
 
  * run 'simple_server.py --factory=test_twill.create_publisher';
 
- * execute 'twill-sh test/test_twill.twill'.
+ * execute 'twill-sh test_twill.twill' from within the test/ directory.
 
 The test will prompt twice for input; just enter something unique each
 time.  (These two tests make sure that 'getinput' and 'getpassword' work.)
