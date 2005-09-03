@@ -34,15 +34,15 @@ class _command_loop_metaclass(type):
             fn = getattr(commands, command)
             
             def do_cmd(self, rest_of_line, cmd=command):
-                globals_dict, locals_dict = parse.get_twill_glocals()
+                global_dict, local_dict = parse.get_twill_glocals()
 
                 args = []
                 if rest_of_line.strip() != "":
                     args = parse.arguments.parseString(rest_of_line)
-                    args = parse.process_args(args,globals_dict,locals_dict)
+                    args = parse.process_args(args, global_dict, local_dict)
 
                 try:
-                    parse.execute_command(cmd, args, globals_dict, locals_dict)
+                    parse.execute_command(cmd, args, global_dict, local_dict)
                 except Exception, e:
                     print '\nERROR: %s\n' % (str(e),)
                 
@@ -114,13 +114,21 @@ class TwillCommandLoop(object, cmd.Cmd):
         # leading whitespace.
         line = line.strip()
 
-        # ignore comments.
-        if line[0] == '#':
+        # look for command
+        global_dict, local_dict = parse.get_twill_glocals()
+        cmd, args = parse.parse_command(line, global_dict, local_dict)
+
+        # ignore comments & empty stuff
+        if cmd is None:
             return
 
-        # raise objection, if not a comment.
-        cmd.Cmd.default(self, line)
-        
+        try:
+            parse.execute_command(cmd, args, global_dict, local_dict)
+        except SystemExit:
+            raise
+        except Exception, e:
+            print '\nERROR: %s\n' % (str(e),)
+
     def emptyline(self):
         "Ignore empty lines."
         pass

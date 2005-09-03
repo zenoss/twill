@@ -313,6 +313,7 @@ Longer term fixes & cleanups:
  2. Paul McGuire's pyparsing suggestions
  3. cookie "1" vs 1, in cookielib.
  4. Test HTTP basic auth.
+ 5. command line completion doesn't understand extend_with results yet.
 
 Contributions are welcome & will be duly acknowledged!
 

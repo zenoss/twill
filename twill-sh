@@ -29,7 +29,7 @@ parser.add_option('-q', '--quiet', action="store_true", dest="quiet",
                   help = 'do not show normal output')
 
 parser.add_option('-i', '--interactive', action="store_true", dest="interact",
-                  help = 'drop into an interactive shell after running files (if any)')
+          help = 'drop into an interactive shell after running files (if any)')
 
 parser.add_option('-f', '--fail', action="store_true", dest="fail",
                   help = 'fail exit on first file to fail')
