@@ -147,7 +147,9 @@ click may be recorded for use by <strong>submit</strong>, but the value is not c
 <h2><a class="toc-backref" href="#id9" name="other-commands">Other commands</a></h2>
 <p><strong>sleep</strong> <em>[&lt;seconds&gt;]</em> -- sleep the given number of seconds.  Defaults to 1 second.</p>
 <p><strong>reset_state</strong> -- reset the browser.</p>
-<p><strong>extend_with</strong> <em>&lt;module&gt;</em> -- import commands from Python module.</p>
+<p><strong>extend_with</strong> <em>&lt;module&gt;</em> -- import commands from Python module.  This acts
+like <tt class="docutils literal"><span class="pre">from</span> <span class="pre">&lt;module&gt;</span> <span class="pre">import</span> <span class="pre">*</span></tt> does in Python, so e.g. a function
+<tt class="docutils literal"><span class="pre">fn</span></tt> in <tt class="docutils literal"><span class="pre">extmodule</span></tt> would be available as <tt class="docutils literal"><span class="pre">fn</span></tt>.  See <em>examples/extend_example.py</em> for an example.</p>
 <p><strong>getinput</strong> <em>&lt;prompt&gt;</em> -- get keyboard input and store it in <tt class="docutils literal"><span class="pre">__input__</span></tt>.</p>
 <p><strong>getpassword</strong> <em>&lt;prompt&gt;</em> -- get <em>silent</em> keyboard input and store
 it in <tt class="docutils literal"><span class="pre">__password__</span></tt>.</p>
@@ -286,6 +288,8 @@ fixes, soon...</p>
 <li>command-line option to fork server before executing twill.  (or
 special test script, whatever.)</li>
 <li>execute directories/directory trees?</li>
+<li>record scripts</li>
+<li>extend_with searches current directory/current directory put in PYTHONPATH?</li>
 </ol>
 </blockquote>
 <p>Longer term fixes &amp; cleanups:</p>
@@ -295,6 +299,8 @@ special test script, whatever.)</li>
 <li>Paul McGuire's pyparsing suggestions</li>
 <li>cookie &quot;1&quot; vs 1, in cookielib.</li>
 <li>Test HTTP basic auth.</li>
+<li>command line completion doesn't understand extend_with results yet.</li>
+<li>extend_with etc. -- module namespaces, e.g. extmodule.fn?</li>
 </ol>
 </blockquote>
 <p>Contributions are welcome &amp; will be duly acknowledged!</p>

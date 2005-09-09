@@ -135,7 +135,9 @@ Other commands
 
 **reset_state** -- reset the browser.
 
-**extend_with** *<module>* -- import commands from Python module.
+**extend_with** *<module>* -- import commands from Python module.  This acts
+like ``from <module> import *`` does in Python, so e.g. a function
+``fn`` in ``extmodule`` would be available as ``fn``.  See *examples/extend_example.py* for an example.
 
 **getinput** *<prompt>* -- get keyboard input and store it in ``__input__``.
 
@@ -306,6 +308,7 @@ TODO:
     special test script, whatever.)
  4. execute directories/directory trees?
  5. record scripts
+ 6. extend_with searches current directory/current directory put in PYTHONPATH?
 
 Longer term fixes & cleanups:
 
@@ -314,6 +317,7 @@ Longer term fixes & cleanups:
  3. cookie "1" vs 1, in cookielib.
  4. Test HTTP basic auth.
  5. command line completion doesn't understand extend_with results yet.
+ 6. extend_with etc. -- module namespaces, e.g. extmodule.fn?
 
 Contributions are welcome & will be duly acknowledged!
 
