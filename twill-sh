@@ -21,6 +21,14 @@ from twill import TwillCommandLoop, execute_file, __version__
 from optparse import OptionParser
 from cStringIO import StringIO
 
+###
+# make sure that the current working directory is in the path.  does this
+# work on Windows??
+
+if not '.' in sys.path:
+    sys.path.append('.')
+###
+
 #### OPTIONS
 
 parser = OptionParser()

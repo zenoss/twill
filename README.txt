@@ -202,11 +202,13 @@ so you should have no problems.)
 Mailing list
 ~~~~~~~~~~~~
 
-There is a `twill mailing list`_ for discussion and help purposes;
-for announcements, either subscribe to the twill list or monitor
-``comp.lang.python.announce``.
+There is a `twill mailing list`_ for discussion and help purposes; for
+announcements, either subscribe to the twill list, or monitor
+``comp.lang.python.announce``/PyPi.  You can also check out the
+archives_.
 
 .. _twill mailing list: http://lists.idyll.org/listinfo/twill
+.. _archives: http://lists.idyll.org/pipermail/twill/
 
 Installation and Examples
 -------------------------
@@ -338,9 +340,7 @@ TODO:
     special test script, whatever.)
  4. execute directories/directory trees?
  5. record scripts
- 6. extend_with searches current directory/current directory put in PYTHONPATH?
- 7. egggggs and pypi
- 8. add debug response, others?
+ 6. add debug response, others?
 
 Longer term fixes & cleanups:
 

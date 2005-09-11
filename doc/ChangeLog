@@ -1,3 +1,20 @@
+2005-09-10  Titus Brown  <t@issola.caltech.edu>
+
+	* Updated version to 0.7.2.  RELEASE.
+
+	* Updated setup.py to contain full Pypi info & Trove classification.
+
+	* Made sure current directory was in sys.path on load;
+	  useful for extend_with!
+
+	* Added debug http functionality.
+
+	* Added save_html <filename>.
+
+2005-09-03  Titus Brown  <t@issola.caltech.edu>
+
+	* Fixed extend_with to update the interactive shell.
+	
 2005-08-20  Titus Brown  <t@issola.caltech.edu>
 
 	* Updated pyparsing.py to 1.3.2.
