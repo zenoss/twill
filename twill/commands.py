@@ -16,6 +16,7 @@ __all__ = ['reset_state',
            'back',
            'show',
            'echo',
+           'save_html',
            'sleep',
            'agent',
            'showforms',
@@ -31,6 +32,7 @@ __all__ = ['reset_state',
            'clear_cookies',
            'show_cookies',
            'add_auth',
+           'debug',
            ]
 
 import re, getpass, urllib2, time
@@ -444,6 +446,18 @@ def echo(*strs):
     s = " ".join(strs)
     print s
 
+def save_html(filename):
+    """
+    >> save_html <filename>
+    
+    Save the HTML for the current page into <filename>
+    """
+    html = state.get_html()
+
+    f = open(filename, 'w')
+    f.write(html)
+    f.close()
+
 def sleep(interval=1):
     """
     >> sleep [<interval>]
@@ -627,6 +641,16 @@ def add_auth(realm, uri, user, passwd):
     print "Added auth info: realm '%s' / URI '%s' / user '%s'" % (realm,
                                                                   uri,
                                                                   user,)
+
+def debug(what, level):
+    """
+    >> debug <what> <level>
+
+    <what> can be:
+       * http (any level >= 1), to display the HTTP transactions.
+    """
+    if what == "http":
+        state._browser.set_debug_http(int(level))
 
 #### doesn't really work just yet.
 

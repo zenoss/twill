@@ -98,6 +98,8 @@ Display
 
 **echo** *<string>* -- echo the string to the screen via 'print'.
 
+**save_html** *<filename>* -- save the current page's HTML into a file.
+
 Forms
 ~~~~~
 
@@ -127,6 +129,11 @@ Cookies
 **clear_cookies** -- clear all of the current cookies.
 
 **show_cookies** -- show all of the current cookies.
+
+Debugging
+~~~~~~~~~
+
+**debug** *<what>* *<level>* -- turn on debugging/tracing for various functions.
 
 Other commands
 ~~~~~~~~~~~~~~
@@ -269,9 +276,32 @@ Notes:
 Using twill in other Python programs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+All of the commands available in twill are implemented as top-level functions
+in the `twill.commands` module.  For example, to use twill functionality from
+another Python program, you can do:
+
+::
+
+   from twill.commands import go, showforms, formclear, fv, submit
+
+   go('http://issola.caltech.edu/~t/qwsgi/qwsgi-demo.cgi/')
+   go('./widgets')
+   showforms()
+
+   formclear('1')
+   fv("1", "name", "test")
+   fv("1", "password", "testpass")
+   fv("1", "confirm", "yes")
+   showforms()
+
+   submit('0')
+
+Note that all arguments need to be strings, at least for the moment.
+
 twill also provides a simple wrapper for mechanize_ functionality, in
 the `commands.py` module.  This may be useful for twill extensions as
-well as for other toolkits.
+well as for other toolkits, but I can't make any guarantees about the
+stability of that API for the moment...
 
 Miscellaneous Implementation Details
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -309,6 +339,8 @@ TODO:
  4. execute directories/directory trees?
  5. record scripts
  6. extend_with searches current directory/current directory put in PYTHONPATH?
+ 7. egggggs and pypi
+ 8. add debug response, others?
 
 Longer term fixes & cleanups:
 
