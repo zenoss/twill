@@ -169,15 +169,15 @@ twill is developed in python 2.3, and should work fine with python 2.4.
 You don't need any other software; both pyparsing_ and mechanize_ are
 required but included with twill.
 
-Version 0.7.1 ("most of the obvious bugs have been fixed") is
-available for download here_.  The latest development version can be
-found at twill-latest.tar.gz_.  There's a darcs repository for the
-project at http://darcs.idyll.org/~t/projects/twill/.
+Version 0.7.2 ("no obvious bugs") is available for download here_.
+The latest development version can be found at twill-latest.tar.gz_.
+There's a darcs repository for the project at
+http://darcs.idyll.org/~t/projects/twill/.
 
 Licensing
 ~~~~~~~~~
 
-twill 0.7.1 is licensed under the `GNU LGPL`_, although I am amenable
+twill 0.7.2 is licensed under the `GNU LGPL`_, although I am amenable
 to changing to an MIT-like license in the future.  All code currently
 contained in twill is Copyright (C) 2005, C. Titus Brown
 <titus@caltech.edu>.
@@ -195,7 +195,7 @@ pyparsing_ and mechanize_ are both included with twill, but are under
 their own licenses.  (Both are currently more lenient than the LGPL,
 so you should have no problems.)
 
-.. _here: http://darcs.idyll.org/~t/projects/twill-0.7.1.tar.gz
+.. _here: http://darcs.idyll.org/~t/projects/twill-0.7.2.tar.gz
 .. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
 .. _GNU LGPL: http://www.gnu.org/copyleft/lesser.html
 
