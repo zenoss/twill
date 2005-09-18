@@ -370,4 +370,4 @@ MATSUNO Tokuhiro, and Elvelind Grandin.
 Patches have been submitted by: Joeri van Ruth and Paul McGuire.
 
 This document was written by C. Titus Brown, titus@caltech.edu.
-Last updated June '05.
+Last updated September '05.

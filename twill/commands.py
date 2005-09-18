@@ -32,6 +32,8 @@ __all__ = ['reset_state',
            'clear_cookies',
            'show_cookies',
            'add_auth',
+           'run',
+           'runfile',
            'debug',
            ]
 
@@ -651,6 +653,25 @@ def debug(what, level):
     """
     if what == "http":
         state._browser.set_debug_http(int(level))
+
+def run(cmd):
+    # execute command.
+    import parse, commands
+    global_dict, local_dict = parse.get_twill_glocals()
+
+    # set __url__
+    local_dict['__cmd__'] = cmd
+    local_dict['__url__'] = commands.state.url()
+
+    exec(cmd, global_dict, local_dict)
+
+def runfile(files):
+    import parse, sys
+    global_dict, local_dict = parse.get_twill_glocals()
+
+    filenames = files.split(' ')
+    for f in filenames:
+        parse.execute_file(f, init_glocals=False)
 
 #### doesn't really work just yet.
 

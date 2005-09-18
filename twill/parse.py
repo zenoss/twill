@@ -80,6 +80,20 @@ def execute_command(cmd, args, globals_dict, locals_dict):
     Side effects: __args__ is set to the argument tuple, __cmd__ is set to
     the command.
     """
+
+    # replace variables
+    for n, a in enumerate(args):
+        if a.startswith('$'):
+            vname = a[1:]
+            if vname in locals_dict:
+                args[n] = locals_dict[vname]
+            elif vname in globals_dict:
+                args[n] = globals_dict[vname]
+            else:
+                print "arg!!"
+                raise Exception("variable %s doesn't exist" % (a,))
+
+
     # execute command.
     locals_dict['__cmd__'] = cmd
     locals_dict['__args__'] = args
