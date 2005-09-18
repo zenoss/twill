@@ -135,8 +135,21 @@ Debugging
 
 **debug** *<what>* *<level>* -- turn on debugging/tracing for various functions.
 
+Variable handling
+~~~~~~~~~~~~~~~~~
+
+**setglobal** *<name> <value>* -- set variable <name> to value <value> in
+global dictionary
+
+**setlocal** *<name> <value>* -- set variable <name> to value <value> in
+local dictionary
+
 Other commands
 ~~~~~~~~~~~~~~
+
+**run** *<command>* -- exec the given Python command.
+
+**runfile** *<file1> [ <file2> ... ]* -- execute the given files.
 
 **sleep** *[<seconds>]* -- sleep the given number of seconds.  Defaults to 1 second.
 

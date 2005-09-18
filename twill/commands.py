@@ -34,6 +34,8 @@ __all__ = ['reset_state',
            'add_auth',
            'run',
            'runfile',
+           'setglobal',
+           'setlocal',
            'debug',
            ]
 
@@ -517,7 +519,7 @@ def formvalue(formname, fieldname, value):
     Set value of a form field.
 
     There are some ambiguities in the way formvalue deals with lists:
-    'set' will *add* the given value to a multilist.
+    'fv' will *add* the given value to a multilist.
 
     Formvalue ignores read-only fields completely; if they're readonly,
     nothing is done.
@@ -655,6 +657,13 @@ def debug(what, level):
         state._browser.set_debug_http(int(level))
 
 def run(cmd):
+    """
+    >> run <command>
+
+    <command> can be any valid python command; 'exec' is used to run it.
+    """
+    # @CTB: use pyparsing to grok the command?  make sure that quoting works...
+    
     # execute command.
     import parse, commands
     global_dict, local_dict = parse.get_twill_glocals()
@@ -666,12 +675,44 @@ def run(cmd):
     exec(cmd, global_dict, local_dict)
 
 def runfile(files):
+    """
+    >> runfile <file1> [ <file2> ... ]
+
+    """
+    # @CTB: use pyparsing to separate out the files, so that quoted
+    # filenames with spaces in them can be used, e.g.
+    #     runfile "test 1" "test 2"
+
     import parse, sys
     global_dict, local_dict = parse.get_twill_glocals()
 
     filenames = files.split(' ')
     for f in filenames:
         parse.execute_file(f, init_glocals=False)
+
+def setglobal(name, value):
+    """
+    setglobal <name> <value>
+
+    Sets the variable <name> to the value <value> in the global namespace.
+    """
+    # @CTB: what is the difference between local and global??
+
+    import parse, sys
+    global_dict, local_dict = parse.get_twill_glocals()
+    global_dict[name] = value
+
+def setlocal(name, value):
+    """
+    setlocal <name> <value>
+
+    Sets the variable <name> to the value <value> in the local namespace.
+    """
+    # @CTB: what is the difference between local and global??
+
+    import parse, sys
+    global_dict, local_dict = parse.get_twill_glocals()
+    local_dict[name] = value
 
 #### doesn't really work just yet.
 
