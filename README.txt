@@ -144,6 +144,10 @@ global dictionary
 **setlocal** *<name> <value>* -- set variable <name> to value <value> in
 local dictionary
 
+The local dictionary is file-specific, while the global module is general
+to all the commands.  Local variables will override global variables if
+they exist.
+
 Other commands
 ~~~~~~~~~~~~~~
 
@@ -354,6 +358,7 @@ TODO:
  4. execute directories/directory trees?
  5. record scripts
  6. add debug response, others?
+ 7. systematize variable handling a bit better: __ vs $
 
 Longer term fixes & cleanups:
 
@@ -380,7 +385,7 @@ a bit.  Thanks, guys...
 Bug reports have come in from the following fine people: Chris Miles,
 MATSUNO Tokuhiro, and Elvelind Grandin.
 
-Patches have been submitted by: Joeri van Ruth and Paul McGuire.
+Patches have been submitted by: Joeri van Ruth, Paul McGuire, and Ed Rahn.
 
 This document was written by C. Titus Brown, titus@caltech.edu.
 Last updated September '05.

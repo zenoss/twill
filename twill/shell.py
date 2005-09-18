@@ -10,6 +10,7 @@ them.
 
 import cmd
 from twill import commands, parse, __version__
+import namespaces
 
 try:
     import readline
@@ -34,7 +35,7 @@ class _command_loop_metaclass(type):
             fn = getattr(commands, command)
             
             def do_cmd(self, rest_of_line, cmd=command):
-                global_dict, local_dict = parse.get_twill_glocals()
+                global_dict, local_dict = namespaces.get_twill_glocals()
 
                 args = []
                 if rest_of_line.strip() != "":
@@ -77,7 +78,10 @@ class TwillCommandLoop(object, cmd.Cmd):
     
     def __init__(self, **kw):
         cmd.Cmd.__init__(self)
-        parse._init_twill_glocals()
+
+        # initialize a new local namespace.
+        
+        namespaces.new_local_dict()
         self.use_raw_input = False
 
         # import readline history, if available.
@@ -115,7 +119,7 @@ class TwillCommandLoop(object, cmd.Cmd):
         line = line.strip()
 
         # look for command
-        global_dict, local_dict = parse.get_twill_glocals()
+        global_dict, local_dict = namespaces.get_twill_glocals()
         cmd, args = parse.parse_command(line, global_dict, local_dict)
 
         # ignore comments & empty stuff

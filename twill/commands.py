@@ -1,7 +1,5 @@
 """
 Implementation of all of the individual 'twill' commands.
-
-
 """
 
 # export:
@@ -47,6 +45,7 @@ from mechanize._mechanize import BrowserStateError, LinkNotFoundError
 import ClientCookie, ClientForm
 from errors import TwillAssertionError
 from utils import trunc, print_form, set_form_control_value, journey
+from namespaces import get_twill_glocals
 
 #
 # _TwillBrowserState
@@ -571,7 +570,6 @@ def extend_with(module_name):
     
     Import contents of given module.
     """
-    from twill.parse import get_twill_glocals
     global_dict, local_dict = get_twill_glocals()
     
     exec "from %s import *" % (module_name,) in global_dict, local_dict
@@ -581,7 +579,6 @@ def getinput(prompt):
     >> getinput <prompt>
     Get input, store it in '__input__'.
     """
-    from twill.parse import get_twill_glocals
     global_dict, local_dict = get_twill_glocals()
 
     inp = raw_input(prompt)
@@ -594,7 +591,6 @@ def getpassword(prompt):
     
     Get a password ("invisible input"), store it in '__password__'.
     """
-    from twill.parse import get_twill_glocals
     global_dict, local_dict = get_twill_glocals()
 
     inp = getpass.getpass(prompt)
@@ -665,8 +661,8 @@ def run(cmd):
     # @CTB: use pyparsing to grok the command?  make sure that quoting works...
     
     # execute command.
-    import parse, commands
-    global_dict, local_dict = parse.get_twill_glocals()
+    import commands
+    global_dict, local_dict = get_twill_glocals()
 
     # set __url__
     local_dict['__cmd__'] = cmd
@@ -684,11 +680,11 @@ def runfile(files):
     #     runfile "test 1" "test 2"
 
     import parse, sys
-    global_dict, local_dict = parse.get_twill_glocals()
+    global_dict, local_dict = get_twill_glocals()
 
     filenames = files.split(' ')
     for f in filenames:
-        parse.execute_file(f, init_glocals=False)
+        parse.execute_file(f)
 
 def setglobal(name, value):
     """
@@ -696,10 +692,7 @@ def setglobal(name, value):
 
     Sets the variable <name> to the value <value> in the global namespace.
     """
-    # @CTB: what is the difference between local and global??
-
-    import parse, sys
-    global_dict, local_dict = parse.get_twill_glocals()
+    global_dict, local_dict = get_twill_glocals()
     global_dict[name] = value
 
 def setlocal(name, value):
@@ -708,10 +701,7 @@ def setlocal(name, value):
 
     Sets the variable <name> to the value <value> in the local namespace.
     """
-    # @CTB: what is the difference between local and global??
-
-    import parse, sys
-    global_dict, local_dict = parse.get_twill_glocals()
+    global_dict, local_dict = get_twill_glocals()
     local_dict[name] = value
 
 #### doesn't really work just yet.

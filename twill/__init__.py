@@ -32,3 +32,7 @@ from parse import execute_file
 import commands
 def get_browser_state():
     return commands.state
+
+# initialize global dict
+import namespaces
+namespaces.init_global_dict()

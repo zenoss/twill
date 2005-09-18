@@ -9,6 +9,7 @@ from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
      removeQuotes, Literal
 
 import twill.commands as commands
+import namespaces
 
 ### pyparsing stuff
 
@@ -28,26 +29,6 @@ comment = Literal('#') + restOfLine
 comment = comment.suppress()
 
 full_command = comment ^ (command + Optional(arguments) + Optional(comment))
-
-### initialization and global/local dicts
-
-global_dict = local_dict = None
-
-def _init_twill_glocals():
-    global global_dict, local_dict
-
-    global_dict = {}
-    local_dict = {}
-    exec "from twill.commands import *" in global_dict, local_dict
-
-    local_dict['__url__'] = commands.state.url()
-
-###
-
-def get_twill_glocals():
-    global global_dict, local_dict
-
-    return global_dict, local_dict
 
 ### command/argument handling.
 
@@ -84,6 +65,7 @@ def execute_command(cmd, args, globals_dict, locals_dict):
     # replace variables
     for n, a in enumerate(args):
         if a.startswith('$'):
+            # @CTB use eval
             vname = a[1:]
             if vname in locals_dict:
                 args[n] = locals_dict[vname]
@@ -103,7 +85,7 @@ def execute_command(cmd, args, globals_dict, locals_dict):
     # set __url__
     locals_dict['__url__'] = commands.state.url()
 
-    return eval(eval_str, global_dict, local_dict)
+    return eval(eval_str, globals_dict, locals_dict)
 
 ###
 
@@ -128,9 +110,12 @@ def execute_file(filename, **kw):
     """
     finished = 0
 
-    # initialize global/local dictionaries.
-    if kw.get('init_glocals', True):
-        _init_twill_glocals()
+    # initialize new local dictionary & get global + current local
+    namespaces.new_local_dict()
+    globals_dict, locals_dict = namespaces.get_twill_glocals()
+    
+    local_dict = {}
+    local_dict['__url__'] = commands.state.url()
 
     # reset browser
     commands.reset_state()
@@ -148,31 +133,35 @@ def execute_file(filename, **kw):
         input = open(filename)
     lines = input.readlines()
 
-    n = 0
-    for line in lines:
-        n += 1
-        
-        if not line.strip():            # skip empty lines
-            continue
-        
-        cmd, args = parse_command(line, global_dict, local_dict)
-        if cmd is None:
-            continue
+    try:
 
-        try:
-            execute_command(cmd, args, global_dict, local_dict)
-        except SystemExit:
-            # abort script execution, if a SystemExit is raised.
-            return
-        except TwillAssertionError, e:
-            sys.stderr.write('''\
-Oops!  Twill assertion error on line %d of '%s' while executing
- 
- >> %s
-    
-''' % (n, filename, line.strip(),))
-            raise
-        except Exception, e:
-            sys.stderr.write("EXCEPTION raised at line %d of '%s'\n\n\t%s\n" % (n, filename, line.strip(),))
-            sys.stderr.write(str(e))
-            raise
+        n = 0
+        for line in lines:
+            n += 1
+
+            if not line.strip():            # skip empty lines
+                continue
+
+            cmd, args = parse_command(line, globals_dict, locals_dict)
+            if cmd is None:
+                continue
+
+            try:
+                execute_command(cmd, args, globals_dict, locals_dict)
+            except SystemExit:
+                # abort script execution, if a SystemExit is raised.
+                return
+            except TwillAssertionError, e:
+                sys.stderr.write('''\
+    Oops!  Twill assertion error on line %d of '%s' while executing
+
+     >> %s
+
+    ''' % (n, filename, line.strip(),))
+                raise
+            except Exception, e:
+                sys.stderr.write("EXCEPTION raised at line %d of '%s'\n\n\t%s\n" % (n, filename, line.strip(),))
+                sys.stderr.write(str(e))
+                raise
+    finally:
+        namespaces.pop_local_dict()
