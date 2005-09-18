@@ -1,5 +1,7 @@
 2005-09-18  Titus Brown  <t@issola.caltech.edu>
 
+	* Switched to using eval for $variable substitution.
+
 	* Created namespaces.py, moved local/global dictionary stuff in
 	  there.  Created local namespace stack; namespaces now mean
 	  something ;).

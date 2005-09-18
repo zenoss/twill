@@ -44,8 +44,15 @@ def process_args(args, globals_dict, locals_dict):
         # don't use string.strip, which will remove more than one...
         if arg[0] == arg[-1] and arg[0] in "\"'":
             newargs.append(arg[1:-1])
-        elif arg[0:2] == '__':
+
+        # __variable substitution.  @CTB do we need this?
+        elif arg.startswith('__'):
             val = eval(arg, globals_dict, locals_dict)
+            newargs.append(val)
+
+        # $variable substitution
+        elif arg.startswith('$'):
+            val = eval(arg[1:], globals_dict, locals_dict)
             newargs.append(val)
         else:
             newargs.append(arg)
@@ -61,21 +68,6 @@ def execute_command(cmd, args, globals_dict, locals_dict):
     Side effects: __args__ is set to the argument tuple, __cmd__ is set to
     the command.
     """
-
-    # replace variables
-    for n, a in enumerate(args):
-        if a.startswith('$'):
-            # @CTB use eval
-            vname = a[1:]
-            if vname in locals_dict:
-                args[n] = locals_dict[vname]
-            elif vname in globals_dict:
-                args[n] = globals_dict[vname]
-            else:
-                print "arg!!"
-                raise Exception("variable %s doesn't exist" % (a,))
-
-
     # execute command.
     locals_dict['__cmd__'] = cmd
     locals_dict['__args__'] = args
