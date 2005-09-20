@@ -1,3 +1,7 @@
+2005-09-20  Titus Brown  <t@issola.caltech.edu>
+
+	* Added Nic Ferrier's patch to request text/html first.
+
 2005-09-18  Titus Brown  <t@issola.caltech.edu>
 
 	* Switched to using eval for $variable substitution.

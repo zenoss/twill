@@ -65,6 +65,9 @@ class _TwillBrowserState:
         cj = ClientCookie.LWPCookieJar(policy=policy)
         self._browser.set_cookiejar(cj)
 
+        # Ask for MIME type 'text/html' by preference.
+        self._browser.addheaders = [("Accept", "text/html; */*")]
+
         self.cj = cj
 
         # ignore robots.txt
