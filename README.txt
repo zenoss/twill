@@ -374,6 +374,8 @@ Contributions are welcome & will be duly acknowledged!
 Acknowledgements and Credits
 ----------------------------
 
+twill was designed and written by C. Titus Brown.
+
 Cory Dodt had a great idea with PBP, and I thank him for his insight.
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython
 (since abandoned in favor of cmd_).  Grig Gheorghiu was strangely
@@ -385,7 +387,8 @@ a bit.  Thanks, guys...
 Bug reports have come in from the following fine people: Chris Miles,
 MATSUNO Tokuhiro, and Elvelind Grandin.
 
-Patches have been submitted by: Joeri van Ruth, Paul McGuire, and Ed Rahn.
+Patches have been submitted by: Joeri van Ruth, Paul McGuire, Ed Rahn,
+and Nic Ferrier.
 
 This document was written by C. Titus Brown, titus@caltech.edu.
 Last updated September '05.
