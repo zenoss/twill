@@ -145,11 +145,11 @@ def execute_file(filename, **kw):
                 return
             except TwillAssertionError, e:
                 sys.stderr.write('''\
-    Oops!  Twill assertion error on line %d of '%s' while executing
+Oops!  Twill assertion error on line %d of '%s' while executing
 
-     >> %s
+  >> %s
 
-    ''' % (n, filename, line.strip(),))
+''' % (n, filename, line.strip(),))
                 raise
             except Exception, e:
                 sys.stderr.write("EXCEPTION raised at line %d of '%s'\n\n\t%s\n" % (n, filename, line.strip(),))
