@@ -1,3 +1,11 @@
+2005-10-01  Titus Brown  <t@issola.caltech.edu>
+
+	* Increased code coverage of tests by adding in a few commands
+	  to test_twill.twill.
+
+	* Added Robert Leftwich's patch to allow the use of ImageControl
+	  for 'submit'.
+
 2005-09-20  Titus Brown  <t@issola.caltech.edu>
 
 	* Added Nic Ferrier's patch to request text/html first.

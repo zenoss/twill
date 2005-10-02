@@ -388,7 +388,7 @@ Bug reports have come in from the following fine people: Chris Miles,
 MATSUNO Tokuhiro, and Elvelind Grandin.
 
 Patches have been submitted by: Joeri van Ruth, Paul McGuire, Ed Rahn,
-and Nic Ferrier.
+Nic Ferrier, and Robert Leftwich.
 
 This document was written by C. Titus Brown, titus@caltech.edu.
 Last updated September '05.
