@@ -1,9 +1,20 @@
 #### This is a script designed to test basic functionality for most of
 #### the commands in twill.  The only things not tested are the commands
-#### that only print stuff out.
+#### that only print stuff out, and:
+####
+#### add_auth, extend_with, runfile, setglobal/setlocal interaction
+
+debug http 1
+
+back
 
 go http://localhost:8080/
 code 200
+
+# miscellaneous gunk for better code coverage
+save_html /dev/null
+sleep 0
+agent test
 
 clear_cookies
 
@@ -33,6 +44,7 @@ code 200
 find "this is visit #2"
 
 # save & then clear cookies.
+show_cookies
 save_cookies 'test_twill.cookies'
 clear_cookies
 
@@ -61,6 +73,7 @@ back
 go ./login
 
 # test formclear
+showforms
 fv 1 username test
 formclear 1
 fv 1 "submit me" click
@@ -70,7 +83,9 @@ find "Log in:"
 
 
 fv 1 username test
-fv 1 "submit me" click
+setlocal name "submit you"
+setglobal name $name
+fv 1 $name click
 submit
 
 code 200

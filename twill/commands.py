@@ -82,7 +82,7 @@ class _TwillBrowserState:
         if self._last_result is None:
             return " *empty page* "
 
-        return self._last_result.get_url()
+        return self.get_url()
 
     def go(self, url):
         """
@@ -106,7 +106,7 @@ class _TwillBrowserState:
             except Exception, e:
                 pass
             
-        print '==> at', self._last_result.get_url()
+        print '==> at', self.get_url()
 
     def reload(self):
         self._last_result = journey(self._browser.reload)
@@ -125,7 +125,7 @@ class _TwillBrowserState:
             self._last_result = None
         
         if self._last_result:
-            print '==> back to', self._last_result.get_url()
+            print '==> back to', self.get_url()
         else:
             print '==> no previous URL; ignoring.'
             
@@ -145,7 +145,7 @@ class _TwillBrowserState:
         """
         Get the URL of the current page.
         """
-        return journey(self._last_result.get_url)
+        return self._last_result.get_url()
 
     def find_link(self, pattern):
         """
@@ -186,7 +186,7 @@ class _TwillBrowserState:
         """
         try:
             self._last_result = journey(self._browser.follow_link, link)
-            print '==> at', self._last_result.get_url()
+            print '==> at', self.get_url()
         except urllib2.HTTPError, e:
             raise
 
@@ -322,7 +322,12 @@ class _TwillBrowserState:
             # submit w/button
             print 'Note: submit is using submit button: name="%s", value="%s"' % \
                   (ctl.name, ctl.value)
-            control = ctl._click(form, True, urllib2.Request)
+            
+            if isinstance(ctl, ClientForm.ImageControl):
+                control = ctl._click(form, (1,1), urllib2.Request)
+            else:
+                control = ctl._click(form, True, urllib2.Request)
+                
         else:
             # submit w/o submit button.
             control = form._click(None, None, None, 0, None, urllib2.Request)

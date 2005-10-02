@@ -95,11 +95,14 @@ class TwillTest(Directory):
                 session = get_session()
                 session.set_user(username)
                 return redirect('./')
+
+        image_submit = '''<input type=image name='submit you' src=DNE.gif>'''
                 
-        return "<form method=POST>Log in: %s<p>%s<p>%s</form>" % \
+        return "<form method=POST>Log in: %s<p>%s<p>%s<p>%s</form>" % \
                (username_widget.render(),
                 submit_widget2.render(),
-                submit_widget.render(),)
+                submit_widget.render(),
+                image_submit)
 
     def simpleform(self):
         """
