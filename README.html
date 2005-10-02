@@ -51,9 +51,11 @@
 </div>
 <div class="section" id="what-is-twill">
 <h1><a class="toc-backref" href="#id1" name="what-is-twill">What is 'twill'?</a></h1>
-<p>twill is a reimplementation of <a class="reference" href="http://pbp.berlios.de/">PBP</a>, the &quot;Python Browser Poseur&quot;.
-twill and PBP both let you execute scripts that looks something like
-this:</p>
+<p>twill is a tool for Web application testing.  twill implements a
+simple scripting language that can be used interactively or from
+scripts; this language contains commands for browsing the Web,
+filling out forms, and asserting various conditions.</p>
+<p>twill scripts look something like this:</p>
 <pre class="literal-block">
 # go to my Quixote demo page
 go http://issola.caltech.edu/~t/qwsgi/qwsgi-demo.cgi/
@@ -79,11 +81,14 @@ show
 code 200
 find testpass
 </pre>
-<p>The primary use for twill (as with PBP) is to do automated testing of
-Web applications via a straightforward declarative language.  In
-addition to basic Web crawling, I wanted to be able to extend the
-language via Python, and I also wanted to be able to record things
-with <a class="reference" href="http://maxq.tigris.org/">maxq</a>.  Hence, twill.</p>
+<p>twill commands can also be used directly from Python.</p>
+<p>The primary use for twill is to do automated testing of Web
+applications via a straightforward declarative language.  In addition
+to basic Web crawling, I wanted to be able to extend the language via
+Python, and I also wanted to be able to record things with <a class="reference" href="http://maxq.tigris.org/">maxq</a>.
+Hence, twill.</p>
+<p>twill was originally based on Cory Dodt's &quot;Python Browser Poseur&quot;,
+a.k.a. <a class="reference" href="http://pbp.berlios.de/">PBP</a>.  It has diverged quite a bit since then.</p>
 <div class="section" id="use-cases">
 <h2><a class="toc-backref" href="#id2" name="use-cases">Use cases</a></h2>
 <p>Here are some of things that I'm using twill for, or that I plan to use
@@ -99,6 +104,8 @@ projects work like they should;</li>
 </ul>
 </blockquote>
 <p>Send me an e-mail if you have additional ideas.</p>
+<p>Grig Gheorgiu has written a blog entry on <a class="reference" href="http://agiletesting.blogspot.com/2005/09/web-app-testing-with-python-part-3.html">Web app testing using twill</a>
+if you want to get his take on things.</p>
 </div>
 </div>
 <div class="section" id="command-reference">
@@ -331,6 +338,7 @@ special test script, whatever.)</li>
 <li>record scripts</li>
 <li>add debug response, others?</li>
 <li>systematize variable handling a bit better: __ vs $</li>
+<li>expose 'state' &amp; document re Grig.</li>
 </ol>
 </blockquote>
 <p>Longer term fixes &amp; cleanups:</p>

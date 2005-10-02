@@ -7,9 +7,12 @@ twill: an extensible scriptlet language for testing web apps
 What is 'twill'?
 ----------------
 
-twill is a reimplementation of PBP_, the "Python Browser Poseur".
-twill and PBP both let you execute scripts that looks something like
-this:
+twill is a tool for Web application testing.  twill implements a
+simple scripting language that can be used interactively or from
+scripts; this language contains commands for browsing the Web,
+filling out forms, and asserting various conditions.
+
+twill scripts look something like this:
 
 ::
 
@@ -37,11 +40,17 @@ this:
    code 200
    find testpass
 
-The primary use for twill (as with PBP) is to do automated testing of
-Web applications via a straightforward declarative language.  In
-addition to basic Web crawling, I wanted to be able to extend the
-language via Python, and I also wanted to be able to record things
-with maxq_.  Hence, twill.
+
+twill commands can also be used directly from Python.
+
+The primary use for twill is to do automated testing of Web
+applications via a straightforward declarative language.  In addition
+to basic Web crawling, I wanted to be able to extend the language via
+Python, and I also wanted to be able to record things with maxq_.
+Hence, twill.
+
+twill was originally based on Cory Dodt's "Python Browser Poseur",
+a.k.a. PBP_.  It has diverged quite a bit since then.
 
 Use cases
 ~~~~~~~~~
@@ -61,6 +70,11 @@ it for:
  * interacting with Mailman lists;
 
 Send me an e-mail if you have additional ideas.
+
+Grig Gheorgiu has written a blog entry on `Web app testing using twill`_
+if you want to get his take on things.
+
+.. _Web app testing using twill: http://agiletesting.blogspot.com/2005/09/web-app-testing-with-python-part-3.html
 
 Command Reference
 -----------------
@@ -359,6 +373,7 @@ TODO:
  5. record scripts
  6. add debug response, others?
  7. systematize variable handling a bit better: __ vs $
+ 8. expose 'state' & document re Grig.
 
 Longer term fixes & cleanups:
 
