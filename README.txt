@@ -69,6 +69,8 @@ it for:
 
  * interacting with Mailman lists;
 
+ * stress-testing applications with multiple hits;
+
 Send me an e-mail if you have additional ideas.
 
 Grig Gheorgiu has written a blog entry on `Web app testing using twill`_
@@ -200,15 +202,15 @@ twill is developed in python 2.3, and should work fine with python 2.4.
 You don't need any other software; both pyparsing_ and mechanize_ are
 required but included with twill.
 
-Version 0.7.2 ("no obvious bugs") is available for download here_.
-The latest development version can be found at twill-latest.tar.gz_.
-There's a darcs repository for the project at
+Version 0.7.3 is available for download here_.  The latest development
+version can be found at twill-latest.tar.gz_.  There's a darcs
+repository for the project at
 http://darcs.idyll.org/~t/projects/twill/.
 
 Licensing
 ~~~~~~~~~
 
-twill 0.7.2 is licensed under the `GNU LGPL`_, although I am amenable
+twill 0.7.3 is licensed under the `GNU LGPL`_, although I am amenable
 to changing to an MIT-like license in the future.  All code currently
 contained in twill is Copyright (C) 2005, C. Titus Brown
 <titus@caltech.edu>.
@@ -226,7 +228,7 @@ pyparsing_ and mechanize_ are both included with twill, but are under
 their own licenses.  (Both are currently more lenient than the LGPL,
 so you should have no problems.)
 
-.. _here: http://darcs.idyll.org/~t/projects/twill-0.7.2.tar.gz
+.. _here: http://darcs.idyll.org/~t/projects/twill-0.7.3.tar.gz
 .. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
 .. _GNU LGPL: http://www.gnu.org/copyleft/lesser.html
 
@@ -277,6 +279,32 @@ script.  maxq_ acts as an HTTP proxy and records all HTTP traffic; I
 have written a simple twill script generator for it.  The script
 generator and installation docs are included in the twill distribution
 under the directory ``maxq/``.
+
+Stress testing
+~~~~~~~~~~~~~~
+
+A new script, `twill-fork`, has been added in 0.7.3.  The syntax is 
+
+::
+
+   twill-fork -n <number to execute> -p <number of processes> script [ scripts... ]
+
+For example,
+
+::
+
+   twill-fork -n 500 -p 10 test-script
+
+will fork 10 times and run `test-script` 50 times in each process.
+`twill-fork` will record the time it takes to run all of the scripts specified
+on the command and print a summary at the end.
+
+The time recorded is *not* the CPU time used.  (This would lead to an
+inaccurate estimate because the client code uses blocking calls to
+retrieve Web pages.)  Rather, the time recorded is the clock time
+measured between the start and end of script execution.
+
+Try `twill-fork -h` to get a list of other command line arguments.
 
 Implementation and Extending Twill
 ----------------------------------
@@ -367,13 +395,11 @@ TODO:
 
  1. test & document the fieldname spec for fv; put into shell help.
  2. unit testing in Python.
- 3. command-line option to fork server before executing twill.  (or
-    special test script, whatever.)
- 4. execute directories/directory trees?
- 5. record scripts
- 6. add debug response, others?
- 7. systematize variable handling a bit better: __ vs $
- 8. expose 'state' & document re Grig.
+ 3. execute directories/directory trees?
+ 4. record scripts
+ 5. add debug response, others?
+ 6. systematize variable handling a bit better: __ vs $
+ 7. expose 'state' & document re Grig.
 
 Longer term fixes & cleanups:
 
@@ -406,4 +432,4 @@ Patches have been submitted by: Joeri van Ruth, Paul McGuire, Ed Rahn,
 Nic Ferrier, and Robert Leftwich.
 
 This document was written by C. Titus Brown, titus@caltech.edu.
-Last updated September '05.
+Last updated October '05.

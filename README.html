@@ -36,17 +36,18 @@
 </li>
 <li><a class="reference" href="#installation-and-examples" id="id16" name="id16">Installation and Examples</a><ul>
 <li><a class="reference" href="#recording-scripts" id="id17" name="id17">Recording scripts</a></li>
+<li><a class="reference" href="#stress-testing" id="id18" name="id18">Stress testing</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#implementation-and-extending-twill" id="id18" name="id18">Implementation and Extending Twill</a><ul>
-<li><a class="reference" href="#extending-twill" id="id19" name="id19">Extending twill</a></li>
-<li><a class="reference" href="#using-twill-in-other-python-programs" id="id20" name="id20">Using twill in other Python programs</a></li>
-<li><a class="reference" href="#miscellaneous-implementation-details" id="id21" name="id21">Miscellaneous Implementation Details</a></li>
+<li><a class="reference" href="#implementation-and-extending-twill" id="id19" name="id19">Implementation and Extending Twill</a><ul>
+<li><a class="reference" href="#extending-twill" id="id20" name="id20">Extending twill</a></li>
+<li><a class="reference" href="#using-twill-in-other-python-programs" id="id21" name="id21">Using twill in other Python programs</a></li>
+<li><a class="reference" href="#miscellaneous-implementation-details" id="id22" name="id22">Miscellaneous Implementation Details</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#why-reimplement-pbp" id="id22" name="id22">Why Reimplement PBP?</a></li>
-<li><a class="reference" href="#future-plans" id="id23" name="id23">Future Plans</a></li>
-<li><a class="reference" href="#acknowledgements-and-credits" id="id24" name="id24">Acknowledgements and Credits</a></li>
+<li><a class="reference" href="#why-reimplement-pbp" id="id23" name="id23">Why Reimplement PBP?</a></li>
+<li><a class="reference" href="#future-plans" id="id24" name="id24">Future Plans</a></li>
+<li><a class="reference" href="#acknowledgements-and-credits" id="id25" name="id25">Acknowledgements and Credits</a></li>
 </ul>
 </div>
 <div class="section" id="what-is-twill">
@@ -101,6 +102,7 @@ it for:</p>
 <li>regression testing of Web projects, and making sure that existing
 projects work like they should;</li>
 <li>interacting with Mailman lists;</li>
+<li>stress-testing applications with multiple hits;</li>
 </ul>
 </blockquote>
 <p>Send me an e-mail if you have additional ideas.</p>
@@ -193,13 +195,13 @@ it in <tt class="docutils literal"><span class="pre">__password__</span></tt>.</
 <p>twill is developed in python 2.3, and should work fine with python 2.4.
 You don't need any other software; both <a class="reference" href="http://pyparsing.sourceforge.net/">pyparsing</a> and <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> are
 required but included with twill.</p>
-<p>Version 0.7.2 (&quot;no obvious bugs&quot;) is available for download <a class="reference" href="http://darcs.idyll.org/~t/projects/twill-0.7.2.tar.gz">here</a>.
-The latest development version can be found at <a class="reference" href="http://darcs.idyll.org/~t/projects/twill-latest.tar.gz">twill-latest.tar.gz</a>.
-There's a darcs repository for the project at
+<p>Version 0.7.3 is available for download <a class="reference" href="http://darcs.idyll.org/~t/projects/twill-0.7.3.tar.gz">here</a>.  The latest development
+version can be found at <a class="reference" href="http://darcs.idyll.org/~t/projects/twill-latest.tar.gz">twill-latest.tar.gz</a>.  There's a darcs
+repository for the project at
 <a class="reference" href="http://darcs.idyll.org/~t/projects/twill/">http://darcs.idyll.org/~t/projects/twill/</a>.</p>
 <div class="section" id="licensing">
 <h2><a class="toc-backref" href="#id14" name="licensing">Licensing</a></h2>
-<p>twill 0.7.2 is licensed under the <a class="reference" href="http://www.gnu.org/copyleft/lesser.html">GNU LGPL</a>, although I am amenable
+<p>twill 0.7.3 is licensed under the <a class="reference" href="http://www.gnu.org/copyleft/lesser.html">GNU LGPL</a>, although I am amenable
 to changing to an MIT-like license in the future.  All code currently
 contained in twill is Copyright (C) 2005, C. Titus Brown
 &lt;<a class="reference" href="mailto:titus&#64;caltech.edu">titus&#64;caltech.edu</a>&gt;.</p>
@@ -251,9 +253,28 @@ have written a simple twill script generator for it.  The script
 generator and installation docs are included in the twill distribution
 under the directory <tt class="docutils literal"><span class="pre">maxq/</span></tt>.</p>
 </div>
+<div class="section" id="stress-testing">
+<h2><a class="toc-backref" href="#id18" name="stress-testing">Stress testing</a></h2>
+<p>A new script, <cite>twill-fork</cite>, has been added in 0.7.3.  The syntax is</p>
+<pre class="literal-block">
+twill-fork -n &lt;number to execute&gt; -p &lt;number of processes&gt; script [ scripts... ]
+</pre>
+<p>For example,</p>
+<pre class="literal-block">
+twill-fork -n 500 -p 10 test-script
+</pre>
+<p>will fork 10 times and run <cite>test-script</cite> 50 times in each process.
+<cite>twill-fork</cite> will record the time it takes to run all of the scripts specified
+on the command and print a summary at the end.</p>
+<p>The time recorded is <em>not</em> the CPU time used.  (This would lead to an
+inaccurate estimate because the client code uses blocking calls to
+retrieve Web pages.)  Rather, the time recorded is the clock time
+measured between the start and end of script execution.</p>
+<p>Try <cite>twill-fork -h</cite> to get a list of other command line arguments.</p>
+</div>
 </div>
 <div class="section" id="implementation-and-extending-twill">
-<h1><a class="toc-backref" href="#id18" name="implementation-and-extending-twill">Implementation and Extending Twill</a></h1>
+<h1><a class="toc-backref" href="#id19" name="implementation-and-extending-twill">Implementation and Extending Twill</a></h1>
 <p>twill is pretty small at the moment, and I'm hoping to keep the core
 of it very simple.  twill is essentially a thin shell around the
 <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> package.  All twill commands are implemented in the
@@ -262,7 +283,7 @@ input and converting it into Python commands (see <tt class="docutils literal"><
 Interactive shell work and readline support is implemented via the
 <a class="reference" href="http://docs.python.org/lib/module-cmd.html">cmd</a> module (from the standard Python library).</p>
 <div class="section" id="extending-twill">
-<h2><a class="toc-backref" href="#id19" name="extending-twill">Extending twill</a></h2>
+<h2><a class="toc-backref" href="#id20" name="extending-twill">Extending twill</a></h2>
 <p>Right now twill is very easy to extend: just build a Python module
 that exports the functions you want to call, place it in the
 PYTHONPATH, and run <tt class="docutils literal"><span class="pre">extend_with</span> <span class="pre">&lt;modulename&gt;</span></tt>.  See
@@ -280,7 +301,7 @@ script.</li>
 </blockquote>
 </div>
 <div class="section" id="using-twill-in-other-python-programs">
-<h2><a class="toc-backref" href="#id20" name="using-twill-in-other-python-programs">Using twill in other Python programs</a></h2>
+<h2><a class="toc-backref" href="#id21" name="using-twill-in-other-python-programs">Using twill in other Python programs</a></h2>
 <p>All of the commands available in twill are implemented as top-level functions
 in the <cite>twill.commands</cite> module.  For example, to use twill functionality from
 another Python program, you can do:</p>
@@ -306,7 +327,7 @@ well as for other toolkits, but I can't make any guarantees about the
 stability of that API for the moment...</p>
 </div>
 <div class="section" id="miscellaneous-implementation-details">
-<h2><a class="toc-backref" href="#id21" name="miscellaneous-implementation-details">Miscellaneous Implementation Details</a></h2>
+<h2><a class="toc-backref" href="#id22" name="miscellaneous-implementation-details">Miscellaneous Implementation Details</a></h2>
 <blockquote>
 <ul class="simple">
 <li>twill ignores robots.txt.</li>
@@ -316,13 +337,13 @@ stability of that API for the moment...</p>
 </div>
 </div>
 <div class="section" id="why-reimplement-pbp">
-<h1><a class="toc-backref" href="#id22" name="why-reimplement-pbp">Why Reimplement PBP?</a></h1>
+<h1><a class="toc-backref" href="#id23" name="why-reimplement-pbp">Why Reimplement PBP?</a></h1>
 <p>PBP is a great idea, but Cory Dodt (the author of PBP) is focusing on
 other things at the moment, and I needed a solid scripting language
 for Web testing.  Plus, I wanted to play with mechanize.</p>
 </div>
 <div class="section" id="future-plans">
-<h1><a class="toc-backref" href="#id23" name="future-plans">Future Plans</a></h1>
+<h1><a class="toc-backref" href="#id24" name="future-plans">Future Plans</a></h1>
 <p>I'm scratching my own itch with twill at the moment, so development of
 the core functionality will proceed sporadically.  Right now I'm
 starting to integrate it into my own projects, so expect many bug
@@ -332,8 +353,6 @@ fixes, soon...</p>
 <ol class="arabic simple">
 <li>test &amp; document the fieldname spec for fv; put into shell help.</li>
 <li>unit testing in Python.</li>
-<li>command-line option to fork server before executing twill.  (or
-special test script, whatever.)</li>
 <li>execute directories/directory trees?</li>
 <li>record scripts</li>
 <li>add debug response, others?</li>
@@ -355,7 +374,7 @@ special test script, whatever.)</li>
 <p>Contributions are welcome &amp; will be duly acknowledged!</p>
 </div>
 <div class="section" id="acknowledgements-and-credits">
-<h1><a class="toc-backref" href="#id24" name="acknowledgements-and-credits">Acknowledgements and Credits</a></h1>
+<h1><a class="toc-backref" href="#id25" name="acknowledgements-and-credits">Acknowledgements and Credits</a></h1>
 <p>twill was designed and written by C. Titus Brown.</p>
 <p>Cory Dodt had a great idea with PBP, and I thank him for his insight.
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython
@@ -369,7 +388,7 @@ MATSUNO Tokuhiro, and Elvelind Grandin.</p>
 <p>Patches have been submitted by: Joeri van Ruth, Paul McGuire, Ed Rahn,
 Nic Ferrier, and Robert Leftwich.</p>
 <p>This document was written by C. Titus Brown, <a class="reference" href="mailto:titus&#64;caltech.edu">titus&#64;caltech.edu</a>.
-Last updated September '05.</p>
+Last updated October '05.</p>
 </div>
 </div>
 </body>
