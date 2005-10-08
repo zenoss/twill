@@ -12,7 +12,7 @@ setup(name = 'twill',
       license='LGPL',
 
       packages = ['twill',],
-      scripts = ['twill-sh',],
+      scripts = ['twill-sh', 'twill-fork'],
       cmdclass = {'build_py' : twill_build_py },
       maintainer = 'C. Titus Brown',
       maintainer_email = 'titus@caltech.edu',

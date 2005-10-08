@@ -1,6 +1,6 @@
 2005-10-07  Titus Brown  <t@issola.caltech.edu>
 
-	* Updated to version 0.7.3 in the code; no release yet!
+	* Updated to version 0.7.3 in the code; RELEASE.
 
 	* Added 'twill-fork' script for stress-testing.
 
