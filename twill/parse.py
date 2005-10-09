@@ -6,7 +6,7 @@ import sys
 from errors import TwillAssertionError
 from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
      alphas, alphanums, ParseException, ZeroOrMore, restOfLine, Combine, \
-     removeQuotes, Literal
+     Literal
 
 import twill.commands as commands
 import namespaces
