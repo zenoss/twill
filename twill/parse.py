@@ -149,7 +149,9 @@ Oops!  Twill assertion error on line %d of '%s' while executing
 
   >> %s
 
-''' % (n, filename, line.strip(),))
+%s
+
+''' % (n, filename, line.strip(), e))
                 raise
             except Exception, e:
                 sys.stderr.write("EXCEPTION raised at line %d of '%s'\n\n\t%s\n" % (n, filename, line.strip(),))
