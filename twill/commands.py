@@ -35,6 +35,7 @@ __all__ = ['reset_state',
            'setglobal',
            'setlocal',
            'debug',
+           'title',
            ]
 
 import re, getpass, urllib2, time
@@ -140,6 +141,12 @@ class _TwillBrowserState:
         Get the HTML for the current page.
         """
         return self._last_result.get_page()
+
+    def get_title(self):
+        """
+        Get content of the HTML title element for the current page.
+        """
+        return self._last_result.get_title()
 
     def get_url(self):
         """
@@ -711,6 +718,18 @@ def setlocal(name, value):
     """
     global_dict, local_dict = get_twill_glocals()
     local_dict[name] = value
+
+def title(what):
+    """
+    >> title <regexp>
+    
+    Succeed if the regular expression is in the page title.
+    """
+    regexp = re.compile(what)
+    title = state.get_title()
+
+    if not regexp.search(title):
+        raise TwillAssertionError("title does not contain '%s'" % (what,))
 
 #### doesn't really work just yet.
 
