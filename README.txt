@@ -107,6 +107,8 @@ e.g. ``code 200`` asserts that the page loaded fine.
 **notfind** *<regexp>* -- assert that the page *does not* contain this
 regular expression.
 
+**title** *<regexp>* -- assert that the title of this page matches this regular expression.
+
 Display
 ~~~~~~~
 
@@ -429,7 +431,7 @@ Bug reports have come in from the following fine people: Chris Miles,
 MATSUNO Tokuhiro, and Elvelind Grandin.
 
 Patches have been submitted by: Joeri van Ruth, Paul McGuire, Ed Rahn,
-Nic Ferrier, and Robert Leftwich.
+Nic Ferrier, Robert Leftwich, and Tommi Virtanen.  Thanks!
 
 This document was written by C. Titus Brown, titus@caltech.edu.
 Last updated October '05.

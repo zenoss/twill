@@ -1,3 +1,8 @@
+2005-10-09  Titus Brown  <t@issola.caltech.edu>
+
+	* Added tv@debian.org's patch: add 'title' assertion,
+	  and show error messages when TwillAssertions are caught.
+
 2005-10-07  Titus Brown  <t@issola.caltech.edu>
 
 	* Updated to version 0.7.3 in the code; RELEASE.
