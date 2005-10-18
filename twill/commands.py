@@ -245,13 +245,14 @@ class _TwillBrowserState:
         if matches and len(matches) == 1:
             found = matches[0]
 
-        regexp = re.compile(fieldname)
+        if found is None:
+            regexp = re.compile(fieldname)
 
-        matches = [ ctl for ctl in form.controls \
-                    if regexp.search(str(ctl.name)) ]
-        
-        if matches and len(matches) == 1:
-            found = matches[0]
+            matches = [ ctl for ctl in form.controls \
+                        if regexp.search(str(ctl.name)) ]
+
+            if matches and len(matches) == 1:
+                found = matches[0]
                 
         if found is None:
             # try num

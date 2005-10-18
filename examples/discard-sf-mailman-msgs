@@ -5,7 +5,7 @@ extend_with mailman_sf
 
 # unfortunately we have to hard-code in the mailing list name for
 # the moment.  not sure how to do substitutions here.
-go https://lists.sourceforge.net/lists/admindb/pywx-discuss
+go https://lists.sourceforge.net/lists/admindb/pywx-announce
 
 # fill out the page with the list password.
 getpassword "Enter list password: "

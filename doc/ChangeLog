@@ -1,3 +1,10 @@
+2005-10-18  Titus Brown  <t@issola.caltech.edu>
+
+	* fixed bug in get_form_field that inverted the priorities of
+	  form/field searches.
+
+	* added documentation for add_auth, form/field identification.
+
 2005-10-09  Titus Brown  <t@issola.caltech.edu>
 
 	* Added tv@debian.org's patch: add 'title' assertion,

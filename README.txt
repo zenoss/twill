@@ -123,13 +123,15 @@ Forms
 
 **showforms** -- show all of the forms on the page.
 
-**submit** *[<n>]* -- click the n'th submit button, if given; otherwise
-submit via the last submission button clicked; if nothing clicked, use
-the first submit button on the form.
+**submit** *[<n>]* -- click the n'th submit button, if given;
+otherwise submit via the last submission button clicked; if nothing
+clicked, use the first submit button on the form.  See `details on
+form handling`_ for more information.
 
 **formvalue** *<formnum> <fieldname> <value>* --- set the given field in the
 given form to the given value.  For read-only form widgets/controls, the
 click may be recorded for use by **submit**, but the value is not changed.
+See `details on form handling`_ for more information.
 
 **fv** -- abbreviation for 'formvalue'
 
@@ -186,7 +188,13 @@ like ``from <module> import *`` does in Python, so e.g. a function
 **getpassword** *<prompt>* -- get *silent* keyboard input and store
 it in ``__password__``.
 
-**add_auth** *<realm> <uri> <user> <password>* -- add HTTP Basic Authentication information for the given realm/URI combination.
+**add_auth** *<realm> <uri> <user> <password>* -- add HTTP Basic Authentication information for the given realm/URI combination.  For example, ::
+
+   add_auth IdyllStuff http://www.idyll.org/ titus test
+
+would tell twill that a request from the authentication realm
+"IdyllStuff" under http://www.idyll.org/ should be answered with
+username 'titus', password 'test'.
 
 Special variables
 ~~~~~~~~~~~~~~~~~
@@ -196,6 +204,58 @@ Special variables
 **__password__** -- result of last **getpassword**
 
 **__url__** -- current URL
+
+Details on Form Handling
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _details on form handling:
+
+Both the `formvalue` (or `fv`) and `submit` commands rely on a certain
+amount of implicit cleverness to do their work.  In odd situations, it
+can be annoying to determine exactly what form field `formvalue` is
+going to pick based on your field name, or what form & field `submit`
+is going to "click" on.
+
+Here is the pseudocode for how `formvalue` and `submit` figure out
+what form to use (function `twill.commands.state.get_form`)::
+
+   for each form on page:
+       if supplied regexp pattern matches the form name, select
+   
+   if no form name, try converting to an integer N & using N-1 as
+   an index into the list or forms on the page (i.e. form 1 is the
+   first form on the page).
+
+Here is the pseudocode for how `formvalue` and `submit` figure out
+what form field to use (function `twill.commands.state.get_form_field`)::
+
+   search current form for exact match to fieldname;
+   if single (unique) match, select.
+
+   if no match, search current form for regexp match to fieldname;
+   if single (unique) match, select.
+
+   if no match, convert fieldname into a number and use as an index, if
+   possible.
+
+   if *still* no match, look for exact matche to submit-button values.
+   (this is because submit buttons do not need names...)
+   if single (unique) match, select.
+
+Here is the pseudocode for `submit`::
+
+   if a form was _not_ previously selected by formvalue:
+      if there's only one form on the page, select it.
+      otherwise, fail.
+
+   if a field is not explicitly named:
+      if a submit button was "clicked" with formvalue, use it.
+      otherwise, use the first submit button on the form, if any.
+   otherwise:
+      find the field using the same rules as formvalue
+
+   finally, if a button has been picked, submit using it;
+   otherwise, submit without using a button
 
 Requirements, Availability and Licensing
 ----------------------------------------
@@ -402,6 +462,7 @@ TODO:
  5. add debug response, others?
  6. systematize variable handling a bit better: __ vs $
  7. expose 'state' & document re Grig.
+ 8. basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
 
 Longer term fixes & cleanups:
 
