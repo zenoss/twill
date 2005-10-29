@@ -74,10 +74,12 @@ def execute_command(cmd, args, globals_dict, locals_dict):
 
     eval_str = "%s(*__args__)" % (cmd,)
 
+    result = eval(eval_str, globals_dict, locals_dict)
+    
     # set __url__
     locals_dict['__url__'] = commands.state.url()
 
-    return eval(eval_str, globals_dict, locals_dict)
+    return result
 
 ###
 
@@ -160,8 +162,9 @@ Oops!  Twill assertion error on line %d of '%s' while executing
                 raise
             except Exception, e:
                 sys.stderr.write("EXCEPTION raised at line %d of '%s'\n\n\t%s\n" % (n, filename, line.strip(),))
-                sys.stderr.write(str(e))
-                raise
+                sys.stderr.write("\nError message: '%s'\n" % (str(e).strip(),))
+                sys.stderr.write("\n")
+                return
     finally:
         namespaces.pop_local_dict()
 
