@@ -86,7 +86,6 @@ class TwillBrowser:
         """
         Visit given URL.
         """
-        print 'GO'
         url = url.replace(' ', '%20')
 
         try_urls = [ url, ]
@@ -100,7 +99,6 @@ class TwillBrowser:
 
         for u in try_urls:
             try:
-                print 'TRYING', u
                 self._last_result = journey(self._browser.open, u)
                 break
             except Exception, e:
@@ -340,7 +338,6 @@ class TwillBrowser:
             control = form._click(None, None, None, 0, None, urllib2.Request)
 
         # now actually GO.
-        print 'SUB', control
         self._last_result = journey(self._browser.open, control)
 
     def save_cookies(self, filename):
