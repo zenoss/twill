@@ -80,10 +80,11 @@ if len(args):
         try:
             execute_file(filename, initial_url=options.url)
             success.append(filename)
-        except:
+        except Exception, e:
             if options.fail:
                 raise
             else:
+                print '** UNHANDLED EXCEPTION:', str(e)
                 failure.append(filename)
 
     print '--'
