@@ -107,6 +107,10 @@ class TwillBrowser:
         print '==> at', self.get_url()
 
     def reload(self):
+        """
+        Tell the browser to reload the current page.
+        """
+        print self.get_url()
         self._last_result = journey(self._browser.reload)
         print '==> reloaded'
 
@@ -117,9 +121,11 @@ class TwillBrowser:
         back_url = self._browser.back
         try:
             self._last_result = journey(back_url)
-        except AttributeError:
+        except AttributeError, e:
+            print 'BACK ATTR ERROR', str(e)            
             self._last_result = None
-        except BrowserStateError:
+        except BrowserStateError, e:
+            print 'BACK STATE ERROR', str(e)
             self._last_result = None
         
         if self._last_result:

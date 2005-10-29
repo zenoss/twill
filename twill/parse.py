@@ -81,12 +81,17 @@ def execute_command(cmd, args, globals_dict, locals_dict):
 
 ###
 
+_print_commands = False
+
 def parse_command(line, globals_dict, locals_dict):
     """
     Parse command.
     """
     res = full_command.parseString(line)
     if res:
+        if _print_commands:
+            print "twill: executing cmd '%s'" % (line.strip(),)
+            
         command = res[0]
         args = process_args(res[1:], globals_dict, locals_dict)
 
@@ -159,3 +164,13 @@ Oops!  Twill assertion error on line %d of '%s' while executing
                 raise
     finally:
         namespaces.pop_local_dict()
+
+###
+
+def debug_print_commands(flag):
+    """
+    Turn on/off printing of commands as they are executed.  'flag' is bool.
+    """
+    global _print_commands
+    _print_commands = bool(flag)
+        

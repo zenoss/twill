@@ -46,7 +46,6 @@ from browser import TwillBrowser
 from errors import TwillAssertionError
 from utils import set_form_control_value
 from namespaces import get_twill_glocals
-
         
 state = TwillBrowser()
 
@@ -352,9 +351,17 @@ def debug(what, level):
 
     <what> can be:
        * http (any level >= 1), to display the HTTP transactions.
+       * commands (any level >= 1), to display the commands being executed.
     """
+    import parse
+    
     if what == "http":
         state._browser.set_debug_http(int(level))
+    elif what == 'twill':
+        if level > 0:
+            parse.debug_print_commands(True)
+        else:
+            parse.debug_print_commands(False)
 
 def run(cmd):
     """
