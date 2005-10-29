@@ -164,7 +164,8 @@ Oops!  Twill assertion error on line %d of '%s' while executing
                 sys.stderr.write("EXCEPTION raised at line %d of '%s'\n\n\t%s\n" % (n, filename, line.strip(),))
                 sys.stderr.write("\nError message: '%s'\n" % (str(e).strip(),))
                 sys.stderr.write("\n")
-                return
+                raise
+
     finally:
         namespaces.pop_local_dict()
 

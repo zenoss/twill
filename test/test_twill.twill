@@ -10,7 +10,7 @@
 # should fail silently
 back
 
-go http://localhost:8080/
+go http://issola:8080/
 code 200
 
 # miscellaneous gunk for better code coverage
@@ -20,7 +20,7 @@ agent test
 
 clear_cookies
 
-go localhost:8080/
+go issola:8080/
 code 200
 
 # intro page.
@@ -73,7 +73,7 @@ echo 'URL is' __url__
 go restricted/
 code 403
 back
-url http://localhost:8080/
+url http://issola:8080/
 
 find 'this is visit #2'
 
@@ -85,8 +85,6 @@ echo 'URL4 is' __url__
 #find 'this is visit #2'
 
 go ./login
-
-exit 0
 
 # test formclear
 showforms
@@ -138,6 +136,8 @@ code 403
 ### test input/password
 
 back
+back
+
 go ./login
 
 getinput "Enter some (weird) input: "

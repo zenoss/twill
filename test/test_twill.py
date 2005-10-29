@@ -79,7 +79,7 @@ class TwillTest(Directory):
     """
     _q_exports = ['logout', 'increment', 'incrementfail', "", 'restricted',
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
-                  'simpleform', 'upload_file', 'http_auth']
+                  'simpleform', 'upload_file', 'http_auth', 'formpostredirect']
 
     def __init__(self):
         self.restricted = Restricted()
@@ -143,6 +143,18 @@ class TwillTest(Directory):
         
         return "%s %s <form method=POST><input type=text name=n><input type=text name=n2></form>" % (w1.parse(request),
                                                          w2.parse(request),)
+
+    def formpostredirect(self):
+        request = get_request()
+
+        if not request.form:
+            return """\
+<form method=POST enctype=multipart/form-data>
+<input type=text name=test>
+<input type=submit value=submit name=submit>
+</form>
+"""
+        redirect(get_path(1) + '/')
 
     def logout(self):
         # expire session
