@@ -4,8 +4,10 @@
 ####
 #### add_auth, extend_with, runfile, setglobal/setlocal interaction
 
-debug http 1
+#debug http 1
+#debug twill 1
 
+# should fail silently
 back
 
 go http://localhost:8080/
@@ -66,11 +68,25 @@ find "this is visit #2"
 
 # ok, cookies check out. now check login/access restricted.
 
+echo 'URL is' __url__
+
 go restricted/
 code 403
-
 back
+url http://localhost:8080/
+
+find 'this is visit #2'
+
+reload
+
+echo 'URL4 is' __url__
+
+#code 200
+#find 'this is visit #2'
+
 go ./login
+
+exit 0
 
 # test formclear
 showforms

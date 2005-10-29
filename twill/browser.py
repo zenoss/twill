@@ -97,20 +97,24 @@ class TwillBrowser:
             full_url = 'http://%s' % (url,)  # mimic browser behavior
             try_urls.append(full_url)
 
+        success = False
         for u in try_urls:
             try:
                 self._last_result = journey(self._browser.open, u)
+                success = True
                 break
             except Exception, e:
                 pass
-            
-        print '==> at', self.get_url()
+
+        if success:
+            print '==> at', self.get_url()
+        else:
+            raise BrowserStateError("cannot go to '%s'" % (url,))
 
     def reload(self):
         """
         Tell the browser to reload the current page.
         """
-        print self.get_url()
         self._last_result = journey(self._browser.reload)
         print '==> reloaded'
 
@@ -122,10 +126,8 @@ class TwillBrowser:
         try:
             self._last_result = journey(back_url)
         except AttributeError, e:
-            print 'BACK ATTR ERROR', str(e)            
             self._last_result = None
         except BrowserStateError, e:
-            print 'BACK STATE ERROR', str(e)
             self._last_result = None
         
         if self._last_result:
