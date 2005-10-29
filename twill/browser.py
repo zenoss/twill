@@ -1,3 +1,12 @@
+"""
+Python classes for proper browser behavior.
+
+Contains both `PatchedMechanizeBrowser`, which contains twill-specific
+fixes/patches/overrides for mechanize behavior, and `TwillBrowser`, a
+more stateful browser with a somewhat simpler interface.  `TwillBrowser`
+is what is used directly by `commands.py`.
+"""
+
 # Python imports
 import urllib2
 import re
@@ -11,7 +20,27 @@ import ClientCookie, ClientForm
 from utils import trunc, print_form, journey
 
 class PatchedMechanizeBrowser(MechanizeBrowser):
-    pass
+    def viewing_html(self):
+        """
+        Return whether the current response contains HTML data.
+
+        The patched behavior is twofold:
+          1) to assume that text/xml is (or at least *may* be) HTML.
+          2) to assume that *no* content-type means ==> HTML.
+
+        #1 is a valid point.  #2 may be technically incorrect, but
+        twill is for *debugging* servers that be screwy, after all...
+        """
+        if self._response is None:
+            raise BrowserStateError("not viewing any document")
+        ct = self._response.info().getheaders("content-type")
+
+        # CTB: no content-type? assume HTML.
+        if not ct:
+            return True
+        
+        return ct and (ct[0].startswith("text/html") or \
+                       ct[0].startswith("text/xml"))
 
 #
 # TwillBrowser

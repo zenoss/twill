@@ -1,5 +1,6 @@
 """
-Implementation of all of the individual 'twill' commands.
+Implementation of all of the individual 'twill' commands available through
+twill-sh.
 """
 
 # export:
