@@ -1,6 +1,9 @@
+#! /usr/local/bin/python2.3
 """
 Quixote test app for twill.
 """
+import sys
+sys.path.insert(0, '/u/t/dev/')
 
 from quixote.publish import Publisher
 from quixote.errors import AccessError
@@ -9,6 +12,7 @@ from quixote.directory import Directory, AccessControlled
 from quixote import get_user, get_session, get_session_manager, get_path, \
      redirect, get_request
 from quixote.form import widget
+import base64
 
 class AlwaysSession(Session):
     def __init__(self, session_id):
@@ -22,6 +26,29 @@ class AlwaysSession(Session):
         return True
 
     is_dirty = has_info
+
+from quixote.errors import AccessError
+class UnauthorizedError(AccessError):
+    """
+    The request requires user authentication.
+    This subclass of AccessError sends a 401 instead of a 403,
+    hinting that the client should try again with authentication.
+
+    (from http://www.quixote.ca/qx/HttpBasicAuthentication)
+    """
+    status_code = 401
+    title = "Unauthorized"
+    description = "You are not authorized to access this resource."
+
+    def __init__(self, realm='Protected', public_msg=None, private_msg=None):
+        self.realm = realm
+        AccessError.__init__(self, public_msg, private_msg)
+        
+    def format(self):
+        request = get_request()
+        request.response.set_header('WWW-Authenticate',
+                                    'Basic realm="%s"' % self.realm)
+        return AccessError.format(self)
 
 def create_publisher():
     """
@@ -52,10 +79,11 @@ class TwillTest(Directory):
     """
     _q_exports = ['logout', 'increment', 'incrementfail', "", 'restricted',
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
-                  'simpleform', 'upload_file']
+                  'simpleform', 'upload_file', 'http_auth']
 
     def __init__(self):
         self.restricted = Restricted()
+        self.http_auth = HttpAuthRestricted()
 
     def _q_index(self):
         session = get_session()
@@ -142,3 +170,55 @@ class Restricted(AccessControlled, Directory):
 
     def _q_index(self):
         return "you made it!"
+
+class HttpAuthRestricted(AccessControlled, Directory):
+    _q_exports = [""]
+
+    def _q_access(self):
+        r = get_request()
+
+        print '======================== NEW REQUEST'
+        for k, v in r.environ.items():
+            print '***', k, ':', v
+
+        ha = r.get_environ('HTTP_AUTHORIZATION', None)
+        print 'ACCESS'
+        if ha:
+            print 'HA'
+            auth_type, auth_string = ha.split()
+            login, passwd = base64.decodestring(auth_string).split(':')
+
+            print 'YO', login, passwd
+            if login == 'test' and passwd == 'password':
+                return
+            
+        raise UnauthorizedError
+
+    def _q_index(self):
+        return "you made it!"
+
+#!/usr/bin/env python
+"""$URL$
+$Id$
+"""
+
+import sys
+import os
+from quixote.http_request import HTTPRequest
+
+def run(create_publisher):
+    if sys.platform == "win32":
+        # on Windows, stdin and stdout are in text mode by default
+        import msvcrt
+        msvcrt.setmode(sys.__stdin__.fileno(), os.O_BINARY)
+        msvcrt.setmode(sys.__stdout__.fileno(), os.O_BINARY)
+    publisher = create_publisher()
+    request = HTTPRequest(sys.__stdin__, os.environ)
+    response = publisher.process_request(request)
+    try:
+        response.write(sys.__stdout__)
+    except IOError, err:
+        publisher.log("IOError while sending response ignored: %s" % err)
+
+if __name__ == '__main__':
+    run(create_publisher)
