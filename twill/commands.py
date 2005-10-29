@@ -6,8 +6,10 @@ twill-sh.
 # export:
 __all__ = ['reset_state',
            'extend_with',
+           'exit',
            'go',
            'reload',
+           'url',
            'code',
            'follow',
            'find',
@@ -37,6 +39,7 @@ __all__ = ['reset_state',
            'setlocal',
            'debug',
            'title',
+           'exit'
            ]
 
 import re, getpass, time
@@ -59,6 +62,14 @@ def reset_state():
     state = TwillBrowser()
 
 ###
+
+def exit(code="0"):
+    """
+    exit [<code>]
+
+    Exits twill, with the given exit code (defaults to 0, "no error").
+    """
+    raise SystemExit(int(code))
 
 def go(url):
     """
@@ -86,6 +97,18 @@ def code(should_be):
     if state.get_code() != int(should_be):
         raise TwillAssertionError("code is %d, != %d" % (state.get_code(),
                                                          should_be))
+
+def url(should_be):
+    """
+    >> url <regexp>
+
+    Check to make sure that the current URL matches the regexp.
+    """
+    regexp = re.compile(should_be)
+    current_url = state.get_url()
+    
+    if not regexp.search(current_url):
+        raise TwillAssertionError("url does not match '%s'" % (should_be,))
 
 def follow(what):
     """
