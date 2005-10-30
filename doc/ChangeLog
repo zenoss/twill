@@ -1,3 +1,34 @@
+2005-10-29  Titus Brown  <t@issola.caltech.edu>
+
+	* Cleared content-type header in wwwsearch.zip, urllib2_support.py,
+	  class HTTPRedirectHandler, redirect_request.  This fixes a bug
+	  I noticed when testing collar: redirects inappropriately retain
+	  content-type, and this breaks Quixote, at the least, when
+	  enctype multipart/form-data is used in a POST prior to the
+	  redirect.  (CTB: this should be dealt with more generally.)
+
+	* Fixed back() behavior in _mechanize.  (I probably broke it in the
+	  first place, sigh.)  Now accords with latest trunk _mechanize.py.
+
+	* Fixed order of __url__ setting in parse.execute_command.
+
+	* Added 'url' and 'exit' commands.
+
+	* Added 'debug twill' to set printout of twill commands as they
+	  are executed.
+
+	* Attempted to add http_auth testing, but failed.  (non-functional
+	  code left in test/)
+
+	* Overrode 'view_html' bool function in PatchedMechanizeBrowser.
+	  It now assumes that no content-type means text/html, and also
+	  allows 'text/xml' to be used.  (James Cameron's issue.)
+
+	* moved _TwillBrowserState into browser.py, named it TwillBrowser().
+
+	* twill-sh now prints out the exception str when executing files,
+	  even when 'fail' flag is not set.
+
 2005-10-18  Titus Brown  <t@issola.caltech.edu>
 
 	* fixed bug in get_form_field that inverted the priorities of

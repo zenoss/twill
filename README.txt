@@ -107,6 +107,8 @@ e.g. ``code 200`` asserts that the page loaded fine.
 **notfind** *<regexp>* -- assert that the page *does not* contain this
 regular expression.
 
+**url** *<regexp>* -- assert that the current URL matches the given regexp.
+
 **title** *<regexp>* -- assert that the title of this page matches this regular expression.
 
 Display
@@ -153,7 +155,7 @@ Cookies
 Debugging
 ~~~~~~~~~
 
-**debug** *<what>* *<level>* -- turn on debugging/tracing for various functions.
+**debug** *<what>* *<level>* -- turn on debugging/tracing for various functions.  Currently will show HTTP headers ('http') and twill commands ('twill').
 
 Variable handling
 ~~~~~~~~~~~~~~~~~
@@ -170,6 +172,8 @@ they exist.
 
 Other commands
 ~~~~~~~~~~~~~~
+
+**exit** *[<code>]* -- exit with the given integer code, if specified.  'code' defaults to 0.
 
 **run** *<command>* -- exec the given Python command.
 
@@ -422,9 +426,8 @@ another Python program, you can do:
 Note that all arguments need to be strings, at least for the moment.
 
 twill also provides a simple wrapper for mechanize_ functionality, in
-the `commands.py` module.  This may be useful for twill extensions as
-well as for other toolkits, but I can't make any guarantees about the
-stability of that API for the moment...
+the `browser.py` module.  This may be useful for twill extensions as
+well as for other toolkits, but the API is still unstable.
 
 Miscellaneous Implementation Details
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -438,20 +441,8 @@ Miscellaneous Implementation Details
 .. _pyparsing: http://pyparsing.sourceforge.net/
 .. _cmd: http://docs.python.org/lib/module-cmd.html
 
-Why Reimplement PBP?
---------------------
-
-PBP is a great idea, but Cory Dodt (the author of PBP) is focusing on
-other things at the moment, and I needed a solid scripting language
-for Web testing.  Plus, I wanted to play with mechanize.
-
 Future Plans
 ------------
-
-I'm scratching my own itch with twill at the moment, so development of
-the core functionality will proceed sporadically.  Right now I'm
-starting to integrate it into my own projects, so expect many bug
-fixes, soon...
 
 TODO:
 
@@ -463,6 +454,10 @@ TODO:
  6. systematize variable handling a bit better: __ vs $
  7. expose 'state' & document re Grig.
  8. basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
+ 9. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
+ 10. r/o controls ==> writeable
+ 11. 'go' on non-absolute URLs breaks when executed twice in a row.
+ 12. twill-fork: make file writing stuff optional; test massive fork fn.
 
 Longer term fixes & cleanups:
 
@@ -472,6 +467,7 @@ Longer term fixes & cleanups:
  4. Test HTTP basic auth.
  5. command line completion doesn't understand extend_with results yet.
  6. extend_with etc. -- module namespaces, e.g. extmodule.fn?
+ 7. UPGRADE wwwsearch.
 
 Contributions are welcome & will be duly acknowledged!
 
@@ -492,7 +488,7 @@ Bug reports have come in from the following fine people: Chris Miles,
 MATSUNO Tokuhiro, and Elvelind Grandin.
 
 Patches have been submitted by: Joeri van Ruth, Paul McGuire, Ed Rahn,
-Nic Ferrier, Robert Leftwich, and Tommi Virtanen.  Thanks!
+Nic Ferrier, Robert Leftwich, James Cameron, and Tommi Virtanen.  Thanks!
 
 This document was written by C. Titus Brown, titus@caltech.edu.
 Last updated October '05.
