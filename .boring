@@ -26,3 +26,4 @@
 \.cvsignore$
 \.cookies$
 \.twill-history$
+build

@@ -1,3 +1,9 @@
+2005-10-30  Titus Brown  <t@issola.caltech.edu>
+
+	* Now catch errors from __ and $ eval failure (i.e. not in any
+	  namespace) and reset the evaluation to just be the original name.
+	  (bug reported by sureshvv).
+
 2005-10-29  Titus Brown  <t@issola.caltech.edu>
 
 	* Cleared content-type header in wwwsearch.zip, urllib2_support.py,

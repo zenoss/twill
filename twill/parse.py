@@ -47,12 +47,19 @@ def process_args(args, globals_dict, locals_dict):
 
         # __variable substitution.  @CTB do we need this?
         elif arg.startswith('__'):
-            val = eval(arg, globals_dict, locals_dict)
+            try:
+                val = eval(arg, globals_dict, locals_dict)
+            except NameError:           # not in dictionary; don't interpret.
+                val = arg
+                
             newargs.append(val)
 
         # $variable substitution
         elif arg.startswith('$'):
-            val = eval(arg[1:], globals_dict, locals_dict)
+            try:
+                val = eval(arg[1:], globals_dict, locals_dict)
+            except NameError:           # not in dictionary; don't interpret.
+                val = arg
             newargs.append(val)
         else:
             newargs.append(arg)

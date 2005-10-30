@@ -3,6 +3,7 @@
 #### that only print stuff out, and:
 ####
 #### add_auth, extend_with, runfile, setglobal/setlocal interaction
+#### also, be sure to test $/__ interpolation.
 
 #debug http 1
 #debug twill 1
