@@ -446,28 +446,33 @@ Future Plans
 
 TODO:
 
+0.8 release:
+
  1. test & document the fieldname spec for fv; put into shell help.
- 2. unit testing in Python.
- 3. execute directories/directory trees?
- 4. record scripts
- 5. add debug response, others?
- 6. systematize variable handling a bit better: __ vs $
- 7. expose 'state' & document re Grig.
- 8. basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
- 9. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
- 10. r/o controls ==> writeable
- 11. 'go' on non-absolute URLs breaks when executed twice in a row.
- 12. twill-fork: make file writing stuff optional; test massive fork fn.
+ 2. r/o controls ==> writeable
+ 3. 'go' on non-absolute URLs breaks when executed twice in a row.
+ 4. UPGRADE wwwsearch.
+ 5. version ==> 0.8
+
+after that:
+
+ 1. break "unit tests" down into units.
+ 2. execute directories/directory trees?
+ 3. record scripts
+ 4. systematize variable handling a bit better: __ vs $
+ 5. expose 'state' & document re Grig; regexp esp.
+ 6. basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
+ 7. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
+ 8. twill-fork: make file writing stuff optional; test massive fork fn.
+ 9. Test HTTP basic auth.
 
 Longer term fixes & cleanups:
 
  1. fix spaces-in-URLs problem more generally (in urllib2).
  2. Paul McGuire's pyparsing suggestions
  3. cookie "1" vs 1, in cookielib.
- 4. Test HTTP basic auth.
- 5. command line completion doesn't understand extend_with results yet.
- 6. extend_with etc. -- module namespaces, e.g. extmodule.fn?
- 7. UPGRADE wwwsearch.
+ 4. command line completion doesn't understand extend_with results yet.
+ 5. extend_with etc. -- module namespaces, e.g. extmodule.fn?
 
 Contributions are welcome & will be duly acknowledged!
 
@@ -491,4 +496,4 @@ Patches have been submitted by: Joeri van Ruth, Paul McGuire, Ed Rahn,
 Nic Ferrier, Robert Leftwich, James Cameron, and Tommi Virtanen.  Thanks!
 
 This document was written by C. Titus Brown, titus@caltech.edu.
-Last updated October '05.
+Last updated November '05.
