@@ -5,6 +5,8 @@ Quixote test app for twill.
 import sys
 sys.path.insert(0, '/u/t/dev/')
 
+import os
+
 from quixote.publish import Publisher
 from quixote.errors import AccessError
 from quixote.session import Session, SessionManager
@@ -79,7 +81,8 @@ class TwillTest(Directory):
     """
     _q_exports = ['logout', 'increment', 'incrementfail', "", 'restricted',
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
-                  'simpleform', 'upload_file', 'http_auth', 'formpostredirect']
+                  'simpleform', 'upload_file', 'http_auth', 'formpostredirect',
+                  'exit']
 
     def __init__(self):
         self.restricted = Restricted()
@@ -171,6 +174,9 @@ class TwillTest(Directory):
             return contents
         else:
             return "<form enctype=multipart/form-data method=POST> <input type=file name=upload> <input type=submit value=submit> </form>"
+
+    def exit(self):
+        os._exit(0)
 
 class Restricted(AccessControlled, Directory):
     _q_exports = [""]

@@ -1,3 +1,8 @@
+2005-11-04  Titus Brown  <t@issola.caltech.edu>
+
+	* Put test/ tests into a nosetest-compatible format.  Yay,
+	  unit tests!
+
 2005-10-30  Titus Brown  <t@issola.caltech.edu>
 
 	* Now catch errors from __ and $ eval failure (i.e. not in any
