@@ -219,6 +219,14 @@ def submit(submit_button=None):
     Submit the current form (the one last clicked on) by clicking on the
     n'th submission button.  If no "buttonspec" is given, submit the current
     form by using the last clicked submit button.
+
+    The form to submit is the last form clicked on with a 'formvalue' command.
+
+    The button used to submit is chosen based on 'buttonspec'.  If 'buttonspec'
+    is given, it's matched against buttons using the same rules that
+    'formvalue' uses.  If 'buttonspec' is not given, submit uses the last
+    submit button clicked on by 'formvalue'.  If none can be found,
+    submit submits the form with no submit button clicked.
     """
     browser.submit(submit_button)
 
@@ -258,13 +266,24 @@ def formvalue(formname, fieldname, value):
     Set value of a form field.
 
     There are some ambiguities in the way formvalue deals with lists:
-    'fv' will *add* the given value to a multilist.
+    'formvalue' will *add* the given value to a list of multiple selection,
+    for lists that allow it.
+
+    Forms are matched against 'formname' as follows:
+      1. regexp match to actual form name;
+      2. if 'formname' is an integer, it's tried as an index.
+
+    Form controls are matched against 'fieldname' as follows:
+      1. unique exact match to control name;
+      2. unique regexp match to control name;
+      3. if fieldname is an integer, it's tried as an index;
+      4. unique & exact match to submit-button values.
 
     Formvalue ignores read-only fields completely; if they're readonly,
     nothing is done, unless the config options ('config' command) are
     changed.
 
-    Available as 'fv' as well.
+    'formvalue' is vailable as 'fv' as well.
     """
     form = browser.get_form(formname)
     control = browser.get_form_field(form, fieldname)

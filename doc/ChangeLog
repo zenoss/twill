@@ -1,3 +1,7 @@
+2005-11-06  Titus Brown  <t@issola.caltech.edu>
+
+	* Updated 'formvalue' and 'submit' help docs.
+
 2005-11-05  Titus Brown  <t@issola.caltech.edu>
 
 	* Added 'config' command, 'readonly_controls_writeable' option.

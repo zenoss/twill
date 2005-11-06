@@ -239,17 +239,16 @@ what form to use (function `twill.commands.browser.get_form`)::
 Here is the pseudocode for how `formvalue` and `submit` figure out
 what form field to use (function `twill.commands.browser.get_form_field`)::
 
-   search current form for exact match to fieldname;
+   search current form for control name with exact match to fieldname;
    if single (unique) match, select.
 
-   if no match, search current form for regexp match to fieldname;
+   if no match, search current form for control name with regexp match to fieldname;
    if single (unique) match, select.
 
    if no match, convert fieldname into a number and use as an index, if
    possible.
 
-   if *still* no match, look for exact matche to submit-button values.
-   (this is because submit buttons do not need names...)
+   if *still* no match, look for exact matches to submit-button values.
    if single (unique) match, select.
 
 Here is the pseudocode for `submit`::
@@ -454,7 +453,7 @@ TODO:
 
 0.8 release:
 
- 1. test & document the fieldname spec for fv; put into shell help.
+ 1. test the documented fieldname spec for fv/submit.
  2. 'go' on non-absolute URLs breaks when executed twice in a row.
  3. UPGRADE wwwsearch.
 
@@ -477,6 +476,7 @@ Longer term fixes & cleanups:
  3. cookie "1" vs 1, in cookielib.
  4. command line completion doesn't understand extend_with results yet.
  5. extend_with etc. -- module namespaces, e.g. extmodule.fn?
+ 6. doc reorganization: separate out commands, make source docs.
 
 Contributions are welcome & will be duly acknowledged!
 

@@ -224,17 +224,16 @@ first form on the page).
 <p>Here is the pseudocode for how <cite>formvalue</cite> and <cite>submit</cite> figure out
 what form field to use (function <cite>twill.commands.browser.get_form_field</cite>):</p>
 <pre class="literal-block">
-search current form for exact match to fieldname;
+search current form for control name with exact match to fieldname;
 if single (unique) match, select.
 
-if no match, search current form for regexp match to fieldname;
+if no match, search current form for control name with regexp match to fieldname;
 if single (unique) match, select.
 
 if no match, convert fieldname into a number and use as an index, if
 possible.
 
-if *still* no match, look for exact matche to submit-button values.
-(this is because submit buttons do not need names...)
+if *still* no match, look for exact matches to submit-button values.
 if single (unique) match, select.
 </pre>
 <p>Here is the pseudocode for <cite>submit</cite>:</p>
@@ -405,7 +404,7 @@ well as for other toolkits, but the API is still unstable.</p>
 <p>0.8 release:</p>
 <blockquote>
 <ol class="arabic simple">
-<li>test &amp; document the fieldname spec for fv; put into shell help.</li>
+<li>test the documented fieldname spec for fv; put into shell help.</li>
 <li>'go' on non-absolute URLs breaks when executed twice in a row.</li>
 <li>UPGRADE wwwsearch.</li>
 </ol>
@@ -432,6 +431,7 @@ well as for other toolkits, but the API is still unstable.</p>
 <li>cookie &quot;1&quot; vs 1, in cookielib.</li>
 <li>command line completion doesn't understand extend_with results yet.</li>
 <li>extend_with etc. -- module namespaces, e.g. extmodule.fn?</li>
+<li>doc reorganization: separate out commands, make source docs.</li>
 </ol>
 </blockquote>
 <p>Contributions are welcome &amp; will be duly acknowledged!</p>
