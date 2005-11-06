@@ -4,7 +4,7 @@ twill-sh.
 """
 
 # export:
-__all__ = ['reset_state',
+__all__ = ['reset_browser',
            'extend_with',
            'exit',
            'go',
@@ -21,6 +21,7 @@ __all__ = ['reset_state',
            'sleep',
            'agent',
            'showforms',
+           'showlinks',
            'submit',
            'formvalue',
            'fv',
@@ -50,16 +51,16 @@ from errors import TwillAssertionError
 from utils import set_form_control_value
 from namespaces import get_twill_glocals
         
-state = TwillBrowser()
+browser = TwillBrowser()
 
-def reset_state():
+def reset_browser():
     """
-    >> reset_state
+    >> reset_browser
 
     Reset the browser completely.
     """
-    global state
-    state = TwillBrowser()
+    global browser
+    browser = TwillBrowser()
 
 ###
 
@@ -77,7 +78,7 @@ def go(url):
     
     Visit the URL given.
     """
-    state.go(url)
+    browser.go(url)
 
 def reload():
     """
@@ -85,7 +86,7 @@ def reload():
     
     Reload the current URL.
     """
-    state.reload()
+    browser.reload()
 
 def code(should_be):
     """
@@ -94,8 +95,8 @@ def code(should_be):
     Check to make sure the response code for the last page is as given.
     """
     should_be = int(should_be)
-    if state.get_code() != int(should_be):
-        raise TwillAssertionError("code is %d, != %d" % (state.get_code(),
+    if browser.get_code() != int(should_be):
+        raise TwillAssertionError("code is %d, != %d" % (browser.get_code(),
                                                          should_be))
 
 def url(should_be):
@@ -105,7 +106,7 @@ def url(should_be):
     Check to make sure that the current URL matches the regexp.
     """
     regexp = re.compile(should_be)
-    current_url = state.get_url()
+    current_url = browser.get_url()
     
     if not regexp.search(current_url):
         raise TwillAssertionError("url does not match '%s'" % (should_be,))
@@ -117,10 +118,10 @@ def follow(what):
     Find the first matching link on the page & visit it.
     """
     regexp = re.compile(what)
-    links = state.find_link(regexp)
+    links = browser.find_link(regexp)
 
     if links:
-        state.follow_link(links)
+        browser.follow_link(links)
         return
 
     raise TwillAssertionError("no links match to '%s'" % (what,))
@@ -132,7 +133,7 @@ def find(what):
     Succeed if the regular expression is on the page.
     """
     regexp = re.compile(what)
-    page = state.get_html()
+    page = browser.get_html()
 
     if not regexp.search(page):
         raise TwillAssertionError("no match to '%s'" % (what,))
@@ -144,7 +145,7 @@ def notfind(what):
     Fail if the regular expression is on the page.
     """
     regexp = re.compile(what)
-    page = state.get_html()
+    page = browser.get_html()
 
     if regexp.search(page):
         raise TwillAssertionError("match to '%s'" % (what,))
@@ -155,7 +156,7 @@ def back():
     
     Return to the previous page.
     """
-    state.back()
+    browser.back()
 
 def show():
     """
@@ -163,7 +164,7 @@ def show():
     
     Show the HTML for the current page.
     """
-    print state.get_html()
+    print browser.get_html()
 
 def echo(*strs):
     """
@@ -181,7 +182,7 @@ def save_html(filename):
     
     Save the HTML for the current page into <filename>
     """
-    html = state.get_html()
+    html = browser.get_html()
 
     f = open(filename, 'w')
     f.write(html)
@@ -204,7 +205,7 @@ def agent(what):
     """
     what = what.strip()
     agent = agent_map.get(what, what)
-    state.set_agent_string(agent)
+    browser.set_agent_string(agent)
 
 def submit(submit_button=None):
     """
@@ -214,7 +215,7 @@ def submit(submit_button=None):
     n'th submission button.  If no "buttonspec" is given, submit the current
     form by using the last clicked submit button.
     """
-    state.submit(submit_button)
+    browser.submit(submit_button)
 
 def showforms():
     """
@@ -222,7 +223,15 @@ def showforms():
     
     Show all of the forms on the current page.
     """
-    state.showforms()
+    browser.showforms()
+
+def showlinks():
+    """
+    >> showlinks
+    
+    Show all of the links on the current page.
+    """
+    browser.showlinks()
 
 def formclear(formname):
     """
@@ -230,7 +239,7 @@ def formclear(formname):
     
     Run 'clear' on all of the controls in this form.
     """
-    form = state.get_form(formname)
+    form = browser.get_form(formname)
     for control in form.controls:
         if control.readonly:
             continue
@@ -251,11 +260,11 @@ def formvalue(formname, fieldname, value):
 
     Available as 'fv' as well.
     """
-    form = state.get_form(formname)
-    control = state.get_form_field(form, fieldname)
+    form = browser.get_form(formname)
+    control = browser.get_form_field(form, fieldname)
 
     if control:
-        state.clicked(form, control)
+        browser.clicked(form, control)
         if control.readonly:
             return
 
@@ -272,15 +281,15 @@ def formfile(formname, fieldname, filename, content_type=None):
 
     Upload a file via an "upload file" form field.
     """
-    form = state.get_form(formname)
-    control = state.get_form_field(form, fieldname)
+    form = browser.get_form(formname)
+    control = browser.get_form_field(form, fieldname)
 
     if control:
         if not control.is_of_kind('file'):
             print 'ERROR: field is not a file upload field!'
             assert 0
             
-        state.clicked(form, control)
+        browser.clicked(form, control)
         fp = open(filename)
         control.add_file(fp, content_type, filename)
 
@@ -329,7 +338,7 @@ def save_cookies(filename):
 
     Save all of the current cookies to the given file.
     """
-    state.save_cookies(filename)
+    browser.save_cookies(filename)
 
 def load_cookies(filename):
     """
@@ -337,7 +346,7 @@ def load_cookies(filename):
 
     Clear the cookie jar and load cookies from the given file.
     """
-    state.load_cookies(filename)
+    browser.load_cookies(filename)
 
 def clear_cookies():
     """
@@ -345,7 +354,7 @@ def clear_cookies():
 
     Clear the cookie jar.
     """
-    state.clear_cookies()
+    browser.clear_cookies()
 
 def show_cookies():
     """
@@ -353,7 +362,7 @@ def show_cookies():
 
     Show all of the cookies in the cookie jar.
     """
-    state.show_cookies()
+    browser.show_cookies()
 
 def add_auth(realm, uri, user, passwd):
     """
@@ -361,7 +370,7 @@ def add_auth(realm, uri, user, passwd):
 
     Add HTTP Basic Authentication information for the given realm/uri.
     """
-    creds = state.creds
+    creds = browser.creds
     creds.add_password(realm, uri, user, passwd)
 
     print "Added auth info: realm '%s' / URI '%s' / user '%s'" % (realm,
@@ -379,7 +388,7 @@ def debug(what, level):
     import parse
     
     if what == "http":
-        state._browser.set_debug_http(int(level))
+        browser._browser.set_debug_http(int(level))
     elif what == 'twill':
         if level > 0:
             parse.debug_print_commands(True)
@@ -400,7 +409,7 @@ def run(cmd):
 
     # set __url__
     local_dict['__cmd__'] = cmd
-    local_dict['__url__'] = commands.state.url()
+    local_dict['__url__'] = commands.browser.url()
 
     exec(cmd, global_dict, local_dict)
 
@@ -445,7 +454,7 @@ def title(what):
     Succeed if the regular expression is in the page title.
     """
     regexp = re.compile(what)
-    title = state.get_title()
+    title = browser.get_title()
 
     if not regexp.search(title):
         raise TwillAssertionError("title does not contain '%s'" % (what,))

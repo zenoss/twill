@@ -181,7 +181,7 @@ Other commands
 
 **sleep** *[<seconds>]* -- sleep the given number of seconds.  Defaults to 1 second.
 
-**reset_state** -- reset the browser.
+**reset_browser** -- reset the browser.
 
 **extend_with** *<module>* -- import commands from Python module.  This acts
 like ``from <module> import *`` does in Python, so e.g. a function
@@ -221,7 +221,7 @@ going to pick based on your field name, or what form & field `submit`
 is going to "click" on.
 
 Here is the pseudocode for how `formvalue` and `submit` figure out
-what form to use (function `twill.commands.state.get_form`)::
+what form to use (function `twill.commands.browser.get_form`)::
 
    for each form on page:
        if supplied regexp pattern matches the form name, select
@@ -231,7 +231,7 @@ what form to use (function `twill.commands.state.get_form`)::
    first form on the page).
 
 Here is the pseudocode for how `formvalue` and `submit` figure out
-what form field to use (function `twill.commands.state.get_form_field`)::
+what form field to use (function `twill.commands.browser.get_form_field`)::
 
    search current form for exact match to fieldname;
    if single (unique) match, select.
@@ -460,7 +460,7 @@ after that:
  2. execute directories/directory trees?
  3. record scripts
  4. systematize variable handling a bit better: __ vs $
- 5. expose 'state' & document re Grig; regexp esp.
+ 5. expose 'browser' & document re Grig; regexp esp.
  6. basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
  7. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
  8. twill-fork: make file writing stuff optional; test massive fork fn.

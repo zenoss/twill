@@ -98,7 +98,7 @@ class TwillCommandLoop(object, cmd.Cmd):
 
     def _set_prompt(self):
         "Set the prompt to the current page."
-        url = commands.state.url()
+        url = commands.browser.url()
         self.prompt = "current page: %s\n>> " % (url,)
 
     def precmd(self, line):

@@ -84,7 +84,7 @@ def execute_command(cmd, args, globals_dict, locals_dict):
     result = eval(eval_str, globals_dict, locals_dict)
     
     # set __url__
-    locals_dict['__url__'] = commands.state.url()
+    locals_dict['__url__'] = commands.browser.url()
 
     return result
 
@@ -121,16 +121,16 @@ def execute_file(filename, **kw):
     globals_dict, locals_dict = namespaces.get_twill_glocals()
     
     local_dict = {}
-    local_dict['__url__'] = commands.state.url()
+    local_dict['__url__'] = commands.browser.url()
 
     # reset browser
-    commands.reset_state()
+    commands.reset_browser()
 
     # go to a specific URL?
     init_url = kw.get('initial_url')
     if init_url:
         commands.go(init_url)
-        local_dict['__url__'] = commands.state.url()
+        local_dict['__url__'] = commands.browser.url()
         
     # read the input lines
     if filename == "-":
