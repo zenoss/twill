@@ -147,8 +147,10 @@ clicked, use the first submit button on the form.  See <a class="reference" href
 form handling</a> for more information.</p>
 <p><strong>formvalue</strong> <em>&lt;formnum&gt; &lt;fieldname&gt; &lt;value&gt;</em> --- set the given field in the
 given form to the given value.  For read-only form widgets/controls, the
-click may be recorded for use by <strong>submit</strong>, but the value is not changed.
-See <a class="reference" href="#id1">details on form handling</a> for more information.</p>
+click may be recorded for use by <strong>submit</strong>, but the value is not changed
+unless the 'config' command has changed the default behavior.
+See 'config' and <a class="reference" href="#id1">details on form handling</a> for more information on
+the 'formvalue' command.</p>
 <p><strong>fv</strong> -- abbreviation for 'formvalue'</p>
 <p><strong>formclear</strong> -- clear all values in the form.</p>
 <p><strong>formfile</strong> <em>&lt;formspec&gt; &lt;fieldspec&gt; &lt;filename&gt; [ &lt;content_type&gt; ]</em> -- attach a file to a file upload button by filename.</p>
@@ -194,6 +196,7 @@ add_auth IdyllStuff http://www.idyll.org/ titus test
 <p>would tell twill that a request from the authentication realm
 &quot;IdyllStuff&quot; under <a class="reference" href="http://www.idyll.org/">http://www.idyll.org/</a> should be answered with
 username 'titus', password 'test'.</p>
+<p><strong>config</strong> [<em>&lt;key&gt;</em> [<em>&lt;value&gt;</em>]] -- show/set configuration options.</p>
 </div>
 <div class="section" id="special-variables">
 <h2><a class="toc-backref" href="#id13" name="special-variables">Special variables</a></h2>
@@ -403,7 +406,6 @@ well as for other toolkits, but the API is still unstable.</p>
 <blockquote>
 <ol class="arabic simple">
 <li>test &amp; document the fieldname spec for fv; put into shell help.</li>
-<li>r/o controls ==&gt; writeable</li>
 <li>'go' on non-absolute URLs breaks when executed twice in a row.</li>
 <li>UPGRADE wwwsearch.</li>
 </ol>

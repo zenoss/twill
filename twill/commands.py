@@ -40,7 +40,8 @@ __all__ = ['reset_browser',
            'setlocal',
            'debug',
            'title',
-           'exit'
+           'exit',
+           'config'
            ]
 
 import re, getpass, time
@@ -61,6 +62,10 @@ def reset_browser():
     """
     global browser
     browser = TwillBrowser()
+
+    global _options
+    _options = {}
+    _options.update(_orig_options)
 
 ###
 
@@ -256,7 +261,8 @@ def formvalue(formname, fieldname, value):
     'fv' will *add* the given value to a multilist.
 
     Formvalue ignores read-only fields completely; if they're readonly,
-    nothing is done.
+    nothing is done, unless the config options ('config' command) are
+    changed.
 
     Available as 'fv' as well.
     """
@@ -265,7 +271,13 @@ def formvalue(formname, fieldname, value):
 
     if control:
         browser.clicked(form, control)
+
+        if _options['readonly_controls_writeable']:
+            print 'forcing read-only control to writeable'
+            control.readonly = False
+        
         if control.readonly:
+            print 'control is read-only; nothing done.'
             return
 
         set_form_control_value(control, value)
@@ -458,6 +470,43 @@ def title(what):
 
     if not regexp.search(title):
         raise TwillAssertionError("title does not contain '%s'" % (what,))
+
+### options
+
+_orig_options = dict(readonly_controls_writeable=False)
+_options = {}
+_options.update(_orig_options)           # make a copy
+
+def config(key=None, value=None):
+    """
+    >> config [<key> [<value>]]
+
+    Configure/report various options.  If no <value> is given, report
+    the current key value; if no <key> given, report current settings.
+
+    So far:
+
+     * 'readonly_controls_writeable', default 0;
+    """
+    if key is None:
+        keys = _options.keys()
+        keys.sort()
+
+        print 'current configuration:'
+        for k in keys:
+            print '\t%s : %s' % (k, _options[k])
+        print ''
+    else:
+        v = _options.get(key)
+        if v is None:
+            print '*** no such configuration key', key
+            print 'valid keys are:', ";".join(_options.keys())
+        elif value is None:
+            print ''
+            print 'key %s: value %s' % (key, v)
+            print ''
+        else:
+            _options[key] = bool(value)
 
 #### doesn't really work just yet.
 

@@ -1,5 +1,8 @@
 2005-11-05  Titus Brown  <t@issola.caltech.edu>
 
+	* Added 'config' command, 'readonly_controls_writeable' option.
+	  (James Cameron bug/fix)
+
 	* Updated version numbers to 0.8.
 
 	* Added command 'showlinks'.

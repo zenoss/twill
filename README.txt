@@ -134,8 +134,10 @@ form handling`_ for more information.
 
 **formvalue** *<formnum> <fieldname> <value>* --- set the given field in the
 given form to the given value.  For read-only form widgets/controls, the
-click may be recorded for use by **submit**, but the value is not changed.
-See `details on form handling`_ for more information.
+click may be recorded for use by **submit**, but the value is not changed
+unless the 'config' command has changed the default behavior.
+See 'config' and `details on form handling`_ for more information on
+the 'formvalue' command.
 
 **fv** -- abbreviation for 'formvalue'
 
@@ -201,6 +203,8 @@ it in ``__password__``.
 would tell twill that a request from the authentication realm
 "IdyllStuff" under http://www.idyll.org/ should be answered with
 username 'titus', password 'test'.
+
+**config** [*<key>* [*<value>*]] -- show/set configuration options.
 
 Special variables
 ~~~~~~~~~~~~~~~~~
@@ -451,9 +455,8 @@ TODO:
 0.8 release:
 
  1. test & document the fieldname spec for fv; put into shell help.
- 2. r/o controls ==> writeable
- 3. 'go' on non-absolute URLs breaks when executed twice in a row.
- 4. UPGRADE wwwsearch.
+ 2. 'go' on non-absolute URLs breaks when executed twice in a row.
+ 3. UPGRADE wwwsearch.
 
 after that:
 
