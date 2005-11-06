@@ -216,6 +216,15 @@ class TwillBrowser:
         for n, f in enumerate(self._browser.forms()):
             print_form(n, f)
 
+    def showlinks(self):
+        """
+        Pretty-print all of the links.
+        """
+        print 'Links:\n'
+        for n, link in enumerate(self._browser._links):
+            print "%d. %s ==> %s" % (n, link.text, link.url,)
+        print ''
+
     def get_form(self, formname):
         """
         Return the first form that matches 'formname'.

@@ -116,6 +116,8 @@ Display
 
 **show** -- show the current page's HTML.
 
+**showlinks** -- show all of the links on the current page.
+
 **echo** *<string>* -- echo the string to the screen via 'print'.
 
 **save_html** *<filename>* -- save the current page's HTML into a file.
@@ -268,7 +270,7 @@ twill is developed in python 2.3, and should work fine with python 2.4.
 You don't need any other software; both pyparsing_ and mechanize_ are
 required but included with twill.
 
-Version 0.7.3 is available for download here_.  The latest development
+Version 0.8 is available for download here_.  The latest development
 version can be found at twill-latest.tar.gz_.  There's a darcs
 repository for the project at
 http://darcs.idyll.org/~t/projects/twill/.
@@ -276,7 +278,7 @@ http://darcs.idyll.org/~t/projects/twill/.
 Licensing
 ~~~~~~~~~
 
-twill 0.7.3 is licensed under the `GNU LGPL`_, although I am amenable
+twill 0.8 is licensed under the `GNU LGPL`_, although I am amenable
 to changing to an MIT-like license in the future.  All code currently
 contained in twill is Copyright (C) 2005, C. Titus Brown
 <titus@caltech.edu>.
@@ -294,7 +296,7 @@ pyparsing_ and mechanize_ are both included with twill, but are under
 their own licenses.  (Both are currently more lenient than the LGPL,
 so you should have no problems.)
 
-.. _here: http://darcs.idyll.org/~t/projects/twill-0.7.3.tar.gz
+.. _here: http://darcs.idyll.org/~t/projects/twill-0.8.tar.gz
 .. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
 .. _GNU LGPL: http://www.gnu.org/copyleft/lesser.html
 
@@ -349,7 +351,7 @@ under the directory ``maxq/``.
 Stress testing
 ~~~~~~~~~~~~~~
 
-A new script, `twill-fork`, has been added in 0.7.3.  The syntax is 
+A new script, `twill-fork`, has been added.  The syntax is 
 
 ::
 
@@ -452,7 +454,6 @@ TODO:
  2. r/o controls ==> writeable
  3. 'go' on non-absolute URLs breaks when executed twice in a row.
  4. UPGRADE wwwsearch.
- 5. version ==> 0.8
 
 after that:
 

@@ -1,5 +1,9 @@
 2005-11-05  Titus Brown  <t@issola.caltech.edu>
 
+	* Updated version numbers to 0.8.
+
+	* Added command 'showlinks'.
+
 	* Changed 'state' variable to 'browser' in commands.py
 
 2005-11-04  Titus Brown  <t@issola.caltech.edu>

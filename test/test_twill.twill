@@ -23,6 +23,7 @@ clear_cookies
 
 go issola:8080/
 code 200
+showlinks
 
 # intro page.
 
