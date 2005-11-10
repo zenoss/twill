@@ -202,14 +202,27 @@ def sleep(interval=1):
     """
     time.sleep(float(interval))
 
+_agent_map = dict(
+    ie5='Mozilla/4.0 (compatible; MSIE 5.0; Windows NT 5.1)',
+    ie55='Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.1)',
+    ie6='Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)',
+    moz17='Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7) Gecko/20040616',
+    opera7='Opera/7.0 (Windows NT 5.1; U) [en]',
+    konq32='Mozilla/5.0 (compatible; Konqueror/3.2.3; Linux 2.4.14; X11; i686)',
+    saf11='Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-us) AppleWebKit/100 (KHTML, like Gecko) Safari/100',
+    aol9='Mozilla/4.0 (compatible; MSIE 5.5; AOL 9.0; Windows NT 5.1)',)
+
 def agent(what):
     """
     >> agent <agent>
     
-    Set the agent string -- does nothing, currently.
+    Set the agent string (identifying the browser brand).
+
+    Some convenient shortcuts:
+      ie5, ie55, ie6, moz17, opera7, konq32, saf11, aol9.
     """
     what = what.strip()
-    agent = agent_map.get(what, what)
+    agent = _agent_map.get(what, what)
     browser.set_agent_string(agent)
 
 def submit(submit_button=None):
@@ -527,15 +540,4 @@ def config(key=None, value=None):
         else:
             _options[key] = bool(value)
 
-#### doesn't really work just yet.
-
-agent_map = dict(
-    ie5='Mozilla/4.0 (compatible; MSIE 5.0; Windows NT 5.1)',
-    ie55='Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.1)',
-    ie6='Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)',
-    moz17='Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7) Gecko/20040616',
-    opera7='Opera/7.0 (Windows NT 5.1; U) [en]',
-    konq32='Mozilla/5.0 (compatible; Konqueror/3.2.3; Linux 2.4.14; X11; i686)',
-    saf11='Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-us) AppleWebKit/100 (KHTML, like Gecko) Safari/100',
-    aol9='Mozilla/4.0 (compatible; MSIE 5.5; AOL 9.0; Windows NT 5.1)',)
 

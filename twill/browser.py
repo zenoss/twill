@@ -59,11 +59,10 @@ class TwillBrowser:
         policy = ClientCookie.DefaultCookiePolicy(rfc2965=True)
         cj = ClientCookie.LWPCookieJar(policy=policy)
         self._browser.set_cookiejar(cj)
+        self.cj = cj
 
         # Ask for MIME type 'text/html' by preference.
         self._browser.addheaders = [("Accept", "text/html; */*")]
-
-        self.cj = cj
 
         # ignore robots.txt
         self._browser.set_handle_robots(None)
@@ -207,7 +206,11 @@ class TwillBrowser:
         Set the agent string to the given value.
         """
         # currently doesn't work.
-        # self._browser.set_persistent_headers([("User-agent", agent)])
+        for i in xrange(len(self._browser.addheaders)):
+            if self._browser.addheaders[i][0] == "User-agent":
+                del self._browser.addheaders[i]
+                break
+        self._browser.addheaders += [("User-agent", agent)]
 
     def showforms(self):
         """
