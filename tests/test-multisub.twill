@@ -1,0 +1,20 @@
+go http://localhost:8080/multisubmitform
+code 200
+
+fv 1 sub_a click
+submit
+find "used_sub_a"
+
+submit sub_a
+find "used_sub_a"
+
+fv 1 sub_b click
+submit
+find "used_sub_b"
+
+submit sub_b
+find "used_sub_b"
+
+submit
+show
+find "used_sub_a"

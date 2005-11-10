@@ -3,8 +3,6 @@
 Quixote test app for twill.
 """
 import sys
-sys.path.insert(0, '/u/t/dev/')
-
 import os
 
 from quixote.publish import Publisher
@@ -82,7 +80,7 @@ class TwillTest(Directory):
     _q_exports = ['logout', 'increment', 'incrementfail', "", 'restricted',
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
                   'simpleform', 'upload_file', 'http_auth', 'formpostredirect',
-                  'exit']
+                  'exit', 'multisubmitform']
 
     def __init__(self):
         self.restricted = Restricted()
@@ -144,8 +142,30 @@ class TwillTest(Directory):
         w1 = widget.StringWidget(name='n', value='')
         w2 = widget.StringWidget(name='n2', value='')
         
-        return "%s %s <form method=POST><input type=text name=n><input type=text name=n2></form>" % (w1.parse(request),
-                                                         w2.parse(request),)
+        return "%s %s <form method=POST><input type=text name=n><input type=text name=n2></form>" % (w1.parse(request), w2.parse(request),)
+
+    def multisubmitform(self):
+        request = get_request()
+        
+        submit1 = widget.SubmitWidget('sub_a', value='sub_a')
+        submit2 = widget.SubmitWidget('sub_b', value='sub_b')
+
+        s = ""
+        if request.form:
+            used = False
+            if submit1.parse(request):
+                used = True
+                s += "used_sub_a"
+            if submit2.parse(request):
+                used = True
+                s += "used_sub_b"
+
+            if not used:
+                assert 0
+
+        return "<form method=POST>%s %s %s</form>" % (s,
+                                                      submit1.render(),
+                                                      submit2.render())
 
     def formpostredirect(self):
         request = get_request()
@@ -215,28 +235,8 @@ class HttpAuthRestricted(AccessControlled, Directory):
     def _q_index(self):
         return "you made it!"
 
-#!/usr/bin/env python
-"""$URL$
-$Id$
-"""
-
-import sys
-import os
-from quixote.http_request import HTTPRequest
-
-def run(create_publisher):
-    if sys.platform == "win32":
-        # on Windows, stdin and stdout are in text mode by default
-        import msvcrt
-        msvcrt.setmode(sys.__stdin__.fileno(), os.O_BINARY)
-        msvcrt.setmode(sys.__stdout__.fileno(), os.O_BINARY)
-    publisher = create_publisher()
-    request = HTTPRequest(sys.__stdin__, os.environ)
-    response = publisher.process_request(request)
-    try:
-        response.write(sys.__stdout__)
-    except IOError, err:
-        publisher.log("IOError while sending response ignored: %s" % err)
+####
 
 if __name__ == '__main__':
-    run(create_publisher)
+    from quixote.server.simple_server import run
+    run(create_publisher, port=8080)

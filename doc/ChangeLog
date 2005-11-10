@@ -1,5 +1,9 @@
 2005-11-10  Titus Brown  <t@issola.caltech.edu>
 
+	* Moved 'test/' to 'tests/', added 'test-multisub.py',
+	  moved 'twillserver.py' to 'twilltestserver.py', and fixed
+	  it to run simple_server when executed from the command line.
+
 	* Fixed two form submission bugs, pointed out by Mike Rovner.
 
 2005-11-09  Titus Brown  <t@issola.caltech.edu>
