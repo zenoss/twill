@@ -1,3 +1,7 @@
+2005-11-10  Titus Brown  <t@issola.caltech.edu>
+
+	* Fixed two form submission bugs, pointed out by Mike Rovner.
+
 2005-11-09  Titus Brown  <t@issola.caltech.edu>
 
 	* Added William Volkman's patch fixing 'agent'.

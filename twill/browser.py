@@ -75,6 +75,12 @@ class TwillBrowser:
         # do handle HTTP-EQUIV properly.
         self._browser.set_handle_equiv(True)
 
+    def _new_page(self):
+        """
+        Reset various things.
+        """
+        self._last_submit = None
+        
     def url(self):
         if self._last_result is None:
             return " *empty page* "
@@ -100,6 +106,7 @@ class TwillBrowser:
         for u in try_urls:
             try:
                 self._last_result = journey(self._browser.open, u)
+                self._new_page()
                 success = True
                 break
             except Exception, e:
@@ -115,6 +122,7 @@ class TwillBrowser:
         Tell the browser to reload the current page.
         """
         self._last_result = journey(self._browser.reload)
+        self._new_page()
         print '==> reloaded'
 
     def back(self):
@@ -124,6 +132,7 @@ class TwillBrowser:
         back_url = self._browser.back
         try:
             self._last_result = journey(back_url)
+            self._new_page()
         except AttributeError, e:
             self._last_result = None
         except BrowserStateError, e:
@@ -197,6 +206,7 @@ class TwillBrowser:
         """
         try:
             self._last_result = journey(self._browser.follow_link, link)
+            self._new_page()
             print '==> at', self.get_url()
         except urllib2.HTTPError, e:
             raise
@@ -337,7 +347,7 @@ class TwillBrowser:
                 
         else:
             # fieldname given; find it.
-            ctl = self.get_form_field(self._browser.form, fieldname)
+            ctl = self.get_form_field(form, fieldname)
 
         #
         # now set up the submission:
@@ -359,6 +369,7 @@ class TwillBrowser:
 
         # now actually GO.
         self._last_result = journey(self._browser.open, control)
+        self._new_page()
 
     def save_cookies(self, filename):
         self.cj.save(filename, ignore_discard=True, ignore_expires=True)
