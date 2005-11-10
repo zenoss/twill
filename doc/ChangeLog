@@ -1,3 +1,7 @@
+2005-11-09  Titus Brown  <t@issola.caltech.edu>
+
+	* Added William Volkman's patch fixing 'agent'.
+
 2005-11-06  Titus Brown  <t@issola.caltech.edu>
 
 	* Updated 'formvalue' and 'submit' help docs.

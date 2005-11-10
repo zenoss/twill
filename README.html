@@ -181,6 +181,7 @@ they exist.</p>
 <p><strong>exit</strong> <em>[&lt;code&gt;]</em> -- exit with the given integer code, if specified.  'code' defaults to 0.</p>
 <p><strong>run</strong> <em>&lt;command&gt;</em> -- exec the given Python command.</p>
 <p><strong>runfile</strong> <em>&lt;file1&gt; [ &lt;file2&gt; ... ]</em> -- execute the given files.</p>
+<p><strong>agent</strong> -- set the browser's &quot;User-agent&quot; string.</p>
 <p><strong>sleep</strong> <em>[&lt;seconds&gt;]</em> -- sleep the given number of seconds.  Defaults to 1 second.</p>
 <p><strong>reset_browser</strong> -- reset the browser.</p>
 <p><strong>extend_with</strong> <em>&lt;module&gt;</em> -- import commands from Python module.  This acts
@@ -404,7 +405,7 @@ well as for other toolkits, but the API is still unstable.</p>
 <p>0.8 release:</p>
 <blockquote>
 <ol class="arabic simple">
-<li>test the documented fieldname spec for fv; put into shell help.</li>
+<li>test the documented fieldname spec for fv/submit.</li>
 <li>'go' on non-absolute URLs breaks when executed twice in a row.</li>
 <li>UPGRADE wwwsearch.</li>
 </ol>
@@ -449,7 +450,8 @@ a bit.  Thanks, guys...</p>
 <p>Bug reports have come in from the following fine people: Chris Miles,
 MATSUNO Tokuhiro, and Elvelind Grandin.</p>
 <p>Patches have been submitted by: Joeri van Ruth, Paul McGuire, Ed Rahn,
-Nic Ferrier, Robert Leftwich, James Cameron, and Tommi Virtanen.  Thanks!</p>
+Nic Ferrier, Robert Leftwich, James Cameron, William Volkman, and
+Tommi Virtanen.  Thanks!</p>
 <p>This document was written by C. Titus Brown, <a class="reference" href="mailto:titus&#64;caltech.edu">titus&#64;caltech.edu</a>.
 Last updated November '05.</p>
 </div>

@@ -183,6 +183,8 @@ Other commands
 
 **runfile** *<file1> [ <file2> ... ]* -- execute the given files.
 
+**agent** -- set the browser's "User-agent" string.
+
 **sleep** *[<seconds>]* -- sleep the given number of seconds.  Defaults to 1 second.
 
 **reset_browser** -- reset the browser.
@@ -497,7 +499,8 @@ Bug reports have come in from the following fine people: Chris Miles,
 MATSUNO Tokuhiro, and Elvelind Grandin.
 
 Patches have been submitted by: Joeri van Ruth, Paul McGuire, Ed Rahn,
-Nic Ferrier, Robert Leftwich, James Cameron, and Tommi Virtanen.  Thanks!
+Nic Ferrier, Robert Leftwich, James Cameron, William Volkman, and
+Tommi Virtanen.  Thanks!
 
 This document was written by C. Titus Brown, titus@caltech.edu.
 Last updated November '05.
