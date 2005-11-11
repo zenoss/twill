@@ -73,10 +73,16 @@ it for:
 
 Send me an e-mail if you have additional ideas.
 
-Grig Gheorgiu has written a blog entry on `Web app testing using twill`_
-if you want to get his take on things.
+Other Opinions
+~~~~~~~~~~~~~~
+
+Grig Gheorgiu has written a blog entry on `Web app testing using twill`_.
+Michele Simionato wrote a nice long article on `Testing Web Apps`_, and
+Nitesh Djanjani `tried it out`_ as well.
 
 .. _Web app testing using twill: http://agiletesting.blogspot.com/2005/09/web-app-testing-with-python-part-3.html
+.. _Testing Web Apps: http://www.onlamp.com/pub/a/python/2005/11/03/twill.html
+.. _tried it out: http://www.oreillynet.com/pub/wlg/8201
 
 Command Reference
 -----------------
@@ -275,7 +281,7 @@ twill is developed in python 2.3, and should work fine with python 2.4.
 You don't need any other software; both pyparsing_ and mechanize_ are
 required but included with twill.
 
-Version 0.8 is available for download here_.  The latest development
+Version 0.7.4 is available for download here_.  The latest development
 version can be found at twill-latest.tar.gz_.  There's a darcs
 repository for the project at
 http://darcs.idyll.org/~t/projects/twill/.
@@ -283,7 +289,7 @@ http://darcs.idyll.org/~t/projects/twill/.
 Licensing
 ~~~~~~~~~
 
-twill 0.8 is licensed under the `GNU LGPL`_, although I am amenable
+twill 0.7.4 is licensed under the `GNU LGPL`_, although I am amenable
 to changing to an MIT-like license in the future.  All code currently
 contained in twill is Copyright (C) 2005, C. Titus Brown
 <titus@caltech.edu>.
@@ -301,7 +307,7 @@ pyparsing_ and mechanize_ are both included with twill, but are under
 their own licenses.  (Both are currently more lenient than the LGPL,
 so you should have no problems.)
 
-.. _here: http://darcs.idyll.org/~t/projects/twill-0.8.tar.gz
+.. _here: http://darcs.idyll.org/~t/projects/twill-0.7.4.tar.gz
 .. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
 .. _GNU LGPL: http://www.gnu.org/copyleft/lesser.html
 
@@ -353,10 +359,64 @@ have written a simple twill script generator for it.  The script
 generator and installation docs are included in the twill distribution
 under the directory ``maxq/``.
 
+Unit testing
+~~~~~~~~~~~~
+
+twill can be used in unit testing, and with version 0.7.4 I've added
+some Python support infrastructure for this purpose.
+
+As an example, here's the code from twill's own unit test, testing the
+unit-test support code::
+
+    import os
+    import testlib
+    import twill.unit
+    import twilltestserver
+    from quixote.server.simple_server import run as quixote_run
+
+    def test():
+        # port to run the server on
+        PORT=8090
+
+        # create a function to run the server
+        def run_server_fn():
+            quixote_run(twilltestserver.create_publisher, port=PORT)
+
+        # abspath to the script
+        script = os.path.join(testlib.testdir, 'test-unit-support.twill')
+
+        # create test_info object
+        test_info = twill.unit.TestInfo(script, run_server_fn, PORT)
+
+        # run tests!
+        twill.unit.run_test(test_info)
+
+Here, I'm unit testing the Quixote application ``twilltestserver``, which
+is run by ``quixote_run`` (a.k.a. ``quixote.server.simple_server.run``) on
+port ``PORT``, using the twill script ``test-unit-support.twill``.  That
+script contains this code::
+
+   # starting URL is provided to it by the unit test support framework.
+
+   go ./multisubmitform
+   code 200
+
+A few things to note:
+
+ * the initial URL is set based on the URL reported by ``TestInfo``,
+   which calculates it based on the ``PORT`` argument.  (This can be overriden
+   by subclasses.)
+
+ * ``TestInfo`` contains code to (a) run the server function in a new
+   process, and (b) run the twill script against that server.  It then
+   kills the server after script completion.
+
+This is still new code, and it would be good to hear people's opinions.
+
 Stress testing
 ~~~~~~~~~~~~~~
 
-A new script, `twill-fork`, has been added.  The syntax is 
+You can use the `twill-fork` script to do some stress testing.  The syntax is 
 
 ::
 
@@ -378,6 +438,8 @@ retrieve Web pages.)  Rather, the time recorded is the clock time
 measured between the start and end of script execution.
 
 Try `twill-fork -h` to get a list of other command line arguments.
+
+Note that twill-fork still needs a lot of work...
 
 Implementation and Extending Twill
 ----------------------------------
@@ -458,18 +520,18 @@ TODO:
  1. test the documented fieldname spec for fv/submit.
  2. 'go' on non-absolute URLs breaks when executed twice in a row.
  3. UPGRADE wwwsearch.
+ 4. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
+ 5. Test HTTP basic auth.
+ 6. basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
 
 after that:
 
  1. break "unit tests" down into units.
  2. execute directories/directory trees?
- 3. record scripts
+ 3. record scripts fix
  4. systematize variable handling a bit better: __ vs $
  5. expose 'browser' & document re Grig; regexp esp.
- 6. basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
- 7. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
- 8. twill-fork: make file writing stuff optional; test massive fork fn.
- 9. Test HTTP basic auth.
+ 6. twill-fork: make file writing stuff optional; test massive fork fn.
 
 Longer term fixes & cleanups:
 
