@@ -49,7 +49,7 @@ find "this is visit #2"
 
 # save & then clear cookies.
 show_cookies
-save_cookies 'test_twill.cookies'
+save_cookies 'test-basic.cookies'
 clear_cookies
 
 # return to main page; did clear work?
@@ -61,7 +61,7 @@ find 'You are logged in as "None"'
 notfind 'this is visit #2'
 
 # yep!  all right. load cookies, check that.
-load_cookies 'test_twill.cookies'
+load_cookies 'test-basic.cookies'
 
 go ./
 code 200
@@ -109,7 +109,7 @@ show
 find 'You are logged in as "test"'
 find 'this is visit #2'
 
-save_cookies 'test_twill.cookies'
+save_cookies 'test-basic.cookies'
 clear_cookies
 
 # ok, clear username?
@@ -118,7 +118,7 @@ code 200
 find 'You are logged in as "None"'
 
 # yep, reload & visit restricted.
-load_cookies 'test_twill.cookies'
+load_cookies 'test-basic.cookies'
 go ./
 code 200
 find 'You are logged in as "test"'

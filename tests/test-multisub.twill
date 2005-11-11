@@ -16,5 +16,4 @@ submit sub_b
 find "used_sub_b"
 
 submit
-show
 find "used_sub_a"
