@@ -1,13 +1,24 @@
+"""
+myhttplib.MyHTTPConnection is a replacement for httplib.HTTPConnection
+that intercepts certain HTTP connections into a WSGI application.
+"""
+
+import sys
 from httplib import HTTPConnection
-import socket
 from cStringIO import StringIO
 import traceback
 
 debuglevel = 0
+# 1 basic
+# 2 verbose
 
 ####
 
-# create two applications for testing.
+# create two applications for testing.  note that for Quixote-PTL-related
+# import reasons, I use a function to create the application rather than
+# simply specifying the application at the start.  Sorry.
+#
+# (yes, one way to deal with this is a simple proxy object. this was easier.)
 
 def simple_app(environ, start_response):
     """Simplest possible application object"""
@@ -20,7 +31,6 @@ def create_simple_app():
     return simple_app
 
 def create_collar_app():
-    import sys
     sys.path.append('/u/t/dev/qwsgi/quixote2/')
     import qwip2
 
@@ -43,8 +53,8 @@ def create_collar_app():
 #
 # (top_url becomes the SCRIPT_NAME)
 
-wsgi_intercept = { ('floating.caltech.edu', 80) : (create_simple_app, ''),
-                   ('floating.caltech.edu', 8080) : (create_collar_app, '/collar') }
+wsgi_intercept = { ('floating.caltech.edu', 8080) : (create_simple_app, ''),
+                   ('floating.caltech.edu', 80) : (create_collar_app, '/collar') }
 
 #
 # make_environ: behave like a Web server.  Take in 'input', and behave
@@ -65,6 +75,8 @@ def make_environ(inp, host, port, script_name):
     
     content_type = None
     content_length = None
+    cookies = []
+    
     for line in inp:
         if not line.strip():
             break
@@ -75,17 +87,19 @@ def make_environ(inp, host, port, script_name):
         headers.append((k, v))
         if k.lower() == 'content-type':
             content_type = v
-        if k.lower() == 'content-length':
+        elif k.lower() == 'content-length':
             content_length = v
+        elif k.lower() == 'cookie' or k.lower() == 'cookie2':
+            cookies.append(v)
 
-        if debuglevel:
+        if debuglevel >= 2:
             print 'HEADER:', k, v
 
     #
     # decode the method line
     #
 
-    if debuglevel:
+    if debuglevel >= 2:
         print 'METHOD LINE:', method_line
         
     method, url, protocol = method_line.split(' ')
@@ -105,6 +119,9 @@ def make_environ(inp, host, port, script_name):
     if debuglevel:
         print "method: %s; script_name: %s; path_info: %s; query_string: %s" % (method, script_name, path_info, query_string)
 
+    r = inp.read()
+    inp = StringIO(r)
+
     #
     # fill out our dictionary.
     #
@@ -120,7 +137,6 @@ def make_environ(inp, host, port, script_name):
           "REQUEST_METHOD" : method,
           "SCRIPT_NAME" : script_name,
           "PATH_INFO" : path_info,
-          "QUERY_STRING" : query_string,
           
           "SERVER_NAME" : host,
           "SERVER_PORT" : str(port),
@@ -128,18 +144,30 @@ def make_environ(inp, host, port, script_name):
           }
 
     #
-    # content_type & length are optional.
+    # query_string, content_type & length are optional.
     #
 
+    if query_string:
+        d['QUERY_STRING'] = query_string
+        
     if content_type:
-        d['content_type'] = content_type
-        if debuglevel:
+        d['CONTENT_TYPE'] = content_type
+        if debuglevel >= 2:
             print 'CONTENT-TYPE:', content_type
     if content_length:
-        d['content_length'] = content_length
-        if debuglevel:
+        d['CONTENT_LENGTH'] = content_length
+        if debuglevel >= 2:
             print 'CONTENT-LENGTH:', content_length
-        
+
+    #
+    # handle cookies.
+    #
+    if cookies:
+        d['HTTP_COOKIE'] = "; ".join(cookies)
+
+    if debuglevel:
+        print 'WSGI dictionary:', d
+
     return d
 
 #
@@ -149,6 +177,12 @@ def make_environ(inp, host, port, script_name):
 class wsgi_fake_socket:
     """
     Handle HTTP traffic and stuff into a WSGI application object instead.
+
+    Note that this class assumes:
+    
+     1. 'makefile' is called (by the response class) only after all of the
+        data has been sent to the socket by the request class;
+     2. non-persistent (i.e. non-HTTP/1.1) connections.
     """
     def __init__(self, app, host, port, script_name):
         self.app = app                  # WSGI app object
@@ -203,7 +237,7 @@ class wsgi_fake_socket:
         for data in self.result:
             self.output.write(data)
 
-        if debuglevel:
+        if debuglevel >= 2:
             print "***", self.output.getvalue(), "***"
 
         # return the concatenated results.
@@ -213,7 +247,7 @@ class wsgi_fake_socket:
         """
         Save all the traffic to self.inp.
         """
-        if debuglevel:
+        if debuglevel >= 2:
             print ">>>", str, ">>>"
 
         self.inp.write(str)
@@ -255,6 +289,8 @@ class MyHTTPConnection(HTTPConnection):
         try:
             key = (self.host, self.port)
             if wsgi_intercept.has_key(key):
+                sys.stderr.write('INTERCEPTING call to %s:%s\n' % \
+                                 (self.host, self.port,))
                 (app, script_name) = self.get_app(key)
                 self.sock = wsgi_fake_socket(app, self.host, self.port,
                                              script_name)
@@ -269,6 +305,8 @@ class MyHTTPConnection(HTTPConnection):
 ### DEBUGGING CODE -- to help me figure out communications stuff. ###
 
 # (ignore me, please)
+
+import socket
     
 class file_wrapper:
     def __init__(self, fp):

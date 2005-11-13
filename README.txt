@@ -523,6 +523,7 @@ TODO:
  4. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
  5. Test HTTP basic auth.
  6. basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
+ 7. bug: back & forms
 
 after that:
 
