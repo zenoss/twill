@@ -533,6 +533,7 @@ after that:
  4. systematize variable handling a bit better: __ vs $
  5. expose 'browser' & document re Grig; regexp esp.
  6. twill-fork: make file writing stuff optional; test massive fork fn.
+ 7. eggggz
 
 Longer term fixes & cleanups:
 
