@@ -65,11 +65,11 @@ wsgi_intercept = { ('floating.caltech.edu', 8080) : (create_simple_app, ''),
 #
 
 def make_environ(inp, host, port, script_name):
-    headers = []
-
     #
     # parse the input up to the first blank line (or its end).
     #
+
+    environ = {}
     
     method_line = inp.readline()
     
@@ -83,15 +83,23 @@ def make_environ(inp, host, port, script_name):
 
         k, v = line.strip().split(':', 1)
         v = v.lstrip()
-        
-        headers.append((k, v))
+
+        #
+        # take care of special headers, and for the rest, put them
+        # into the environ with HTTP_ in front.
+        #
+
         if k.lower() == 'content-type':
             content_type = v
         elif k.lower() == 'content-length':
             content_length = v
         elif k.lower() == 'cookie' or k.lower() == 'cookie2':
             cookies.append(v)
-
+        else:
+            h = k.upper()
+            h = h.replace('-', '_')
+            environ['HTTP_' + h] = v
+            
         if debuglevel >= 2:
             print 'HEADER:', k, v
 
@@ -126,36 +134,36 @@ def make_environ(inp, host, port, script_name):
     # fill out our dictionary.
     #
     
-    d = { "wsgi.version" : (1,0),
-          "wsgi.url_scheme": "http",
-          "wsgi.input" : inp,           # to read for POSTs
-          "wsgi.errors" : StringIO(),
-          "wsgi.multithread" : 0,
-          "wsgi.multiprocess" : 0,
-          "wsgi.run_once" : 0,
+    environ.update({ "wsgi.version" : (1,0),
+                     "wsgi.url_scheme": "http",
+                     "wsgi.input" : inp,           # to read for POSTs
+                     "wsgi.errors" : StringIO(),
+                     "wsgi.multithread" : 0,
+                     "wsgi.multiprocess" : 0,
+                     "wsgi.run_once" : 0,
     
-          "REQUEST_METHOD" : method,
-          "SCRIPT_NAME" : script_name,
-          "PATH_INFO" : path_info,
+                     "REQUEST_METHOD" : method,
+                     "SCRIPT_NAME" : script_name,
+                     "PATH_INFO" : path_info,
           
-          "SERVER_NAME" : host,
-          "SERVER_PORT" : str(port),
-          "SERVER_PROTOCOL" : protocol,
-          }
+                     "SERVER_NAME" : host,
+                     "SERVER_PORT" : str(port),
+                     "SERVER_PROTOCOL" : protocol,
+                     })
 
     #
     # query_string, content_type & length are optional.
     #
 
     if query_string:
-        d['QUERY_STRING'] = query_string
+        environ['QUERY_STRING'] = query_string
         
     if content_type:
-        d['CONTENT_TYPE'] = content_type
+        environ['CONTENT_TYPE'] = content_type
         if debuglevel >= 2:
             print 'CONTENT-TYPE:', content_type
     if content_length:
-        d['CONTENT_LENGTH'] = content_length
+        environ['CONTENT_LENGTH'] = content_length
         if debuglevel >= 2:
             print 'CONTENT-LENGTH:', content_length
 
@@ -163,12 +171,12 @@ def make_environ(inp, host, port, script_name):
     # handle cookies.
     #
     if cookies:
-        d['HTTP_COOKIE'] = "; ".join(cookies)
+        environ['HTTP_COOKIE'] = "; ".join(cookies)
 
     if debuglevel:
-        print 'WSGI dictionary:', d
+        print 'WSGI environ dictionary:', environ
 
-    return d
+    return environ
 
 #
 # fake socket for WSGI intercept stuff.
