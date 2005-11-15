@@ -1,5 +1,7 @@
 2005-11-15  Titus Brown  <t@issola.caltech.edu>
 
+	* Added test-http-codes, cleaned up testlib a bit.
+
 	* Fixed a stupid bug in parse.py with 'local_dict' != 'locals_dict'.
 
 2005-11-14  Titus Brown  <t@issola.caltech.edu>

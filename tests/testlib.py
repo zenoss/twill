@@ -1,4 +1,12 @@
 import sys
+
+# import quixote & check version.
+try:
+    import quixote
+except ImportError:
+    raise Exception("you must have quixote 2.3 to run the tests")
+assert quixote.__version__ == '2.3', "you must have quixote 2.3 to run the tests"
+
 from quixote.server.simple_server import run
 from cStringIO import StringIO
 import os
@@ -19,7 +27,7 @@ def pop_testdir():
     global cwd
     os.chdir(cwd)
 
-def execute_twill_script(filename, inp=None):
+def execute_twill_script(filename, inp=None, initial_url=None):
     global testdir
     
     if inp:
@@ -28,7 +36,7 @@ def execute_twill_script(filename, inp=None):
 
     scriptfile = os.path.join(testdir, filename)
     try:
-        twill.execute_file(filename)
+        twill.execute_file(filename, initial_url=initial_url)
     finally:
         if inp:
             sys.stdin = old
@@ -37,12 +45,15 @@ def run_server(create_fn, PORT=8080):
     """
     Run a Quixote simple_server on localhost:PORT by forking & then
     _exit.  All output is captured & thrown away..
+
+    The parent process returns the URL on which the server is running.
     """
     global child_pid
     
     pid = os.fork()
     if pid != 0:
         child_pid = pid
+        return 'http://localhost:%d/' % (PORT,)
     else:
         outp = StringIO()
         errp = StringIO()
