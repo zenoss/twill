@@ -1,6 +1,8 @@
 """
 myhttplib.MyHTTPConnection is a replacement for httplib.HTTPConnection
 that intercepts certain HTTP connections into a WSGI application.
+
+Use 'add_host_intercept' and 'remove_host_intercept' to control this behavior.
 """
 
 import sys
@@ -14,38 +16,11 @@ debuglevel = 0
 
 ####
 
-# create two applications for testing.  note that for Quixote-PTL-related
-# import reasons, I use a function to create the application rather than
-# simply specifying the application at the start.  Sorry.
-#
-# (yes, one way to deal with this is a simple proxy object. this was easier.)
-
-def simple_app(environ, start_response):
-    """Simplest possible application object"""
-    status = '200 OK'
-    response_headers = [('Content-type','text/plain')]
-    start_response(status, response_headers)
-    return ['Hello world!\n']
-
-def create_simple_app():
-    return simple_app
-
-def create_collar_app():
-    sys.path.append('/u/t/dev/qwsgi/quixote2/')
-    import qwip2
-
-    sys.path.append('/u/t/dev/collar/lib')
-    from collar.website import create_publisher
-
-    return qwip2.QWIP(create_publisher())
-
-####
-
 #
 # Specify which hosts/ports to target for interception to a given WSGI app.
 #
 # For simplicity's sake, intercept ENTIRE host/port combinations;
-# intercepting only specific URL subtrees  gets complicated, because we don't
+# intercepting only specific URL subtrees gets complicated, because we don't
 # have that information in the HTTPConnection.connect() function that does the
 # redirection.
 #
@@ -53,8 +28,22 @@ def create_collar_app():
 #
 # (top_url becomes the SCRIPT_NAME)
 
-wsgi_intercept = { ('floating.caltech.edu', 8080) : (create_simple_app, ''),
-                   ('floating.caltech.edu', 80) : (create_collar_app, '/collar') }
+_wsgi_intercept = { }
+
+def add_host_intercept(host, port, app_create_fn, script_name=''):
+    """
+    Add a WSGI intercept call for host:port, using the app returned
+    by app_create_fn with a SCRIPT_NAME of 'script_name' (default '').
+    """
+    _wsgi_intercept[(host, port)] = (app_create_fn, script_name)
+
+def remove_host_intercept(host, port):
+    """
+    Remove the WSGI intercept call for (host, port).
+    """
+    key = (host, port)
+    if _wsgi_intercept.has_key(key):
+        del _wsgi_intercept[key]
 
 #
 # make_environ: behave like a Web server.  Take in 'input', and behave
@@ -65,6 +54,14 @@ wsgi_intercept = { ('floating.caltech.edu', 8080) : (create_simple_app, ''),
 #
 
 def make_environ(inp, host, port, script_name):
+    """
+    Take 'inp' as if it were HTTP-speak being received on host:port,
+    and parse it into a WSGI-ok environment dictionary.  Return the
+    dictionary.
+
+    Set 'SCRIPT_NAME' from the 'script_name' input, and, if present,
+    remove it from the beginning of the PATH_INFO variable.
+    """
     #
     # parse the input up to the first blank line (or its end).
     #
@@ -149,6 +146,8 @@ def make_environ(inp, host, port, script_name):
                      "SERVER_NAME" : host,
                      "SERVER_PORT" : str(port),
                      "SERVER_PROTOCOL" : protocol,
+
+                     "REMOTE_ADDRESS" : '127.0.0.1',
                      })
 
     #
@@ -275,19 +274,30 @@ class MyHTTPConnection(HTTPConnection):
     """
     wsgi_apps = {}
 
-    def get_app(self, key):
+    def get_app(self, host, port):
         """
         Return the app object for the given (host, port).
         
-        Only create a given application once; store it after that.
+        Only create a given application once; store it after that.  Clear it
+        from the cache if it's been cleared from _wsgi_intercept.
         """
-        (app, script_name) = self.wsgi_apps.get(key, ((None, None,)))
-        if not app:
-            (app_fn, script_name) = wsgi_intercept[key]
+        global _wsgi_intercept
+        
+        key = (host, port)
+
+        app, script_name = None, None
+        
+        if self.wsgi_apps.has_key(key):
+            if _wsgi_intercept.has_key(key):
+                (app, script_name) = self.wsgi_apps[key]
+            else:
+                del self.wsgi_apps[key] # it's been removed; clear cache.
+        elif _wsgi_intercept.has_key(key):
+            (app_fn, script_name) = _wsgi_intercept[key]
             app = app_fn()
             self.wsgi_apps[key] = (app, script_name)
 
-        return (app, script_name)
+        return app, script_name        
     
     def connect(self):
         """
@@ -295,11 +305,10 @@ class MyHTTPConnection(HTTPConnection):
         host/ports.
         """
         try:
-            key = (self.host, self.port)
-            if wsgi_intercept.has_key(key):
-                sys.stderr.write('INTERCEPTING call to %s:%s\n' % \
-                                 (self.host, self.port,))
-                (app, script_name) = self.get_app(key)
+            (app, script_name) = self.get_app(self.host, self.port)
+            if app:
+#                sys.stderr.write('INTERCEPTING call to %s:%s\n' % \
+#                                 (self.host, self.port,))
                 self.sock = wsgi_fake_socket(app, self.host, self.port,
                                              script_name)
             else:

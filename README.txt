@@ -279,10 +279,10 @@ Requirements, Availability and Licensing
 
 twill is developed in python 2.3, and should work fine with python 2.4.
 You don't need any other software; both pyparsing_ and mechanize_ are
-required but included with twill.
+required, but they are included with twill.
 
 Version 0.7.4 is available for download here_.  The latest development
-version can be found at twill-latest.tar.gz_.  There's a darcs
+version can always be found at twill-latest.tar.gz_.  There's a darcs
 repository for the project at
 http://darcs.idyll.org/~t/projects/twill/.
 
@@ -300,8 +300,8 @@ obligated to make any changes to twill publicly available, in source
 code form, if and only if you are distributing those changes in some
 *other* form (e.g. as part of another package).  You do *not* need to
 provide the source to packages that use twill, and you are not
-obligated to publish your own private changes to twill, or twill scripts,
-or twill extensions.
+obligated to publish your own private changes to twill.  You do not need
+to publish your twill scripts or twill extensions, either.
 
 pyparsing_ and mechanize_ are both included with twill, but are under
 their own licenses.  (Both are currently more lenient than the LGPL,
@@ -349,6 +349,16 @@ site, and a script for clearing out SourceForge Mailman lists.  The
 latter script makes use of the (very simple!) extension feature, if
 you're interested...
 
+Package tests
+~~~~~~~~~~~~~
+
+twill comes with several unit tests.  They depend on nose_ and
+`Quixote 2.3`_.  To run them, simply type 'nosetests' in the top
+package directory.
+
+.. _nose: http://somethingaboutorange.com/mrl/projects/nose/
+.. _Quixote 2.3: http://www.mems-exchange.org/software/quixote/
+
 Recording scripts
 ~~~~~~~~~~~~~~~~~
 
@@ -358,6 +368,102 @@ script.  maxq_ acts as an HTTP proxy and records all HTTP traffic; I
 have written a simple twill script generator for it.  The script
 generator and installation docs are included in the twill distribution
 under the directory ``maxq/``.
+
+Stress testing
+~~~~~~~~~~~~~~
+
+You can use the `twill-fork` script to do some stress testing.  The syntax is 
+
+::
+
+   twill-fork -n <number to execute> -p <number of processes> script [ scripts... ]
+
+For example,
+
+::
+
+   twill-fork -n 500 -p 10 test-script
+
+will fork 10 times and run `test-script` 50 times in each process.
+`twill-fork` will record the time it takes to run all of the scripts specified
+on the command and print a summary at the end.
+
+The time recorded is *not* the CPU time used.  (This would lead to an
+inaccurate estimate because the client code uses blocking calls to
+retrieve Web pages.)  Rather, the time recorded is the clock time
+measured between the start and end of script execution.
+
+Try `twill-fork -h` to get a list of other command line arguments.
+
+Note that twill-fork still needs a lot of work...
+
+twill and Python
+----------------
+
+twill is essentially a thin shell around the
+mechanize_ package.  All twill commands are implemented in the
+``commands.py`` file, and pyparsing_ does the work of parsing the
+input and converting it into Python commands (see ``parse.py``).
+Interactive shell work and readline support is implemented via the
+`cmd`_ module (from the standard Python library).
+
+Extending twill
+~~~~~~~~~~~~~~~
+
+Right now twill is very easy to extend: just build a Python module
+that exports the functions you want to call, place it in the
+PYTHONPATH, and run ``extend_with <modulename>``.  See
+``extensions/mailman_sf.py`` for an extension that helps deal
+with mailman lists on SourceForge; this extension is used by
+``examples/discard-sf-mailman-msgs``.
+
+Notes:
+
+  * If your extension raises ``SystemExit``, twill will stop
+    processing the script.  This is a useful way to build in
+    conditionals, e.g. see the ``discard-sf-mailman-msgs`` example
+    script.
+
+Using twill in other Python programs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All of the commands available in twill are implemented as top-level functions
+in the `twill.commands` module.  For example, to use twill functionality from
+another Python program, you can do:
+
+::
+
+   from twill.commands import go, showforms, formclear, fv, submit
+
+   go('http://issola.caltech.edu/~t/qwsgi/qwsgi-demo.cgi/')
+   go('./widgets')
+   showforms()
+
+   formclear('1')
+   fv("1", "name", "test")
+   fv("1", "password", "testpass")
+   fv("1", "confirm", "yes")
+   showforms()
+
+   submit('0')
+
+Note that all arguments need to be strings, at least for the moment.
+
+twill also provides a simple wrapper for mechanize_ functionality, in
+the `browser.py` module.  This may be useful for twill extensions as
+well as for other toolkits, but the API is still unstable.
+
+Miscellaneous Implementation Details
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ * twill ignores robots.txt.
+ * twill does not understand javascript
+
+.. _PBP: http://pbp.berlios.de/
+.. _maxq: http://maxq.tigris.org/
+.. _mechanize: http://wwwsearch.sf.net/
+.. _pyparsing: http://pyparsing.sourceforge.net/
+.. _cmd: http://docs.python.org/lib/module-cmd.html
 
 Unit testing
 ~~~~~~~~~~~~
@@ -413,102 +519,28 @@ A few things to note:
 
 This is still new code, and it would be good to hear people's opinions.
 
-Stress testing
-~~~~~~~~~~~~~~
+Testing WSGI applications "in-process"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can use the `twill-fork` script to do some stress testing.  The syntax is 
+twill has some built-in support for testing `WSGI-compliant
+applications`_.  ``twill.myhttplib`` contains two functions,
+`add_host_intercept` and `remove_host_intercept`, that allow Python
+applications to redirect HTTP calls into a WSGI application
+"in-process", without going via an external Internet call.  This is
+particularly useful for unit tests, where setting up an externally
+available Web server can be inconvenient.
 
-::
+For example, the following code redirects all ``localhost:80`` calls to
+the given WSGI app: ::
 
-   twill-fork -n <number to execute> -p <number of processes> script [ scripts... ]
+    def create_app():
+        return wsgi_app
 
-For example,
+    twill.myhttplib.add_host_intercept('localhost', 80, create__app)
 
-::
+See the ``test-wsgi-intercept.py`` unit test for more information.
 
-   twill-fork -n 500 -p 10 test-script
-
-will fork 10 times and run `test-script` 50 times in each process.
-`twill-fork` will record the time it takes to run all of the scripts specified
-on the command and print a summary at the end.
-
-The time recorded is *not* the CPU time used.  (This would lead to an
-inaccurate estimate because the client code uses blocking calls to
-retrieve Web pages.)  Rather, the time recorded is the clock time
-measured between the start and end of script execution.
-
-Try `twill-fork -h` to get a list of other command line arguments.
-
-Note that twill-fork still needs a lot of work...
-
-Implementation and Extending Twill
-----------------------------------
-
-twill is pretty small at the moment, and I'm hoping to keep the core
-of it very simple.  twill is essentially a thin shell around the
-mechanize_ package.  All twill commands are implemented in the
-``commands.py`` file, and pyparsing_ does the work of parsing the
-input and converting it into Python commands (see ``parse.py``).
-Interactive shell work and readline support is implemented via the
-`cmd`_ module (from the standard Python library).
-
-Extending twill
-~~~~~~~~~~~~~~~
-
-Right now twill is very easy to extend: just build a Python module
-that exports the functions you want to call, place it in the
-PYTHONPATH, and run ``extend_with <modulename>``.  See
-``extensions/mailman_sf.py`` for an extension that helps deal
-with mailman lists on SourceForge; this extension is used by
-``examples/discard-sf-mailman-msgs``.
-
-Notes:
-
-  * If your extension raises ``SystemExit``, twill will stop
-    processing the script.  This is a useful way to build in
-    conditionals, e.g. see the ``discard-sf-mailman-msgs`` example
-    script.
-    
-Using twill in other Python programs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-All of the commands available in twill are implemented as top-level functions
-in the `twill.commands` module.  For example, to use twill functionality from
-another Python program, you can do:
-
-::
-
-   from twill.commands import go, showforms, formclear, fv, submit
-
-   go('http://issola.caltech.edu/~t/qwsgi/qwsgi-demo.cgi/')
-   go('./widgets')
-   showforms()
-
-   formclear('1')
-   fv("1", "name", "test")
-   fv("1", "password", "testpass")
-   fv("1", "confirm", "yes")
-   showforms()
-
-   submit('0')
-
-Note that all arguments need to be strings, at least for the moment.
-
-twill also provides a simple wrapper for mechanize_ functionality, in
-the `browser.py` module.  This may be useful for twill extensions as
-well as for other toolkits, but the API is still unstable.
-
-Miscellaneous Implementation Details
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
- * twill ignores robots.txt.
- * twill does not understand javascript
-
-.. _PBP: http://pbp.berlios.de/
-.. _maxq: http://maxq.tigris.org/
-.. _mechanize: http://wwwsearch.sf.net/
-.. _pyparsing: http://pyparsing.sourceforge.net/
-.. _cmd: http://docs.python.org/lib/module-cmd.html
+.. _WSGI-compliant applications: http://www.python.org/peps/pep-0333.html
 
 Future Plans
 ------------
@@ -553,11 +585,12 @@ twill was designed and written by C. Titus Brown.
 
 Cory Dodt had a great idea with PBP, and I thank him for his insight.
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython
-(since abandoned in favor of cmd_).  Grig Gheorghiu was strangely
-enthusiastic about the simple demo I showed him.  John J. Lee has
-promptly and enthusiastically checked in my various patches to
-mechanize.  Michele Simionato is an early adopter who has helped quite
-a bit.  Thanks, guys...
+(since abandoned in favor of cmd_), and suggested the "in-process"
+hack.  Grig Gheorghiu was strangely enthusiastic about the simple demo
+I showed him and has religiously promoted twill ever since.  John
+J. Lee has promptly and enthusiastically checked in my various patches
+to mechanize.  Michele Simionato is an early adopter who has helped
+quite a bit.  Thanks, guys...
 
 Bug reports have come in from the following fine people: Chris Miles,
 MATSUNO Tokuhiro, Elvelind Grandin, and Mike Rovner.
