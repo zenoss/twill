@@ -1,3 +1,7 @@
+2005-11-15  Titus Brown  <t@issola.caltech.edu>
+
+	* Fixed a stupid bug in parse.py with 'local_dict' != 'locals_dict'.
+
 2005-11-14  Titus Brown  <t@issola.caltech.edu>
 
 	* Added small section to README about 'nose' unit tests.
