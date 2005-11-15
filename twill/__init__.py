@@ -12,7 +12,10 @@
 
 __version__ = "0.7.4"
 
-# add the wwwsearch stuff from the zip file.
+__all__ = [ "TwillCommandLoop", "execute_file", "get_browser_state",
+            "add_wsgi_intercept", "remove_wsgi_intercept" ]
+
+# add the wwwsearch & pyparsing stuff from the zip files.
 import sys, os.path
 thisdir = os.path.dirname(__file__)
 sys.path.insert(0, thisdir)             # @@CTB
@@ -23,7 +26,9 @@ sys.path.insert(0, wwwsearchlib)
 pyparsinglib = os.path.join(thisdir, 'pyparsing.zip')
 sys.path.insert(0, pyparsinglib)
 
-# the only two things we really need.
+import myhttplib
+
+# the two core components
 from shell import TwillCommandLoop
 from parse import execute_file
 
@@ -36,3 +41,5 @@ def get_browser_state():
 # initialize global dict
 import namespaces
 namespaces.init_global_dict()
+
+from myhttplib import add_wsgi_intercept, remove_wsgi_intercept

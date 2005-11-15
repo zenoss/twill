@@ -522,9 +522,11 @@ This is still new code, and it would be good to hear people's opinions.
 Testing WSGI applications "in-process"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-twill has some built-in support for testing `WSGI-compliant
-applications`_.  ``twill.myhttplib`` contains two functions,
-`add_host_intercept` and `remove_host_intercept`, that allow Python
+twill has some built-in support for testing `WSGI
+applications`_.
+
+twill contains two functions,
+`add_wsgi_intercept` and `remove_wsgi_intercept`, that allow Python
 applications to redirect HTTP calls into a WSGI application
 "in-process", without going via an external Internet call.  This is
 particularly useful for unit tests, where setting up an externally
@@ -536,11 +538,11 @@ the given WSGI app: ::
     def create_app():
         return wsgi_app
 
-    twill.myhttplib.add_host_intercept('localhost', 80, create__app)
+    twill.add_wsgi_intercept('localhost', 80, create_app)
 
-See the ``test-wsgi-intercept.py`` unit test for more information.
+See the ``tests/test-wsgi-intercept.py`` unit test for more information.
 
-.. _WSGI-compliant applications: http://www.python.org/peps/pep-0333.html
+.. _WSGI applications: http://www.python.org/peps/pep-0333.html
 
 Future Plans
 ------------

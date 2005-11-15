@@ -1,5 +1,6 @@
 import testlib
-import myhttplib
+import twill
+from twill import myhttplib
 
 ###
 
@@ -16,8 +17,8 @@ def simple_app(environ, start_response):
     
     return ['WSGI intercept successful!\n']
 
-    def create_simple_app():
-        return simple_app
+def create_simple_app():
+    return simple_app
 
 ###
 
@@ -25,7 +26,7 @@ _saved_debuglevel = None
 
 def setup():
     _saved_debuglevel, myhttplib.debuglevel = myhttplib.debuglevel, 1
-    myhttplib.add_host_intercept('localhost', 80, create_simple_app)
+    twill.add_wsgi_intercept('localhost', 80, create_simple_app)
 
 def test():
     global simple_app_was_hit
@@ -34,7 +35,7 @@ def test():
     simple_app_was_hit = False
     go('http://localhost/')
     code(200)
-    show()
+    #show()
     find('WSGI intercept successful!')
     assert simple_app_was_hit
 
@@ -47,7 +48,7 @@ def test():
     assert simple_app_was_hit
 
     # clear & make sure it's clear...
-    myhttplib.remove_host_intercept('localhost', 80)
+    twill.remove_wsgi_intercept('localhost', 80)
     simple_app_was_hit = False
 
     go('http://localhost/')             # may or may not succeed!

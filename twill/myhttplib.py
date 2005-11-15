@@ -2,7 +2,7 @@
 myhttplib.MyHTTPConnection is a replacement for httplib.HTTPConnection
 that intercepts certain HTTP connections into a WSGI application.
 
-Use 'add_host_intercept' and 'remove_host_intercept' to control this behavior.
+Use 'add_wsgi_intercept' and 'remove_wsgi_intercept' to control this behavior.
 """
 
 import sys
@@ -10,7 +10,7 @@ from httplib import HTTPConnection
 from cStringIO import StringIO
 import traceback
 
-debuglevel = 0
+debuglevel = 1
 # 1 basic
 # 2 verbose
 
@@ -28,16 +28,16 @@ debuglevel = 0
 #
 # (top_url becomes the SCRIPT_NAME)
 
-_wsgi_intercept = { }
+_wsgi_intercept = {}
 
-def add_host_intercept(host, port, app_create_fn, script_name=''):
+def add_wsgi_intercept(host, port, app_create_fn, script_name=''):
     """
     Add a WSGI intercept call for host:port, using the app returned
     by app_create_fn with a SCRIPT_NAME of 'script_name' (default '').
     """
     _wsgi_intercept[(host, port)] = (app_create_fn, script_name)
 
-def remove_host_intercept(host, port):
+def remove_wsgi_intercept(host, port):
     """
     Remove the WSGI intercept call for (host, port).
     """
@@ -281,8 +281,6 @@ class MyHTTPConnection(HTTPConnection):
         Only create a given application once; store it after that.  Clear it
         from the cache if it's been cleared from _wsgi_intercept.
         """
-        global _wsgi_intercept
-        
         key = (host, port)
 
         app, script_name = None, None

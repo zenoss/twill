@@ -467,9 +467,10 @@ kills the server after script completion.</li>
 </div>
 <div class="section" id="testing-wsgi-applications-in-process">
 <h2><a class="toc-backref" href="#id28" name="testing-wsgi-applications-in-process">Testing WSGI applications &quot;in-process&quot;</a></h2>
-<p>twill has some built-in support for testing <a class="reference" href="http://www.python.org/peps/pep-0333.html">WSGI-compliant
-applications</a>.  <tt class="docutils literal"><span class="pre">twill.myhttplib</span></tt> contains two functions,
-<cite>add_host_intercept</cite> and <cite>remove_host_intercept</cite>, that allow Python
+<p>twill has some built-in support for testing <a class="reference" href="http://www.python.org/peps/pep-0333.html">WSGI
+applications</a>.</p>
+<p>twill contains two functions,
+<cite>add_wsgi_intercept</cite> and <cite>remove_wsgi_intercept</cite>, that allow Python
 applications to redirect HTTP calls into a WSGI application
 &quot;in-process&quot;, without going via an external Internet call.  This is
 particularly useful for unit tests, where setting up an externally
@@ -480,9 +481,9 @@ the given WSGI app:</p>
 def create_app():
     return wsgi_app
 
-twill.myhttplib.add_host_intercept('localhost', 80, create__app)
+twill.add_wsgi_intercept('localhost', 80, create_app)
 </pre>
-<p>See the <tt class="docutils literal"><span class="pre">test-wsgi-intercept.py</span></tt> unit test for more information.</p>
+<p>See the <tt class="docutils literal"><span class="pre">tests/test-wsgi-intercept.py</span></tt> unit test for more information.</p>
 </div>
 </div>
 <div class="section" id="future-plans">
