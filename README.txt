@@ -124,7 +124,7 @@ Display
 
 **showlinks** -- show all of the links on the current page.
 
-**echo** *<string>* -- echo the string to the screen via 'print'.
+**echo** *<string>* -- echo the string to the screen.
 
 **save_html** *<filename>* -- save the current page's HTML into a file.
 
@@ -165,7 +165,7 @@ Cookies
 Debugging
 ~~~~~~~~~
 
-**debug** *<what>* *<level>* -- turn on debugging/tracing for various functions.  Currently will show HTTP headers ('http') and twill commands ('twill').
+**debug** *<what>* *<level>* -- turn on or off debugging/tracing for various functions.  The first argument is either 'http' to show HTTP headers, or 'twill' to show twill commands.  The second argument is '0' for off, '1' for on.
 
 Variable handling
 ~~~~~~~~~~~~~~~~~
@@ -185,7 +185,7 @@ Other commands
 
 **exit** *[<code>]* -- exit with the given integer code, if specified.  'code' defaults to 0.
 
-**run** *<command>* -- exec the given Python command.
+**run** *<command>* -- execute the given Python command.
 
 **runfile** *<file1> [ <file2> ... ]* -- execute the given files.
 
@@ -217,11 +217,11 @@ username 'titus', password 'test'.
 Special variables
 ~~~~~~~~~~~~~~~~~
 
-**__input__** -- result of last **getinput**
+**__input__** -- result of last **getinput**.
 
-**__password__** -- result of last **getpassword**
+**__password__** -- result of last **getpassword**.
 
-**__url__** -- current URL
+**__url__** -- current URL.
 
 Details on Form Handling
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -575,11 +575,11 @@ useful links:
 
 .. _`urllib2.py: the missing manual`: http://www.voidspace.org.uk/python/articles/urllib2.shtml
 
-Miscellaneous implementation etails
+Miscellaneous implementation details
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  * twill ignores robots.txt.
- * twill does not understand javascript
+ * twill does not understand javascript.
 
 .. _PBP: http://pbp.berlios.de/
 .. _maxq: http://maxq.tigris.org/
@@ -603,23 +603,23 @@ after that:
 
  1. break "unit tests" down into units.
  2. execute directories/directory trees?
- 3. record scripts fix
+ 3. record scripts fix.
  4. systematize variable handling a bit better: __ vs $
  5. expose 'browser' & document re Grig; regexp esp.
  6. twill-fork: make file writing stuff optional; test massive fork fn.
- 7. eggggz
- 8. think about 'go' & test-go
+ 7. eggggz.
+ 8. think about 'go' & test-go.
 
 Longer term fixes & cleanups:
 
  1. fix spaces-in-URLs problem more generally (in urllib2).
- 2. Paul McGuire's pyparsing suggestions
+ 2. Paul McGuire's pyparsing suggestions.
  3. cookie "1" vs 1, in cookielib.
  4. command line completion doesn't understand extend_with results yet.
  5. extend_with etc. -- module namespaces, e.g. extmodule.fn?
  6. doc reorganization: separate out commands, make source docs.
- 7. implement more complex proxy support
- 8. add config directives for socket timeout
+ 7. implement more complex proxy support.
+ 8. add config directives for socket timeout.
 
 Contributions are welcome & will be duly acknowledged!
 
