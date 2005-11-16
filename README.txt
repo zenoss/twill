@@ -545,6 +545,17 @@ See the ``tests/test-wsgi-intercept.py`` unit test for more information.
 
 .. _WSGI applications: http://www.python.org/peps/pep-0333.html
 
+Advanced documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+twill uses a melange of different packages.  Here are some potentially
+useful links:
+
+ * `urllib2.py: the missing manual`_ -- a detailed discussion of urllib2
+   functionality that can be directly applied to twill.
+
+.. _`urllib2.py: the missing manual`: http://www.voidspace.org.uk/python/articles/urllib2.shtml
+
 Miscellaneous implementation etails
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -590,6 +601,8 @@ Longer term fixes & cleanups:
  4. command line completion doesn't understand extend_with results yet.
  5. extend_with etc. -- module namespaces, e.g. extmodule.fn?
  6. doc reorganization: separate out commands, make source docs.
+ 7. implement more complex proxy support
+ 8. add config directives for socket timeout
 
 Contributions are welcome & will be duly acknowledged!
 

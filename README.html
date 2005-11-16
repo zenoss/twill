@@ -48,11 +48,12 @@
 <li><a class="reference" href="#using-twill-in-other-python-programs" id="id26" name="id26">Using twill in other Python programs</a></li>
 <li><a class="reference" href="#unit-testing" id="id27" name="id27">Unit testing</a></li>
 <li><a class="reference" href="#testing-wsgi-applications-in-process" id="id28" name="id28">Testing WSGI applications &quot;in-process&quot;</a></li>
-<li><a class="reference" href="#miscellaneous-implementation-etails" id="id29" name="id29">Miscellaneous implementation etails</a></li>
+<li><a class="reference" href="#advanced-documentation" id="id29" name="id29">Advanced documentation</a></li>
+<li><a class="reference" href="#miscellaneous-implementation-etails" id="id30" name="id30">Miscellaneous implementation etails</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#future-plans" id="id30" name="id30">Future Plans</a></li>
-<li><a class="reference" href="#acknowledgements-and-credits" id="id31" name="id31">Acknowledgements and Credits</a></li>
+<li><a class="reference" href="#future-plans" id="id31" name="id31">Future Plans</a></li>
+<li><a class="reference" href="#acknowledgements-and-credits" id="id32" name="id32">Acknowledgements and Credits</a></li>
 </ul>
 </div>
 <div class="section" id="what-is-twill">
@@ -490,8 +491,19 @@ twill.add_wsgi_intercept('localhost', 80, create_app)
 </pre>
 <p>See the <tt class="docutils literal"><span class="pre">tests/test-wsgi-intercept.py</span></tt> unit test for more information.</p>
 </div>
+<div class="section" id="advanced-documentation">
+<h2><a class="toc-backref" href="#id29" name="advanced-documentation">Advanced documentation</a></h2>
+<p>twill uses a melange of different packages.  Here are some potentially
+useful links:</p>
+<blockquote>
+<ul class="simple">
+<li><a class="reference" href="http://www.voidspace.org.uk/python/articles/urllib2.shtml">urllib2.py: the missing manual</a> -- a detailed discussion of urllib2
+functionality that can be directly applied to twill.</li>
+</ul>
+</blockquote>
+</div>
 <div class="section" id="miscellaneous-implementation-etails">
-<h2><a class="toc-backref" href="#id29" name="miscellaneous-implementation-etails">Miscellaneous implementation etails</a></h2>
+<h2><a class="toc-backref" href="#id30" name="miscellaneous-implementation-etails">Miscellaneous implementation etails</a></h2>
 <blockquote>
 <ul class="simple">
 <li>twill ignores robots.txt.</li>
@@ -501,7 +513,7 @@ twill.add_wsgi_intercept('localhost', 80, create_app)
 </div>
 </div>
 <div class="section" id="future-plans">
-<h1><a class="toc-backref" href="#id30" name="future-plans">Future Plans</a></h1>
+<h1><a class="toc-backref" href="#id31" name="future-plans">Future Plans</a></h1>
 <p>TODO:</p>
 <p>0.8 release:</p>
 <blockquote>
@@ -536,12 +548,14 @@ twill.add_wsgi_intercept('localhost', 80, create_app)
 <li>command line completion doesn't understand extend_with results yet.</li>
 <li>extend_with etc. -- module namespaces, e.g. extmodule.fn?</li>
 <li>doc reorganization: separate out commands, make source docs.</li>
+<li>implement more complex proxy support</li>
+<li>add config directives for socket timeout</li>
 </ol>
 </blockquote>
 <p>Contributions are welcome &amp; will be duly acknowledged!</p>
 </div>
 <div class="section" id="acknowledgements-and-credits">
-<h1><a class="toc-backref" href="#id31" name="acknowledgements-and-credits">Acknowledgements and Credits</a></h1>
+<h1><a class="toc-backref" href="#id32" name="acknowledgements-and-credits">Acknowledgements and Credits</a></h1>
 <p>twill was designed and written by C. Titus Brown.</p>
 <p>Cory Dodt had a great idea with PBP, and I thank him for his insight.
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython

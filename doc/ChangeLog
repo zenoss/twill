@@ -1,5 +1,7 @@
 2005-11-15  Titus Brown  <t@issola.caltech.edu>
 
+	* Added 'advanced docs' section.
+
 	* Added http_proxy documentation.
 
 	* Fixed problems caused by failure to construct a valid
