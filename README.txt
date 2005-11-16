@@ -292,12 +292,18 @@ To obtain twill using darcs, install darcs and then type
 
    darcs get http://darcs.idyll.org/~t/projects/twill/
 
-And to send in a change, mail the output of either command
+To propose a change to the lead developer, after making the changes
 
 ::
 
-   darcs whatsnew
-   darcs diff --unified
+   darcs record -am "explanation of change"
+   darcs send -a
+
+To pull in changes made by the lead developer some time later
+
+::
+
+   darcs pull
 
 Licensing
 ~~~~~~~~~
