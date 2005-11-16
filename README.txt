@@ -286,6 +286,19 @@ version can always be found at twill-latest.tar.gz_.  There's a darcs
 repository for the project at
 http://darcs.idyll.org/~t/projects/twill/.
 
+To obtain twill using darcs, install darcs and then type
+
+::
+
+   darcs get http://darcs.idyll.org/~t/projects/twill/
+
+And to send in a change, mail the output of either command
+
+::
+
+   darcs whatsnew
+   darcs diff --unified
+
 Licensing
 ~~~~~~~~~
 
