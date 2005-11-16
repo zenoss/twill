@@ -322,8 +322,8 @@ archives_.
 .. _twill mailing list: http://lists.idyll.org/listinfo/twill
 .. _archives: http://lists.idyll.org/pipermail/twill/
 
-Installation and Examples
--------------------------
+Installation and Using twill
+----------------------------
 
 To install twill, just run
 
@@ -348,6 +348,19 @@ subdirectory.  Included in the examples is a test of the Quixote demo
 site, and a script for clearing out SourceForge Mailman lists.  The
 latter script makes use of the (very simple!) extension feature, if
 you're interested...
+
+Proxy servers
+~~~~~~~~~~~~~
+
+twill understands the ``http_proxy`` environment variable generically
+used to set proxy server information.  To use a proxy in UNIX or
+Windows, just set the ``http_proxy`` environment variable, e.g. ::
+
+   % export http_proxy="http://www.someproxy.com:3128"
+
+or ::
+
+   % setenv http_proxy="http://www.someotherproxy.com:3148"
 
 Package tests
 ~~~~~~~~~~~~~
@@ -453,18 +466,6 @@ twill also provides a simple wrapper for mechanize_ functionality, in
 the `browser.py` module.  This may be useful for twill extensions as
 well as for other toolkits, but the API is still unstable.
 
-Miscellaneous Implementation Details
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
- * twill ignores robots.txt.
- * twill does not understand javascript
-
-.. _PBP: http://pbp.berlios.de/
-.. _maxq: http://maxq.tigris.org/
-.. _mechanize: http://wwwsearch.sf.net/
-.. _pyparsing: http://pyparsing.sourceforge.net/
-.. _cmd: http://docs.python.org/lib/module-cmd.html
-
 Unit testing
 ~~~~~~~~~~~~
 
@@ -543,6 +544,18 @@ the given WSGI app: ::
 See the ``tests/test-wsgi-intercept.py`` unit test for more information.
 
 .. _WSGI applications: http://www.python.org/peps/pep-0333.html
+
+Miscellaneous implementation etails
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ * twill ignores robots.txt.
+ * twill does not understand javascript
+
+.. _PBP: http://pbp.berlios.de/
+.. _maxq: http://maxq.tigris.org/
+.. _mechanize: http://wwwsearch.sf.net/
+.. _pyparsing: http://pyparsing.sourceforge.net/
+.. _cmd: http://docs.python.org/lib/module-cmd.html
 
 Future Plans
 ------------

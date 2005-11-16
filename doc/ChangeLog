@@ -1,5 +1,11 @@
 2005-11-15  Titus Brown  <t@issola.caltech.edu>
 
+	* Added http_proxy documentation.
+
+	* Fixed problems caused by failure to construct a valid
+	  result object when HTTP errors (e.g. 404) happen.  Tested
+	  by test-http-codes.py.
+
 	* Added test-http-codes, cleaned up testlib a bit.
 
 	* Fixed a stupid bug in parse.py with 'local_dict' != 'locals_dict'.
