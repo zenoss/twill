@@ -74,7 +74,7 @@ def journey(func, *args, **kwargs):
                                    result.read() # HTML
                                    )
     except urllib2.HTTPError, e:
-        new_result = ResultWrapper(e.code)
+        new_result = ResultWrapper(e.code, e.url, e.read())
 
     return new_result
 

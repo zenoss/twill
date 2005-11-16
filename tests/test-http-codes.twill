@@ -4,10 +4,14 @@ setglobal start __url__
 # test code 403, access denied
 go ./restricted
 code 403
-show
+url "restricted"
+reload
+code 403
 
 # test code 404, does not exist
 go $start
 go ./does-not-exist
 code 404
-show
+url "does-not-exist"
+reload
+code 404
