@@ -239,4 +239,8 @@ class HttpAuthRestricted(AccessControlled, Directory):
 
 if __name__ == '__main__':
     from quixote.server.simple_server import run
-    run(create_publisher, port=8080)
+    print 'starting twilltestserver on port 8080.'
+    try:
+        run(create_publisher, port=8080)
+    except KeyboardInterrupt:
+        pass

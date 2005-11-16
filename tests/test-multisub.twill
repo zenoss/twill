@@ -1,4 +1,4 @@
-go http://localhost:8080/multisubmitform
+go /multisubmitform
 code 200
 
 fv 1 sub_a click

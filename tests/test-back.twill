@@ -1,0 +1,9 @@
+setglobal init __url__
+code 200
+
+go /multisubmitform
+showforms
+go /
+back
+showforms		# this might fail if the seek(0) in _parse_html isn't fixed
+fv 1 sub_a blah

@@ -16,6 +16,8 @@ def teardown():
     testlib.pop_testdir()
 
 if __name__ == '__main__':
-    setup()
-    test()
-    teardown()
+    try:
+        setup()
+        test()
+    finally:
+        teardown()

@@ -1,5 +1,12 @@
 2005-11-15  Titus Brown  <t@issola.caltech.edu>
 
+	* Fixed failure to seek(0) before parsing response; problem
+	  in _parse_html.  It broke 'back()' behavior for forms.
+	  Added test-back.{py,twill}.
+	
+	* Test cleanup: add try: finally: around __main__ stuff, and
+	  add 'initial_url' args.
+
 	* Added 'advanced docs' section.
 
 	* Added http_proxy documentation.

@@ -23,6 +23,8 @@ def teardown():
         pass
 
 if __name__ == '__main__':
-    setup()
-    test()
-    teardown()
+    try:
+        setup()
+        test()
+    finally:
+        teardown()

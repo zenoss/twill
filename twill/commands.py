@@ -299,6 +299,10 @@ def formvalue(formname, fieldname, value):
     'formvalue' is vailable as 'fv' as well.
     """
     form = browser.get_form(formname)
+    if not form:
+        print 'No forms on this page!'
+        assert 0, "no forms!"
+
     control = browser.get_form_field(form, fieldname)
 
     if control:

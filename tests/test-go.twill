@@ -1,0 +1,12 @@
+setglobal init __url__
+code 200
+
+# test going too
+go /login
+code 200
+
+go /login
+code 200
+
+#go ../ @CTB this should work, yes?
+#code 200

@@ -576,12 +576,9 @@ TODO:
 0.8 release:
 
  1. test the documented fieldname spec for fv/submit.
- 2. 'go' on non-absolute URLs breaks when executed twice in a row.
- 3. UPGRADE wwwsearch.
- 4. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
- 5. Test HTTP basic auth.
- 6. basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
- 7. bug: back & forms
+ 2. UPGRADE wwwsearch stuff.
+ 3. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
+ 4. Test HTTP basic auth & basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
 
 after that:
 
@@ -592,6 +589,7 @@ after that:
  5. expose 'browser' & document re Grig; regexp esp.
  6. twill-fork: make file writing stuff optional; test massive fork fn.
  7. eggggz
+ 8. think about 'go' & test-go
 
 Longer term fixes & cleanups:
 

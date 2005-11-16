@@ -58,6 +58,8 @@ def teardown():
     myhttplib.debuglevel = _saved_debuglevel
 
 if __name__ == '__main__':
-    setup()
-    test()
-    teardown()
+    try:
+        setup()
+        test()
+    finally:
+        teardown()

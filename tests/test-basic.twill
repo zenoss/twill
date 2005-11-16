@@ -8,10 +8,12 @@
 #debug http 1
 #debug twill 1
 
+setglobal init __url__
+
 # should fail silently
 back
 
-go http://issola:8080/
+go $init
 code 200
 
 # miscellaneous gunk for better code coverage
@@ -21,7 +23,7 @@ agent test
 
 clear_cookies
 
-go issola:8080/
+go $init
 code 200
 showlinks
 
@@ -75,7 +77,7 @@ echo 'URL is' __url__
 go restricted/
 code 403
 back
-url http://issola:8080/
+url $init
 
 find 'this is visit #2'
 

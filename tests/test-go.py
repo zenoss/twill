@@ -1,14 +1,15 @@
+import os
 import testlib
 import twilltestserver
 
 def setup():
-    global url
-    
     testlib.cd_testdir()
+
+    global url
     url = testlib.run_server(twilltestserver.create_publisher)
 
 def test():
-    testlib.execute_twill_script('test-multisub.twill', initial_url=url)
+    testlib.execute_twill_script('test-go.twill', initial_url=url)
     
 def teardown():
     testlib.kill_server()
