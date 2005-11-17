@@ -97,6 +97,9 @@ if len(args):
 
 if not args or options.interact:
     welcome_msg = "\n -= Welcome to twill! =-\n"
-    TwillCommandLoop(initial_url=options.url).cmdloop(welcome_msg)
+    try:
+        TwillCommandLoop(initial_url=options.url).cmdloop(welcome_msg)
+    except KeyboardInterrupt:
+        pass
 
 sys.exit(0)
