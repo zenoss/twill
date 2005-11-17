@@ -15,3 +15,11 @@ code 404
 url "does-not-exist"
 reload
 code 404
+
+# test code 500, server error
+go $start
+go ./exception
+code 500
+url "exception"
+reload
+code 500

@@ -80,7 +80,7 @@ class TwillTest(Directory):
     _q_exports = ['logout', 'increment', 'incrementfail', "", 'restricted',
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
                   'simpleform', 'upload_file', 'http_auth', 'formpostredirect',
-                  'exit', 'multisubmitform']
+                  'exit', 'multisubmitform', "exception"]
 
     def __init__(self):
         self.restricted = Restricted()
@@ -89,6 +89,9 @@ class TwillTest(Directory):
     def _q_index(self):
         session = get_session()
         return message(session)
+
+    def exception(self):
+        raise Exception("500 error -- fail out!")
 
     def test_spaces(self):
         return "success"
