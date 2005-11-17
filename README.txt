@@ -1,6 +1,6 @@
-============================================================
-twill: an extensible scriptlet language for testing web apps
-============================================================
+=====================================================
+twill: a simple language for testing Web applications
+=====================================================
 
 .. contents::
 
@@ -10,7 +10,8 @@ What is 'twill'?
 twill is a tool for Web application testing.  twill implements a
 simple scripting language that can be used interactively or from
 scripts; this language contains commands for browsing the Web,
-filling out forms, and asserting various conditions.
+filling out forms, and asserting various conditions.  twill can
+explore Web sites both interactively and via a script.
 
 twill scripts look something like this:
 
@@ -40,14 +41,12 @@ twill scripts look something like this:
    code 200
    find testpass
 
-
 twill commands can also be used directly from Python.
 
 The primary use for twill is to do automated testing of Web
-applications via a straightforward declarative language.  In addition
-to basic Web crawling, I wanted to be able to extend the language via
-Python, and I also wanted to be able to record things with maxq_.
-Hence, twill.
+applications via a straightforward declarative language.  However,
+it also provides a friendly, programmable interface for interacting
+with Web sites.
 
 twill was originally based on Cory Dodt's "Python Browser Poseur",
 a.k.a. PBP_.  It has diverged quite a bit since then.
@@ -58,22 +57,19 @@ Use cases
 Here are some of things that I'm using twill for, or that I plan to use
 it for:
 
+ * unit-testing Web applications, esp. WSGI_ and Quixote_ Python applications;
+
  * checking that Web sites are alive;
 
- * testing functionality in my Quixote extensions;
-
  * demonstrating specific problems with my (and other) Web sites;
-
- * regression testing of Web projects, and making sure that existing
-   projects work like they should;
 
  * interacting with Mailman lists;
 
  * stress-testing applications with multiple hits;
 
-Send me an e-mail if you have additional ideas.
+Send me an e-mail if you have additional uses.
 
-Other Opinions
+Other opinions
 ~~~~~~~~~~~~~~
 
 Grig Gheorgiu has written a blog entry on `Web app testing using twill`_.
@@ -83,6 +79,41 @@ Nitesh Djanjani `tried it out`_ as well.
 .. _Web app testing using twill: http://agiletesting.blogspot.com/2005/09/web-app-testing-with-python-part-3.html
 .. _Testing Web Apps: http://www.onlamp.com/pub/a/python/2005/11/03/twill.html
 .. _tried it out: http://www.oreillynet.com/pub/wlg/8201
+
+Other tools
+~~~~~~~~~~~
+
+For those who want to use Python-based toolkits to test their Web
+apps, there are a lot of great options.  Here are the ones I know
+about:
+
+PBP_ is very similar to twill, but the project seems to be
+more-or-less defunct.  There are still one or two things that
+PBP does that twill doesn't, but we're working on that ;).
+Both twill and PBP are based on mechanize_.
+
+funkload_ is a nifty looking tool that does functional load testing.
+It is built on webunit_.
+
+webtest_ is an extension to ``unittest`` for testing Web frameworks.
+It's primarily used for CherryPy, I think.
+
+zope.testbrowser_ is a wrapper around mechanize_ that exposes a more
+convenient interface for testing.  Check out the `zope.testbrowser README`_
+for more information.
+
+mechanoid_ is a fork of mechanize_ that claims many bug fixes and a
+different programming style.  It's primarily used for scripting Web
+sites, not for testing, but it can easily be used for testing.
+
+Finally, Selenium_ is an in-browser testing system that several people
+have given rave reviews.  Check out this `article on Selenium`_ for
+some starting tips.  Note that it's not written in Python...
+
+You might also consider checking out Ian Bicking's proto-implementation
+of `twill in Javascript`_.
+
+(Thanks to Grig Gheorghiu for assembling much of this list!)
 
 Command Reference
 -----------------
@@ -223,7 +254,7 @@ Special variables
 
 **__url__** -- current URL.
 
-Details on Form Handling
+Details on form handling
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. _details on form handling:
@@ -562,8 +593,6 @@ the given WSGI app: ::
 
 See the ``tests/test-wsgi-intercept.py`` unit test for more information.
 
-.. _WSGI applications: http://www.python.org/peps/pep-0333.html
-
 Advanced documentation
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -580,12 +609,6 @@ Miscellaneous implementation details
 
  * twill ignores robots.txt.
  * twill does not understand javascript.
-
-.. _PBP: http://pbp.berlios.de/
-.. _maxq: http://maxq.tigris.org/
-.. _mechanize: http://wwwsearch.sf.net/
-.. _pyparsing: http://pyparsing.sourceforge.net/
-.. _cmd: http://docs.python.org/lib/module-cmd.html
 
 Future Plans
 ------------
@@ -621,12 +644,25 @@ Longer term fixes & cleanups:
  7. implement more complex proxy support.
  8. add config directives for socket timeout.
 
+Random ideas:
+
+ 1. Build twill interfaces for zope.testbrowser and mechanoid.
+
+    (This shouldn't be too difficult, since both are based on mechanize...)
+
+ 2. Write a sizeable Web app and then test it with all of the different tools,
+    above.
+
+    Draw broad conclusions that are unsubstantiated by the work.
+
 Contributions are welcome & will be duly acknowledged!
 
 Acknowledgements and Credits
 ----------------------------
 
-twill was designed and written by C. Titus Brown.
+twill was designed and written by C. Titus Brown.  All of the good
+design ideas were stolen from other people; all of the bad ones are
+my fault.
 
 Cory Dodt had a great idea with PBP, and I thank him for his insight.
 Ian Bicking gave me the idea of reimplementing PBP on top of IPython
@@ -638,11 +674,32 @@ to mechanize.  Michele Simionato is an early adopter who has helped
 quite a bit.  Thanks, guys...
 
 Bug reports have come in from the following fine people: Chris Miles,
-MATSUNO Tokuhiro, Elvelind Grandin, and Mike Rovner.
+MATSUNO Tokuhiro, Elvelind Grandin, Mike Rovner, and sureshvv.
 
 Patches have been submitted by: Joeri van Ruth, Paul McGuire, Ed Rahn,
 Nic Ferrier, Robert Leftwich, James Cameron, William Volkman, and
 Tommi Virtanen.  Thanks!
 
+---------
+
 This document was written by C. Titus Brown, titus@caltech.edu.
 Last updated November '05.
+
+.. _PBP: http://pbp.berlios.de/
+.. _maxq: http://maxq.tigris.org/
+.. _mechanize: http://wwwsearch.sf.net/
+.. _pyparsing: http://pyparsing.sourceforge.net/
+.. _cmd: http://docs.python.org/lib/module-cmd.html
+.. _funkload: http://funkload.nuxeo.org/
+.. _webunit: http://webunit.sourceforge.net/
+.. _webtest: http://www.cherrypy.org/file/trunk/cherrypy/test/webtest.py
+.. _zope.testbrowser: http://cheeseshop.python.org/pypi?:action=display&name=zope.testbrowser
+.. _zope.testbrowser README: http://svn.zope.org/*checkout*/Zope3/trunk/src/zope/testbrowser/README.txt
+.. _Selenium: http://confluence.public.thoughtworks.org/display/SEL/Home
+.. _article on Selenium: http://agiletesting.blogspot.com/2005/10/article-on-selenium-in-october-issue.html
+
+.. _WSGI applications: http://www.python.org/peps/pep-0333.html
+.. _WSGI:  http://www.python.org/peps/pep-0333.html
+.. _Quixote: http://www.mems-exchange.org/software/quixote/
+.. _mechanoid: http://python.org/pypi/mechanoid
+.. _twill in Javascript: http://blog.ianbicking.org/twill-in-javascript.html

@@ -1,3 +1,12 @@
+2005-11-17  Titus Brown  <t@issola.caltech.edu>
+
+	* substantially updated README with links to other tools.
+
+	* KeyboardInterrupts don't error out in twill-sh; they just force
+	  a silent exit.
+
+	* Added a code 500 test to 'test-http-codes'.
+
 2005-11-15  Titus Brown  <t@issola.caltech.edu>
 
 	* Fixed failure to seek(0) before parsing response; problem
