@@ -245,7 +245,7 @@ class TwillBrowser:
         Pretty-print all of the links.
         """
         print 'Links:\n'
-        for n, link in enumerate(self._browser._links):
+        for n, link in enumerate(self._browser.links()):
             print "%d. %s ==> %s" % (n, link.text, link.url,)
         print ''
 

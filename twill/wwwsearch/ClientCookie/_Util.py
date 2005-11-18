@@ -510,6 +510,10 @@ class seek_wrapper:
         self.wrapped = None
 
 class eoffile:
+    def __init__(self, headers, url):
+        self.headers = headers
+        self.url = url
+        
     # file-like object that always claims to be at end-of-file...
     def read(self, size=-1): return ""
     def readline(self, size=-1): return ""
@@ -518,6 +522,8 @@ class eoffile:
         return self.headers
     def geturl(self):
         return self.url
+    def close(self):
+        pass
 
 
 class response_seek_wrapper(seek_wrapper):
@@ -544,7 +550,7 @@ class response_seek_wrapper(seek_wrapper):
         self.headers = self.wrapped.headers
         self.url = self.wrapped.url
         self.wrapped.close()
-        self.wrapped = eoffile()
+        self.wrapped = eoffile(self.headers, self.url)
 
     def __getstate__(self):
         # There are three obvious options here:
