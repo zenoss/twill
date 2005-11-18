@@ -266,8 +266,7 @@ class TwillBrowser:
         """
         found = None
         
-        matches = [ ctl for ctl in form.controls \
-                    if str(ctl.name) == fieldname ]
+        matches = [ c for c in form.controls if str(c.name) == fieldname ]
 
         if matches and len(matches) == 1:
             found = matches[0]
@@ -341,7 +340,7 @@ class TwillBrowser:
                 # get first submit button in form.
                 submits = [ c for c in form.controls \
                             if isinstance(c, ClientForm.SubmitControl) ]
-                    
+
                 if len(submits):
                     ctl = submits[0]
                 
@@ -365,7 +364,7 @@ class TwillBrowser:
                 
         else:
             # submit w/o submit button.
-            control = form._click(None, None, None, 0, None, urllib2.Request)
+            control = form._click(None, None, None, None, 0, None, urllib2.Request)
 
         # now actually GO.
         self._last_result = journey(self._browser.open, control)

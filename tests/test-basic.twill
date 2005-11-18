@@ -199,13 +199,15 @@ go ./upload_file
 formfile 1 upload ../README.txt
 submit
 code 200
-find "twill: an extensible scriptlet language"
+find "twill: a simple language"
 
 # ok, separate issue: redirect + enctype problem that I fixed in
 # wwwsearch, urllib2_support, HTTPRedirectHandler, redirect_request.
 # (redirects after a POST retain content-type inappropriately)
-go ./formpostredirect
-fv 1 test "hello"
-submit 1
 
-code 200
+## @@CTB
+#go ./formpostredirect
+#fv 1 test "hello"
+#submit 1
+
+#code 200
