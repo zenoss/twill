@@ -331,15 +331,15 @@ class TwillBrowser:
             self._last_submit = control
 
     def submit(self, fieldname):
-        if not self._browser._forms:
+        if not self._browser.forms():
             raise Exception("no forms on this page!")
         
         ctl = None
         
         form = self._browser.form
         if form is None:
-            if len(self._browser._forms) == 1:
-                form = self._browser._forms[0]
+            if len(self._browser.forms()) == 1:
+                form = self._browser.forms()[0]
             else:
                 raise Exception("more than one form; you must select one (use 'fv') before submitting")
 
