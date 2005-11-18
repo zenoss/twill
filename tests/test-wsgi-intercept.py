@@ -2,6 +2,18 @@ import testlib
 import twill
 from twill import myhttplib
 
+from twill.myhttplib import MyHTTPConnection
+import ClientCookie
+import urllib2
+from ClientCookie._urllib2_support import HTTPHandler
+class MyHTTPHandler(HTTPHandler):
+    def http_open(self, req):
+        print 'YO'
+        return self.do_open(MyHTTPConnection, req)
+
+opener = ClientCookie._urllib2_support.build_opener(MyHTTPHandler())
+ClientCookie._urllib2_support.install_opener(opener)
+
 ###
 
 simple_app_was_hit = False

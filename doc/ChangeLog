@@ -1,3 +1,10 @@
+2005-11-18  Titus Brown  <t@issola.caltech.edu>
+
+	* WSGI intercept stuff is now much cleaner.  Could be even cleaner,
+	  yes...
+
+	* Updated ClientForm/ClientCookie/pullparser.
+
 2005-11-17  Titus Brown  <t@issola.caltech.edu>
 
 	* substantially updated README with links to other tools.

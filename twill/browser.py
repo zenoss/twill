@@ -17,9 +17,20 @@ from mechanize._mechanize import BrowserStateError, LinkNotFoundError
 import ClientCookie, ClientForm
 
 # twill package imports
+from twill import myhttplib
 from utils import trunc, print_form, journey
 
 class PatchedMechanizeBrowser(MechanizeBrowser):
+    """
+    A patched version of the mechanize browser class, to fix various
+    bugs and install new handlers.
+    """
+    def __init__(self, *args, **kwargs):
+        # install WSGI intercept handler.
+        self.handler_classes['http'] = myhttplib.get_my_handler()
+        
+        MechanizeBrowser.__init__(self, *args, **kwargs)
+        
     def viewing_html(self):
         """
         Return whether the current response contains HTML data.

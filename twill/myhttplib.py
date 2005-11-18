@@ -317,6 +317,15 @@ class MyHTTPConnection(HTTPConnection):
                 traceback.print_exc()
             raise
 
+def get_my_handler():
+    from ClientCookie import HTTPHandler
+
+    class MyHTTPHandler(HTTPHandler):
+        def http_open(self, req):
+            return self.do_open(MyHTTPConnection, req)
+
+    return MyHTTPHandler
+
 ### DEBUGGING CODE -- to help me figure out communications stuff. ###
 
 # (ignore me, please)
