@@ -20,8 +20,8 @@ import sys, os.path
 thisdir = os.path.dirname(__file__)
 sys.path.insert(0, thisdir)             # @@CTB
 
-wwwsearchlib = os.path.join(thisdir, 'wwwsearch.zip')
-sys.path.insert(0, wwwsearchlib)
+#wwwsearchlib = os.path.join(thisdir, 'wwwsearch.zip')
+#sys.path.insert(0, wwwsearchlib)
 
 pyparsinglib = os.path.join(thisdir, 'pyparsing.zip')
 sys.path.insert(0, pyparsinglib)
