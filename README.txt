@@ -106,6 +106,9 @@ mechanoid_ is a fork of mechanize_ that claims many bug fixes and a
 different programming style.  It's primarily used for scripting Web
 sites, not for testing, but it can easily be used for testing.
 
+PAMIE_ and PyXPCOM_ provide a Python interface for interacting with IE
+and Mozilla-based browsers, respectively.
+
 Finally, Selenium_ is an in-browser testing system that several people
 have given rave reviews.  Check out this `article on Selenium`_ for
 some starting tips.  Note that it's not written in Python...
@@ -655,6 +658,10 @@ Random ideas:
 
     Draw broad conclusions that are unsubstantiated by the work.
 
+ 3. Develop twill-like languages for PAMIE_ and PyXPCOM_.  Note that the
+    hard work, at least for PAMIE, is already done; check out the
+    `PAMIE examples page`_.
+
 Contributions are welcome & will be duly acknowledged!
 
 Acknowledgements and Credits
@@ -703,3 +710,7 @@ Last updated November '05.
 .. _Quixote: http://www.mems-exchange.org/software/quixote/
 .. _mechanoid: http://python.org/pypi/mechanoid
 .. _twill in Javascript: http://blog.ianbicking.org/twill-in-javascript.html
+
+.. _PAMIE: http://pamie.sourceforge.net/
+.. _PAMIE examples page: tutoriala.html
+.. _PyXPCOM: http://kb.mozillazine.org/PyXPCOM
