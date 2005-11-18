@@ -1,12 +1,25 @@
 setglobal init __url__
 code 200
 
+showhistory
+
 # test going too
 go /login
 code 200
 
+showhistory
+
 go /login
 code 200
+
+showhistory
+
+back
+back
+
+showhistory
+
+back
 
 #go ../ @CTB this should work, yes?
 #code 200

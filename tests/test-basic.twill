@@ -72,12 +72,17 @@ find "this is visit #2"
 
 # ok, cookies check out. now check login/access restricted.
 
-echo 'URL is' __url__
+showhistory
 
 go restricted/
 code 403
 back
+
+showhistory
+echo 'URL IS' __url__
 url $init
+
+show
 
 find 'this is visit #2'
 

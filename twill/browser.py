@@ -114,6 +114,7 @@ class TwillBrowser:
             try_urls.append(full_url)
 
         success = False
+
         for u in try_urls:
             try:
                 self._last_result = journey(self._browser.open, u)
@@ -148,35 +149,43 @@ class TwillBrowser:
             self._last_result = None
         except BrowserStateError, e:
             self._last_result = None
-        
+
         if self._last_result:
             print '==> back to', self.get_url()
         else:
-            print '==> no previous URL; ignoring.'
+            print '==> back at empty page.'
             
     def get_code(self):
         """
         Get the HTTP status code received for the current page.
         """
-        return self._last_result.get_http_code()
+        if self._last_result:
+            return self._last_result.get_http_code()
+        return None
 
     def get_html(self):
         """
         Get the HTML for the current page.
         """
-        return self._last_result.get_page()
+        if self._last_result:
+            return self._last_result.get_page()
+        return None
 
     def get_title(self):
         """
         Get content of the HTML title element for the current page.
         """
-        return self._last_result.get_title()
+        if self._last_result:
+            return self._last_result.get_title()
+        return None
 
     def get_url(self):
         """
         Get the URL of the current page.
         """
-        return self._last_result.get_url()
+        if self._last_result:
+            return self._last_result.get_url()
+        return None
 
     def find_link(self, pattern):
         """
@@ -247,6 +256,20 @@ class TwillBrowser:
         print 'Links:\n'
         for n, link in enumerate(self._browser.links()):
             print "%d. %s ==> %s" % (n, link.text, link.url,)
+        print ''
+
+    def showhistory(self):
+        """
+        Pretty-print the history of links visited.
+        """
+        print ''
+        print 'History: (%d pages total) ' % (len(self._browser._history))
+        for n, (req, resp) in enumerate(self._browser._history):
+            if req and resp:
+                print "\t%d. %s" % (n, resp.geturl())
+            else:
+                print "\t%d. ** empty page **" % (n,)
+            
         print ''
 
     def get_form(self, formname):

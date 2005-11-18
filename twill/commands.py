@@ -22,6 +22,7 @@ __all__ = ['reset_browser',
            'agent',
            'showforms',
            'showlinks',
+           'showhistory',
            'submit',
            'formvalue',
            'fv',
@@ -113,7 +114,7 @@ def url(should_be):
     regexp = re.compile(should_be)
     current_url = browser.get_url()
     
-    if not regexp.search(current_url):
+    if current_url is None or not regexp.search(current_url):
         raise TwillAssertionError("url does not match '%s'" % (should_be,))
 
 def follow(what):
@@ -258,6 +259,14 @@ def showlinks():
     Show all of the links on the current page.
     """
     browser.showlinks()
+
+def showhistory():
+    """
+    >> showhistory
+
+    Show the browser history (what URLs were visited).
+    """
+    browser.showhistory()
 
 def formclear(formname):
     """

@@ -55,6 +55,15 @@ class ResultWrapper:
         title = getNodeContentsAsText(title)
         return title
 
+    def __len__(self):
+        return len(self.page)
+
+#    def __getattr__(self, name):
+#        print '============', name
+#        if self.__dict__.has_key(name):
+#            return self.__dict__.get(name)
+#        raise AttributeError, name
+
 def journey(func, *args, **kwargs):
     """
     Wrap 'func' so that HTTPErrors and other things are captured when
@@ -68,6 +77,9 @@ def journey(func, *args, **kwargs):
     """
     try:
         result = func(*args, **kwargs)
+
+        if result is None:
+            return None
 
         new_result = ResultWrapper(result.wrapped.code, # HTTP response code
                                    result.geturl(), #  URL

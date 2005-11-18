@@ -1,9 +1,37 @@
 setglobal init __url__
 code 200
 
+#
+# first test to make sure that forms are properly loaded on back() calls.
+#
+
 go /multisubmitform
 showforms
 go /
 back
-showforms		# this might fail if the seek(0) in _parse_html isn't fixed
+showforms
 fv 1 sub_a blah
+
+back
+
+#
+# back at initial page: fine.
+#
+
+echo url is __url__
+go /
+code 200
+echo url is now __url__
+#restricted
+#code 403
+back
+
+#
+# now test restricted
+#
+
+echo url is __url__
+go /restricted
+code 403
+echo url is now __url__
+back

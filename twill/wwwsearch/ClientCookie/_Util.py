@@ -510,7 +510,8 @@ class seek_wrapper:
         self.wrapped = None
 
 class eoffile:
-    def __init__(self, headers, url):
+    def __init__(self, headers, url, code):
+        self.code = code
         self.headers = headers
         self.url = url
         
@@ -550,7 +551,7 @@ class response_seek_wrapper(seek_wrapper):
         self.headers = self.wrapped.headers
         self.url = self.wrapped.url
         self.wrapped.close()
-        self.wrapped = eoffile(self.headers, self.url)
+        self.wrapped = eoffile(self.headers, self.url, self.code)
 
     def __getstate__(self):
         # There are three obvious options here:

@@ -1,5 +1,11 @@
 2005-11-18  Titus Brown  <t@issola.caltech.edu>
 
+	* Miscellaneous fixes to browser.py.
+
+	* Miscellaneous fixes to ClientCookie/_Util.py.
+
+	* Added 'showhistory' command.
+
 	* WSGI intercept stuff is now much cleaner.  Could be even cleaner,
 	  yes...
 
