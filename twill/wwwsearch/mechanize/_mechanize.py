@@ -1,6 +1,6 @@
 """Stateful programmatic WWW navigation, after Perl's WWW::Mechanize.
 
-Copyright 2003-2004 John J. Lee <jjl@pobox.com>
+Copyright 2003-2005 John J. Lee <jjl@pobox.com>
 Copyright 2003 Andy Lester (original Perl code)
 
 This code is free software; you can redistribute it and/or modify it under
@@ -11,20 +11,18 @@ distribution).
 
 # XXXX
 # test referer bugs (frags and don't add in redirect unless orig req had Referer)
-# fix CC bug (tst.py debug stuff)
 
 # XXX
 # The stuff on web page's todo list.
 # Moof's emails about response object, .back(), etc.
-# Add Browser.load_response() method.
-# Add Browser.form_as_string() and Browser.__str__() methods.
 
-import urllib2, urlparse, re
+from __future__ import generators
+
+import urllib2, urlparse, re, sys
 
 import ClientCookie
 from ClientCookie._Util import response_seek_wrapper
-from ClientCookie._HeadersUtil import split_header_words
-import pullparser
+from ClientCookie._HeadersUtil import split_header_words, is_html
 # serves me right for not using a version tuple...
 VERSION_RE = re.compile(r"(?P<major>\d+)\.(?P<minor>\d+)\.(?P<bugfix>\d+)"
                         r"(?P<state>[ab])?(?:-pre)?(?P<pre>\d+)?$")
@@ -34,10 +32,8 @@ def parse_version(text):
         raise ValueError
     return tuple([m.groupdict()[part] for part in
                   ("major", "minor", "bugfix", "state", "pre")])
-assert map(int, parse_version(ClientCookie.VERSION)[:3]) >= [1, 0, 2], \
-       "ClientCookie 1.0.2 or newer is required"
-assert pullparser.__version__[:3] >= (0, 0, 4), \
-       "pullparser 0.0.4b or newer is required"
+assert map(int, parse_version(ClientCookie.VERSION)[:3]) >= [1, 0, 4], \
+       "ClientCookie 1.0.4 or newer is required"
 
 from _useragent import UserAgent
 
@@ -51,24 +47,82 @@ class Link:
     def __init__(self, base_url, url, text, tag, attrs):
         assert None not in [url, tag, attrs]
         self.base_url = base_url
-
-        # @CTB space ==> %20 hack.
-        self.absolute_url = urlparse.urljoin(base_url, url.replace(' ', '%20'))
-        #self.absolute_url = urlparse.urljoin(base_url, url)
-        
+        self.absolute_url = urlparse.urljoin(base_url, url)
         self.url, self.text, self.tag, self.attrs = url, text, tag, attrs
-    def __eq__(self, other):
+    def __cmp__(self, other):
         try:
             for name in "url", "text", "tag", "attrs":
                 if getattr(self, name) != getattr(other, name):
-                    return False
+                    return -1
         except AttributeError:
-            return False
-        return True
+            return -1
+        return 0
     def __repr__(self):
         return "Link(base_url=%r, url=%r, text=%r, tag=%r, attrs=%r)" % (
             self.base_url, self.url, self.text, self.tag, self.attrs)
 
+
+class LinksFactory:
+
+    def __init__(self,
+                 link_parser_class=None,
+                 link_class=Link,
+                 urltags=None,
+                 ):
+        import pullparser
+        assert pullparser.__version__[:3] >= (0, 0, 7), \
+               "pullparser 0.0.7 or newer is required"
+        if link_parser_class is None:
+            link_parser_class = pullparser.TolerantPullParser
+        self.link_parser_class = link_parser_class
+        self.link_class = link_class
+        if urltags is None:
+            urltags = {
+                "a": "href",
+                "area": "href",
+                "frame": "src",
+                "iframe": "src",
+                }
+        self.urltags = urltags
+
+    def links(self, fh, base_url, encoding=None):
+        """Return an iterator that provides links of the document."""
+        import pullparser
+        p = self.link_parser_class(fh, encoding=encoding)
+
+        for token in p.tags(*(self.urltags.keys()+["base"])):
+            if token.data == "base":
+                base_url = dict(token.attrs).get("href")
+                continue
+            if token.type == "endtag":
+                continue
+            attrs = dict(token.attrs)
+            tag = token.data
+            name = attrs.get("name")
+            text = None
+            # XXX need to sort out quoting
+            #url = urllib.quote_plus(attrs.get(self.urltags[tag]))
+            url = attrs.get(self.urltags[tag])
+            if tag == "a":
+                if token.type != "startendtag":
+                    # XXX hmm, this'd break if end tag is missing
+                    text = p.get_compressed_text(("endtag", tag))
+                # but this doesn't work for eg. <a href="blah"><b>Andy</b></a>
+                #text = p.get_compressed_text()
+                # This is a hack from WWW::Mechanize to get some really basic
+                # JavaScript working, which I'm not yet convinced is a good
+                # idea.
+##                 onClick = attrs["onclick"]
+##                 m = re.search(r"/^window\.open\(\s*'([^']+)'/", onClick)
+##                 if onClick and m:
+##                     url = m.group(1)
+            if not url:
+                # Probably an <A NAME="blah"> link or <AREA NOHREF...>.
+                # For our purposes a link is something with a URL, so ignore
+                # this.
+                continue
+
+            yield Link(base_url, url, text, tag, token.attrs)
 
 class FormsFactory:
 
@@ -83,10 +137,11 @@ class FormsFactory:
                  select_default=False,
                  form_parser_class=None,
                  request_class=None,
+                 backwards_compat=False,
                  ):
         import ClientForm
-        assert map(int, parse_version(ClientForm.VERSION)[:3]) >= [0, 1, 7], \
-               "ClientForm >= 0.1.7 is required"
+        assert map(int, parse_version(ClientForm.VERSION)[:3]) >= [0, 2, 1], \
+               "ClientForm >= 0.2.1a is required"
         self.select_default = select_default
         if form_parser_class is None:
             form_parser_class = ClientForm.FormParser
@@ -94,6 +149,7 @@ class FormsFactory:
         if request_class is None:
             request_class = ClientCookie.Request
         self.request_class = request_class
+        self.backwards_compat = backwards_compat
 
     def parse_response(self, response):
         import ClientForm
@@ -101,7 +157,8 @@ class FormsFactory:
             response,
             select_default=self.select_default,
             form_parser_class=self.form_parser_class,
-            request_class=self.request_class
+            request_class=self.request_class,
+            backwards_compat=self.backwards_compat,
             )
 
     def parse_file(self, file_obj, base_url):
@@ -111,11 +168,16 @@ class FormsFactory:
             base_url,
             select_default=self.select_default,
             form_parser_class=self.form_parser_class,
-            request_class=self.request_class
+            request_class=self.request_class,
+            backwards_compat=self.backwards_compat,
             )
 
+if sys.version_info[:2] >= (2, 4):
+    from ClientCookie._Opener import OpenerMixin
+else:
+    class OpenerMixin: pass
 
-class Browser(UserAgent):
+class Browser(UserAgent, OpenerMixin):
     """Browser-like class with support for history, forms and links.
 
     BrowserStateError is raised whenever the browser is in the wrong state to
@@ -133,21 +195,19 @@ class Browser(UserAgent):
      getting this right without resorting to this default)
 
     """
-    urltags = {
-        "a": "href",
-        "area": "href",
-        "frame": "src",
-        "iframe": "src",
-    }
 
     def __init__(self, default_encoding="latin-1",
                  forms_factory=None,
+                 links_factory=None,
                  request_class=None,
                  ):
         """
 
+        Only named arguments should be passed to this constructor.
+
         default_encoding: See class docs.
         forms_factory: Object supporting the mechanize.FormsFactory interface.
+        links_factory: Object supporting the mechanize.LinksFactory interface.
         request_class: Request class to use.  Defaults to ClientCookie.Request
          by default for Pythons older than 2.4, urllib2.Request otherwise.
 
@@ -174,15 +234,24 @@ class Browser(UserAgent):
             forms_factory = FormsFactory()
         self._forms_factory = forms_factory
         forms_factory.request_class = request_class
+        if links_factory is None:
+            links_factory = LinksFactory()
+        self._links_factory = links_factory
 
         UserAgent.__init__(self)  # do this last to avoid __getattr__ problems
 
     def close(self):
+        if self._response is not None:
+            self._response.close()    
         UserAgent.close(self)
-        self._history = self._forms = self._title = self._links = None
+        del self._history[:]
+        self._forms = self._title = self._links = None
         self.request = self._response = None
 
-    def open(self, url, data=None): return self._mech_open(url, data)
+    def open(self, url, data=None):
+        if self._response is not None:
+            self._response.close()
+        return self._mech_open(url, data)
 
     def _mech_open(self, url, data=None, update_history=True):
         try:
@@ -200,18 +269,16 @@ class Browser(UserAgent):
 
         if self.request is not None and update_history:
             self._history.append((self.request, self._response))
-
         self._response = None
-        # we want self.request to be assigned even if OpenerDirector.open fails
+        # we want self.request to be assigned even if UserAgent.open fails
         self.request = self._request(url, data)
         self._previous_scheme = self.request.get_type()
 
-        self._response = ClientCookie.OpenerDirector.open(
-            self, self.request, data)
+        self._response = UserAgent.open(self, self.request, data)
         if not hasattr(self._response, "seek"):
             self._response = response_seek_wrapper(self._response)
         self._parse_html(self._response)
-            
+
         return self._response
 
     def response(self):
@@ -230,6 +297,8 @@ class Browser(UserAgent):
         """Reload current document, and return response object."""
         if self.request is None:
             raise BrowserStateError("no URL has yet been .open()ed")
+        if self._response is not None:
+            self._response.close()
         return self._mech_open(self.request, update_history=False)
 
     def back(self, n=1):
@@ -238,42 +307,71 @@ class Browser(UserAgent):
         n: go back this number of steps (default 1 step)
 
         """
-        while n:
+        if self._response is not None:
+            self._response.close()
+        while n > 0 or self._response is None:
             try:
                 self.request, self._response = self._history.pop()
             except IndexError:
                 raise BrowserStateError("already at start of history")
             n -= 1
-        if self._response is not None:
-            self._parse_html(self._response)
+        self._parse_html(self._response)
         return self._response
 
-    def links(self, *args, **kwds):
-        """Return iteratable over links (mechanize.Link objects)."""
+    def links(self, **kwds):
+        """Return iterable over links (mechanize.Link objects)."""
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
-        if args:
-            raise ValueError("keyword arguments only, please!")
         if kwds:
             return self._find_links(False, **kwds)
-        return self._links
+        if self._links is None:
+            try:
+                self._links = list(self.get_links_iter())
+            finally:
+                self._response.seek(0)
+            return self._links
+
+    def get_links_iter(self):
+        """Return an iterator that provides links of the document.
+
+        This method is provided in addition to .links() to allow lazy iteration
+        over links, while still keeping .links() safe against somebody
+        .seek()ing on a response "behind your back".  When response objects are
+        fixed to have independent seek positions, this method will be
+        deprecated in favour of .links().
+
+        """
+        if not self.viewing_html():
+            raise BrowserStateError("not viewing HTML")
+        base_url = self._response.geturl()
+        self._response.seek(0)
+        return self._links_factory.links(
+            self._response, base_url, self._encoding(self._response))
 
     def forms(self):
-        """Return iteratable over forms.
+        """Return iterable over forms.
 
         The returned form objects implement the ClientForm.HTMLForm interface.
 
         """
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
+        if self._forms is None:
+            response = self._response
+            response.seek(0)
+            try:
+                self._forms = self._forms_factory.parse_response(response)
+            finally:
+                response.seek(0)
         return self._forms
 
     def viewing_html(self):
         """Return whether the current response contains HTML data."""
         if self._response is None:
             raise BrowserStateError("not viewing any document")
-        ct = self._response.info().getheaders("content-type")
-        return ct and ct[0].startswith("text/html")
+        ct_hdrs = self._response.info().getheaders("content-type")
+        url = self._response.geturl()
+        return is_html(ct_hdrs, url)
 
     def title(self):
         """Return title, or None if there is no title element in the document.
@@ -282,11 +380,12 @@ class Browser(UserAgent):
         PullParser.get_text() method of pullparser module.
 
         """
+        import pullparser
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
         if self._title is None:
-            p = pullparser.PullParser(self._response,
-                                      encoding=self._encoding(self._response))
+            p = pullparser.TolerantPullParser(
+                self._response, encoding=self._encoding(self._response))
             try:
                 p.get_tag("title")
             except pullparser.NoMoreTokensError:
@@ -298,7 +397,7 @@ class Browser(UserAgent):
     def select_form(self, name=None, predicate=None, nr=None):
         """Select an HTML form for input.
 
-        This is like giving a form the "input focus" in a browser.
+        This is a bit like giving a form the "input focus" in a browser.
 
         If a form is selected, the object supports the HTMLForm interface, so
         you can call methods like .set_value(), .set(), and .click().
@@ -325,7 +424,7 @@ class Browser(UserAgent):
                 "at least one argument must be supplied to specify form")
 
         orig_nr = nr
-        for form in self._forms:
+        for form in self.forms():
             if name is not None and name != form.name:
                 continue
             if predicate is not None and not predicate(form):
@@ -356,8 +455,8 @@ class Browser(UserAgent):
             return request
 
         if (self._handle_referer and
-            original_scheme in ["http", "https"] and not
-            (original_scheme == "https" and scheme != "https")):
+            original_scheme in ["http", "https"] and
+            not (original_scheme == "https" and scheme != "https")):
             # strip URL fragment (RFC 2616 14.36)
             parts = urlparse.urlparse(self.request.get_full_url())
             parts = parts[:-1]+("",)
@@ -397,7 +496,7 @@ class Browser(UserAgent):
             if kwds:
                 raise ValueError(
                     "either pass a Link, or keyword arguments, not both")
-        request = ClientCookie.Request(link.absolute_url)
+        request = self.request_class(link.absolute_url)
         return self._add_referer_header(request)
 
     def follow_link(self, link=None, **kwds):
@@ -410,7 +509,7 @@ class Browser(UserAgent):
         """
         return self.open(self.click_link(link, **kwds))
 
-    def find_link(self, *args, **kwds):
+    def find_link(self, **kwds):
         """Find a link in current page.
 
         Links are returned as mechanize.Link objects.
@@ -455,19 +554,16 @@ class Browser(UserAgent):
         nr: matches the nth link that matches all other criteria (default 0)
 
         """
-        if args:
-            raise ValueError("keyword arguments only, please!")
         return self._find_links(True, **kwds)
 
     def __getattr__(self, name):
         # pass through ClientForm / DOMForm methods and attributes
         form = self.__dict__.get("form")
-        if form is not None:
-            try: return getattr(form, name)
-            except AttributeError: pass
-        raise AttributeError("%s instance has no attribute %s "
-                             "(perhaps you forgot to .select_form()?" %
-                             (self.__class__, name))
+        if form is None:
+            raise AttributeError(
+                "%s instance has no attribute %s (perhaps you forgot to "
+                ".select_form()?)" % (self.__class__, name))
+        return getattr(form, name)
 
 #---------------------------------------------------
 # Private methods.
@@ -483,10 +579,22 @@ class Browser(UserAgent):
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
 
-        links = []
+        found_links = []
         orig_nr = nr
 
-        for link in self._links:
+        # An optimization, so that if we look for a single link we do not have
+        # to necessarily parse the entire file.
+        if self._links is None and single:
+            all_links = self.get_links_iter()
+        else:
+            if self._links is None:
+                try:
+                    self._links = list(self.get_links_iter())
+                finally:
+                    self._response.seek(0)
+            all_links = self._links
+
+        for link in all_links:
             if url is not None and url != link.url:
                 continue
             if url_regex is not None and not url_regex.search(link.url):
@@ -513,81 +621,25 @@ class Browser(UserAgent):
             if single:
                 return link
             else:
-                links.append(link)
+                found_links.append(link)
                 nr = orig_nr
-        if not links:
+        if not found_links:
             raise LinkNotFoundError()
-        return links
+        return found_links
 
     def _encoding(self, response):
         # HTTPEquivProcessor may be in use, so both HTTP and HTTP-EQUIV
-        # headers may be in the response.
-        ct_headers = response.info().getheaders("content-type")
-        if not ct_headers:
-            return self.default_encoding
-
-        # sometimes servers return multiple HTTP headers: take the first
-        http_ct = ct_headers[0]
-        for k, v in split_header_words([http_ct])[0]:
-            if k == "charset":
-                return v
-
-        # no HTTP-specified encoding, so look in META HTTP-EQUIV headers,
-        # which, if present, will be last
-        if len(ct_headers) > 1:
-            equiv_ct = ct_headers[-1]
-            for k, v in split_header_words([equiv_ct])[0]:
+        # headers may be in the response.  HTTP-EQUIV headers come last,
+        # so try in order from first to last.
+        for ct in response.info().getheaders("content-type"):
+            for k, v in split_header_words([ct])[0]:
                 if k == "charset":
                     return v
         return self.default_encoding
 
     def _parse_html(self, response):
+        # this is now lazy, so we just reset the various attributes that
+        # result from parsing
         self.form = None
         self._title = None
-        if not self.viewing_html():
-            # nothing to see here
-            return
-
-        # set ._forms, ._links
-        response.seek(0)
-        self._forms = self._forms_factory.parse_response(response)
-        response.seek(0)
-
-        base = response.geturl()
-
-        p = pullparser.PullParser(response, encoding=self._encoding(response))
-        self._links = []
-        for token in p.tags(*(self.urltags.keys()+["base"])):
-            if token.data == "base":
-                base = dict(token.attrs).get("href")
-                continue
-            if token.type == "endtag":
-                continue
-            attrs = dict(token.attrs)
-            tag = token.data
-            name = attrs.get("name")
-            text = None
-            url = attrs.get(self.urltags[tag])
-            if tag == "a":
-                if token.type != "startendtag":
-                    # XXX hmm, this'd break if end tag is missing
-                    text = p.get_compressed_text(("endtag", tag))
-                # but this doesn't work for eg. <a href="blah"><b>Andy</b></a>
-                #text = p.get_compressed_text()
-                # This is a hack from WWW::Mechanize to get some really basic
-                # JavaScript working, which I'm not yet convinced is a good
-                # idea.
-##                 onClick = attrs["onclick"]
-##                 m = re.search(r"/^window\.open\(\s*'([^']+)'/", onClick)
-##                 if onClick and m:
-##                     url = m.group(1)
-            if not url:
-                # Probably an <A NAME="blah"> link or <AREA NOHREF...>.
-                # For our purposes a link is something with a URL, so ignore
-                # this.
-                continue
-
-            link = Link(base, url, text, tag, token.attrs)
-            self._links.append(link)
-
-        response.seek(0)
+        self._forms = self._links = None
