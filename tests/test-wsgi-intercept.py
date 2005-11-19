@@ -42,6 +42,10 @@ def setup():
 
 def test():
     global simple_app_was_hit
+    from twill.namespaces import init_global_dict, new_local_dict
+    init_global_dict()
+    new_local_dict()
+    
     from twill.commands import go, code, find, show
 
     simple_app_was_hit = False

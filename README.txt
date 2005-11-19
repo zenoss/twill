@@ -142,14 +142,14 @@ Assertions
 **code** *<code>* -- assert that the last page loaded had this HTTP status,
 e.g. ``code 200`` asserts that the page loaded fine.
 
-**find** *<regexp>* -- assert that the page contains this regular expression.
+**find** *<regexp>* -- assert that the page contains this regular expression. The variable ``__match__`` is set to the matching string.
 
 **notfind** *<regexp>* -- assert that the page *does not* contain this
 regular expression.
 
-**url** *<regexp>* -- assert that the current URL matches the given regexp.
+**url** *<regexp>* -- assert that the current URL matches the given regexp.  The variable ``__match__`` is set to the matching string.
 
-**title** *<regexp>* -- assert that the title of this page matches this regular expression.
+**title** *<regexp>* -- assert that the title of this page matches this regular expression.  The variable ``__match__`` is set to the matching string.
 
 Display
 ~~~~~~~
@@ -625,6 +625,7 @@ TODO:
  1. test the documented fieldname spec for fv/submit.
  2. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
  3. Test HTTP basic auth & basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
+ 4. switch to using pullparser for 'title' command.
 
 after that:
 

@@ -1,3 +1,14 @@
+2005-11-19  Titus Brown  <t@issola.caltech.edu>
+
+	* Fixed 'code' command to display non-numeric codes from get_code()
+	  (which may return None).  'code' itself still requires an integer.
+
+	* Fixed test-wsgi-intercept.py to init global/local dictionaries.
+
+	* Added 'test-find.*'
+
+	* Set __match__ to matching string in find, url, and title.
+
 2005-11-18  Titus Brown  <t@issola.caltech.edu>
 
 	* Version upgraded to 0.8.

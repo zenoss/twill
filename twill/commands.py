@@ -102,20 +102,28 @@ def code(should_be):
     """
     should_be = int(should_be)
     if browser.get_code() != int(should_be):
-        raise TwillAssertionError("code is %d, != %d" % (browser.get_code(),
-                                                         should_be))
+        raise TwillAssertionError("code is %s != %s" % (browser.get_code(),
+                                                        should_be))
 
 def url(should_be):
     """
     >> url <regexp>
 
-    Check to make sure that the current URL matches the regexp.
+    Check to make sure that the current URL matches the regexp.  The local
+    variable __match__ is set to the matching part of the URL.
     """
     regexp = re.compile(should_be)
     current_url = browser.get_url()
-    
-    if current_url is None or not regexp.search(current_url):
+
+    m = None
+    if current_url is not None:
+        m = regexp.search(current_url)
+
+    if not m:
         raise TwillAssertionError("url does not match '%s'" % (should_be,))
+
+    global_dict, local_dict = get_twill_glocals()
+    local_dict['__match__'] = m.group()
 
 def follow(what):
     """
@@ -136,13 +144,18 @@ def find(what):
     """
     >> find <regexp>
     
-    Succeed if the regular expression is on the page.
+    Succeed if the regular expression is on the page.  Sets the local
+    variable __match__ to the matching text.
     """
     regexp = re.compile(what)
     page = browser.get_html()
 
-    if not regexp.search(page):
+    m = regexp.search(page)
+    if not m:
         raise TwillAssertionError("no match to '%s'" % (what,))
+
+    global_dict, local_dict = get_twill_glocals()
+    local_dict['__match__'] = m.group()
 
 def notfind(what):
     """
@@ -513,8 +526,12 @@ def title(what):
     regexp = re.compile(what)
     title = browser.get_title()
 
-    if not regexp.search(title):
+    m = regexp.search(title)
+    if not m:
         raise TwillAssertionError("title does not contain '%s'" % (what,))
+
+    global_dict, local_dict = get_twill_glocals()
+    local_dict['__match__'] = m.group()
 
 ### options
 
