@@ -10,8 +10,8 @@ from twill.twill_build_utils import twill_build_py
 
 setup(name = 'twill',
       
-      version = '0.7.4',
-      download_url = 'http://darcs.idyll.org/~t/projects/twill-0.7.4.tar.gz',
+      version = '0.8',
+      download_url = 'http://darcs.idyll.org/~t/projects/twill-0.8.tar.gz',
       
       description = 'twill Web testing environment',
       author = 'C. Titus Brown',

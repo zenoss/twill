@@ -10,21 +10,18 @@
 # please see the included LICENSE.txt file for more information, or
 # contact Titus directly.
 
-__version__ = "0.7.4"
+__version__ = "0.8"
 
 __all__ = [ "TwillCommandLoop", "execute_file", "get_browser_state",
             "add_wsgi_intercept", "remove_wsgi_intercept" ]
 
-# add the wwwsearch & pyparsing stuff from the zip files.
+# add the wwwsearch & pyparsing stuff from twill/wwwsearch/.
 import sys, os.path
 thisdir = os.path.dirname(__file__)
 sys.path.insert(0, thisdir)             # @@CTB
 
 wwwsearchlib = os.path.join(thisdir, 'wwwsearch/')
 sys.path.insert(0, wwwsearchlib)
-
-pyparsinglib = os.path.join(thisdir, 'pyparsing.zip')
-sys.path.insert(0, pyparsinglib)
 
 import myhttplib
 

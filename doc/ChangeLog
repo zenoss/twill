@@ -1,5 +1,10 @@
 2005-11-18  Titus Brown  <t@issola.caltech.edu>
 
+	* Version upgraded to 0.8.
+
+	* Removed ez_setup hooks for the moment, because they interfered
+	  with build/install.
+
 	* Finished updating to latest mechanize code.  whew.
 
 	* Miscellaneous fixes to browser.py.

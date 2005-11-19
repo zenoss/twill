@@ -317,7 +317,7 @@ twill is developed in python 2.3, and should work fine with python 2.4.
 You don't need any other software; both pyparsing_ and mechanize_ are
 required, but they are included with twill.
 
-Version 0.7.4 is available for download here_.  The latest development
+Version 0.8 is available for download here_.  The latest development
 version can always be found at twill-latest.tar.gz_.  There's a darcs
 repository for the project at
 http://darcs.idyll.org/~t/projects/twill/.
@@ -344,7 +344,7 @@ To pull in changes made by the lead developer some time later
 Licensing
 ~~~~~~~~~
 
-twill 0.7.4 is licensed under the `GNU LGPL`_, although I am amenable
+twill 0.8 is licensed under the `GNU LGPL`_, although I am amenable
 to changing to an MIT-like license in the future.  All code currently
 contained in twill is Copyright (C) 2005, C. Titus Brown
 <titus@caltech.edu>.
@@ -362,7 +362,7 @@ pyparsing_ and mechanize_ are both included with twill, but are under
 their own licenses.  (Both are currently more lenient than the LGPL,
 so you should have no problems.)
 
-.. _here: http://darcs.idyll.org/~t/projects/twill-0.7.4.tar.gz
+.. _here: http://darcs.idyll.org/~t/projects/twill-0.8.tar.gz
 .. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
 .. _GNU LGPL: http://www.gnu.org/copyleft/lesser.html
 
@@ -524,7 +524,7 @@ well as for other toolkits, but the API is still unstable.
 Unit testing
 ~~~~~~~~~~~~
 
-twill can be used in unit testing, and with version 0.7.4 I've added
+twill can be used in unit testing, and it contains
 some Python support infrastructure for this purpose.
 
 As an example, here's the code from twill's own unit test, testing the
