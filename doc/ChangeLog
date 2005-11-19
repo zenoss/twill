@@ -1,5 +1,7 @@
 2005-11-18  Titus Brown  <t@issola.caltech.edu>
 
+	* Finished updating to latest mechanize code.  whew.
+
 	* Miscellaneous fixes to browser.py.
 
 	* Miscellaneous fixes to ClientCookie/_Util.py.

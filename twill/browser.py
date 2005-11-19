@@ -150,7 +150,7 @@ class TwillBrowser:
         except BrowserStateError, e:
             self._last_result = None
 
-        if self._last_result:
+        if self._last_result is not None:
             print '==> back to', self.get_url()
         else:
             print '==> back at empty page.'
@@ -264,11 +264,12 @@ class TwillBrowser:
         """
         print ''
         print 'History: (%d pages total) ' % (len(self._browser._history))
-        for n, (req, resp) in enumerate(self._browser._history):
-            if req and resp:
+
+        n = 1
+        for (req, resp) in self._browser._history:
+            if req and resp:            # only print those that back() will go
                 print "\t%d. %s" % (n, resp.geturl())
-            else:
-                print "\t%d. ** empty page **" % (n,)
+                n += 1
             
         print ''
 

@@ -65,6 +65,11 @@ notfind 'this is visit #2'
 # yep!  all right. load cookies, check that.
 load_cookies 'test-basic.cookies'
 
+back
+back
+back
+back
+
 go ./
 code 200
 notfind "Your session ID is None"
@@ -145,9 +150,10 @@ code 403
 ### test input/password
 
 back
-back
 
 go ./login
+show
+code 200
 
 getinput "Enter some (weird) input: "
 fv 1 username __input__
@@ -211,8 +217,9 @@ find "twill: a simple language"
 # (redirects after a POST retain content-type inappropriately)
 
 ## @@CTB
-#go ./formpostredirect
-#fv 1 test "hello"
-#submit 1
+go ./formpostredirect
+fv 1 test "hello"
+submit 1
 
-#code 200
+show
+code 200

@@ -47,7 +47,11 @@ class Link:
     def __init__(self, base_url, url, text, tag, attrs):
         assert None not in [url, tag, attrs]
         self.base_url = base_url
-        self.absolute_url = urlparse.urljoin(base_url, url)
+
+        # @CTB space ==> %20 fix/hack
+        self.absolute_url = urlparse.urljoin(base_url, url.replace(' ', '%20'))
+        #self.absolute_url = urlparse.urljoin(base_url, url)
+        
         self.url, self.text, self.tag, self.attrs = url, text, tag, attrs
     def __cmp__(self, other):
         try:

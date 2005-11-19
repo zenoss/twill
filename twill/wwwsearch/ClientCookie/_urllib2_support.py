@@ -105,8 +105,12 @@ else:
                 # from the user (of urllib2, in this case).  In practice,
                 # essentially all clients do redirect in this case, so we do
                 # the same.
+                headers = req.headers
+                if headers.has_key('Content-type'):
+                    del headers['Content-type']
+                
                 return Request(newurl,
-                               headers=req.headers,
+                               headers=headers,
                                origin_req_host=req.get_origin_req_host(),
                                unverifiable=True)
             else:

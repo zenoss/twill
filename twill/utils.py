@@ -32,10 +32,8 @@ class ResultWrapper:
     """
     Deal with mechanize/urllib2/whatever results, and present them in a
     unified form.  Returned by 'journey'-wrapped functions.
-
-    get_url() and get_page() only work when code=200.
     """
-    def __init__(self, http_code, url=None, page=None):
+    def __init__(self, http_code, url, page):
         self.http_code = int(http_code)
         self.url = url
         self.page = page
@@ -55,15 +53,6 @@ class ResultWrapper:
         title = getNodeContentsAsText(title)
         return title
 
-    def __len__(self):
-        return len(self.page)
-
-#    def __getattr__(self, name):
-#        print '============', name
-#        if self.__dict__.has_key(name):
-#            return self.__dict__.get(name)
-#        raise AttributeError, name
-
 def journey(func, *args, **kwargs):
     """
     Wrap 'func' so that HTTPErrors and other things are captured when
@@ -81,7 +70,8 @@ def journey(func, *args, **kwargs):
         if result is None:
             return None
 
-        new_result = ResultWrapper(result.wrapped.code, # HTTP response code
+        result.seek(0)
+        new_result = ResultWrapper(result.code, # HTTP response code
                                    result.geturl(), #  URL
                                    result.read() # HTML
                                    )
