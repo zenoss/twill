@@ -158,14 +158,16 @@ Display
 
 **showlinks** -- show all of the links on the current page.
 
+**showforms** -- show all of the forms on the current page.
+
+**showhistory** -- show the browser history.
+
 **echo** *<string>* -- echo the string to the screen.
 
 **save_html** *<filename>* -- save the current page's HTML into a file.
 
 Forms
 ~~~~~
-
-**showforms** -- show all of the forms on the page.
 
 **submit** *[<n>]* -- click the n'th submit button, if given;
 otherwise submit via the last submission button clicked; if nothing
@@ -621,13 +623,12 @@ TODO:
 0.8 release:
 
  1. test the documented fieldname spec for fv/submit.
- 2. UPGRADE wwwsearch stuff.
- 3. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
- 4. Test HTTP basic auth & basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
+ 2. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
+ 3. Test HTTP basic auth & basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
 
 after that:
 
- 1. break "unit tests" down into units.
+ 1. break "unit tests" down into smaller units.
  2. execute directories/directory trees?
  3. record scripts fix.
  4. systematize variable handling a bit better: __ vs $

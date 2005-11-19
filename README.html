@@ -172,12 +172,13 @@ regular expression.</p>
 <h2><a class="toc-backref" href="#id9" name="display">Display</a></h2>
 <p><strong>show</strong> -- show the current page's HTML.</p>
 <p><strong>showlinks</strong> -- show all of the links on the current page.</p>
+<p><strong>showforms</strong> -- show all of the forms on the current page.</p>
+<p><strong>showhistory</strong> -- show the browser history.</p>
 <p><strong>echo</strong> <em>&lt;string&gt;</em> -- echo the string to the screen.</p>
 <p><strong>save_html</strong> <em>&lt;filename&gt;</em> -- save the current page's HTML into a file.</p>
 </div>
 <div class="section" id="forms">
 <h2><a class="toc-backref" href="#id10" name="forms">Forms</a></h2>
-<p><strong>showforms</strong> -- show all of the forms on the page.</p>
 <p><strong>submit</strong> <em>[&lt;n&gt;]</em> -- click the n'th submit button, if given;
 otherwise submit via the last submission button clicked; if nothing
 clicked, use the first submit button on the form.  See <a class="reference" href="#id1">details on
@@ -559,7 +560,6 @@ functionality that can be directly applied to twill.</li>
 <blockquote>
 <ol class="arabic simple">
 <li>test the documented fieldname spec for fv/submit.</li>
-<li>UPGRADE wwwsearch stuff.</li>
 <li>HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)</li>
 <li>Test HTTP basic auth &amp; basic auth (<a class="reference" href="http://www.quixote.ca/qx/HttpBasicAuthentication">http://www.quixote.ca/qx/HttpBasicAuthentication</a>?) example.</li>
 </ol>
@@ -567,7 +567,7 @@ functionality that can be directly applied to twill.</li>
 <p>after that:</p>
 <blockquote>
 <ol class="arabic simple">
-<li>break &quot;unit tests&quot; down into units.</li>
+<li>break &quot;unit tests&quot; down into smaller units.</li>
 <li>execute directories/directory trees?</li>
 <li>record scripts fix.</li>
 <li>systematize variable handling a bit better: __ vs $</li>
