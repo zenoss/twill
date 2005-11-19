@@ -330,6 +330,7 @@ def get_my_handler():
 
 # (ignore me, please)
 
+'''
 import socket
     
 class file_wrapper:
@@ -388,3 +389,4 @@ class intercept_socket:
     
     def close(self):
         self._open = False
+'''

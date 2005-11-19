@@ -3,8 +3,8 @@
 from setuptools import setup
 from twill.twill_build_utils import twill_build_py
 
-from ez_setup import use_setuptools
-use_setuptools()
+#from ez_setup import use_setuptools
+#use_setuptools()
 
 #### twill info.
 
@@ -18,7 +18,9 @@ setup(name = 'twill',
       author_email = 'titus@caltech.edu',
       license='LGPL',
 
-      packages = ['twill',],
+      packages = ['twill', 'twill.wwwsearch',
+                  'twill.wwwsearch.ClientCookie',
+                  'twill.wwwsearch.mechanize'],
       scripts = ['twill-sh', 'twill-fork'],
       cmdclass = {'build_py' : twill_build_py },
       maintainer = 'C. Titus Brown',
