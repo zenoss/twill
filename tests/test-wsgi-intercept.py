@@ -8,7 +8,6 @@ import urllib2
 from ClientCookie._urllib2_support import HTTPHandler
 class MyHTTPHandler(HTTPHandler):
     def http_open(self, req):
-        print 'YO'
         return self.do_open(MyHTTPConnection, req)
 
 opener = ClientCookie._urllib2_support.build_opener(MyHTTPHandler())
