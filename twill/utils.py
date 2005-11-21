@@ -1,32 +1,10 @@
 """
 Various ugly utility functions for twill.
 """
-
 import ClientForm
 import urllib2, re
-from xml.dom import minidom
+import pullparser
 from cStringIO import StringIO
-
-def getOnlyElementByTagName(iNode, name):
-    elem = iNode.getElementsByTagName(name)
-    assert len(elem)==1
-    return elem[0]
-
-def getNodeContentsAsText(node):
-    buf = StringIO()
-    for t in node.childNodes:
-        assert (isinstance(t, minidom.Text)
-                or isinstance(t, minidom.Entity)), \
-                "Node contents must be text: %r" % t
-        t.writexml(buf)
-    s = buf.getvalue()
-    return s
-
-def getTitle(top):
-    html = getOnlyElementByTagName(top, 'html')
-    head = getOnlyElementByTagName(html, 'head')
-    title = getOnlyElementByTagName(head, 'title')
-    return title
 
 class ResultWrapper:
     """
@@ -48,9 +26,8 @@ class ResultWrapper:
         return self.page
 
     def get_title(self):
-        tree = minidom.parseString(self.get_page())
-        title = getTitle(tree)
-        title = getNodeContentsAsText(title)
+        p = pullparser.PullParser(StringIO(self.get_page()))
+        title = p.tags("title").next()
         return title
 
 def journey(func, *args, **kwargs):

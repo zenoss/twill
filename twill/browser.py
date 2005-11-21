@@ -145,8 +145,6 @@ class TwillBrowser:
         try:
             self._last_result = journey(back_url)
             self._new_page()
-        except AttributeError, e:
-            self._last_result = None
         except BrowserStateError, e:
             self._last_result = None
 

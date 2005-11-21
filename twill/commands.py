@@ -322,8 +322,7 @@ def formvalue(formname, fieldname, value):
     """
     form = browser.get_form(formname)
     if not form:
-        print 'No forms on this page!'
-        assert 0, "no forms!"
+        raise TwillAssertionError("no matching forms!")
 
     control = browser.get_form_field(form, fieldname)
 
