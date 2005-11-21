@@ -27,7 +27,10 @@ class ResultWrapper:
 
     def get_title(self):
         p = pullparser.PullParser(StringIO(self.get_page()))
-        title = p.tags("title").next()
+
+        title = None
+        if p.get_tag("title"):
+            title = p.get_compressed_text()
         return title
 
 def journey(func, *args, **kwargs):
