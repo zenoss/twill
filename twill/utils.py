@@ -5,6 +5,8 @@ import ClientForm
 import urllib2, re
 import pullparser
 from cStringIO import StringIO
+import os
+import tempfile
 
 class ResultWrapper:
     """
@@ -118,3 +120,73 @@ def set_form_control_value(control, val):
         control.set(1, val)
     else:
         control.value = val
+
+def run_tidy(html):
+    """
+    Run the 'tidy' command-line program on the given HTML string.
+
+    Return a 2-tuple (output, errors).  (None, None) will be returned if
+    'tidy' doesn't exist or otherwise fails.
+    """
+    cmd = "tidy -q -ashtml -o %(output)s -f %(err)s %(input)s >& %(err)s"
+
+    # build the input filename.
+    (fd, inp_filename) = tempfile.mkstemp('.tidy')
+    os.write(fd, html)
+    os.close(fd)
+
+    # build the output filename.
+    (fd, out_filename) = tempfile.mkstemp('.tidy.out')
+    os.close(fd)
+    os.unlink(out_filename)
+
+    # build the error filename.
+    (fd, err_filename) = tempfile.mkstemp('.tidy.err')
+    os.close(fd)
+    
+    # build the command to run
+    cmd = cmd % dict(input=inp_filename, err=err_filename, output=out_filename)
+
+    #
+    # run the command
+    #
+    
+    success = False
+    try:
+        os.system(cmd)
+        success = True
+    except Exception, e:
+        pass
+
+    #
+    # get the cleaned-up HTML
+    #
+
+    clean_html = None
+    errors = None
+    if success:
+        try:
+            clean_html = open(out_filename).read()
+            errors = open(err_filename).read()
+        except IOError:
+            pass
+
+    #
+    # remove temp files
+    #
+    try:
+        os.unlink(inp_filename)
+    except OSError:
+        pass
+
+    try:
+        os.unlink(out_filename)
+    except OSError:
+        pass
+
+    try:
+        os.unlink(err_filename)
+    except OSError:
+        pass
+
+    return (clean_html, errors)

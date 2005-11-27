@@ -1,5 +1,7 @@
 2005-11-27  Titus Brown  <t@issola.caltech.edu>
 
+	* Added 'utils.run_tidy' function & 'test-tidy.py' under tests/.
+
 	* Moved the journey-exception-wrapping into the mechanize mech_open
 	  function; this fixes a bug reported by sureshvv.  Augmented
 	  test-back.twill to test this, and added a 'plaintext' function
