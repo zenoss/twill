@@ -36,11 +36,9 @@ class ResultWrapper:
 def journey(func, *args, **kwargs):
     """
     Wrap 'func' so that HTTPErrors and other things are captured when
-    'func' is executed as func(*args, **kwargs).  Convert result from
-    the various confusing options (exceptions, etc.) into a 'ResultWrapper'.
-
-    This function may be more than a bit ugly & confusing, my apologies.
-
+    'func' is executed as func(*args, **kwargs).  Convert result into
+    a 'ResultWrapper'.
+    
     Idea stolen straight from PBP, which used lambda functions waaaaay
     too much.
     """
