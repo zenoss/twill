@@ -12,12 +12,6 @@ def test():
     browser = twill.get_browser_state()
     assert browser is twill.commands.browser
 
-    try:
-        browser._browser.viewing_html()
-        assert 0, "shouldn't get here"
-    except BrowserStateError:
-        pass
-
     old_err, sys.stderr = sys.stderr, StringIO()
     try:
         try:

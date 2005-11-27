@@ -44,19 +44,16 @@ def journey(func, *args, **kwargs):
     Idea stolen straight from PBP, which used lambda functions waaaaay
     too much.
     """
-    try:
-        result = func(*args, **kwargs)
+    result = func(*args, **kwargs)
 
-        if result is None:
-            return None
+    if result is None:
+        return None
 
-        result.seek(0)
-        new_result = ResultWrapper(result.code, # HTTP response code
-                                   result.geturl(), #  URL
-                                   result.read() # HTML
-                                   )
-    except urllib2.HTTPError, e:
-        new_result = ResultWrapper(e.code, e.url, e.read())
+    result.seek(0)
+    new_result = ResultWrapper(result.code, # HTTP response code
+                               result.geturl(), #  URL
+                               result.read() # HTML
+                               )
 
     return new_result
 

@@ -10,7 +10,7 @@ from quixote.errors import AccessError
 from quixote.session import Session, SessionManager
 from quixote.directory import Directory, AccessControlled
 from quixote import get_user, get_session, get_session_manager, get_path, \
-     redirect, get_request
+     redirect, get_request, get_response
 from quixote.form import widget
 import base64
 
@@ -80,7 +80,7 @@ class TwillTest(Directory):
     _q_exports = ['logout', 'increment', 'incrementfail', "", 'restricted',
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
                   'simpleform', 'upload_file', 'http_auth', 'formpostredirect',
-                  'exit', 'multisubmitform', "exception"]
+                  'exit', 'multisubmitform', "exception", "plaintext"]
 
     def __init__(self):
         self.restricted = Restricted()
@@ -189,6 +189,11 @@ class TwillTest(Directory):
 
         # redirect to index page.
         return redirect(get_path(1) + '/')
+
+    def plaintext(self):
+        response = get_response()
+        response.set_content_type("text/plain")
+        return "hello, world"
 
     def upload_file(self):
         request = get_request()

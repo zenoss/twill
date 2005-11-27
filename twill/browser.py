@@ -22,36 +22,14 @@ from utils import trunc, print_form, journey
 
 class PatchedMechanizeBrowser(MechanizeBrowser):
     """
-    A patched version of the mechanize browser class, to fix various
-    bugs and install new handlers.
+    A patched version of the mechanize browser class.  Currently only
+    installs the WSGI intercept handler.
     """
     def __init__(self, *args, **kwargs):
         # install WSGI intercept handler.
         self.handler_classes['http'] = myhttplib.get_my_handler()
         
         MechanizeBrowser.__init__(self, *args, **kwargs)
-        
-    def viewing_html(self):
-        """
-        Return whether the current response contains HTML data.
-
-        The patched behavior is twofold:
-          1) to assume that text/xml is (or at least *may* be) HTML.
-          2) to assume that *no* content-type means ==> HTML.
-
-        #1 is a valid point.  #2 may be technically incorrect, but
-        twill is for *debugging* servers that be screwy, after all...
-        """
-        if self._response is None:
-            raise BrowserStateError("not viewing any document")
-        ct = self._response.info().getheaders("content-type")
-
-        # CTB: no content-type? assume HTML.
-        if not ct:
-            return True
-        
-        return ct and (ct[0].startswith("text/html") or \
-                       ct[0].startswith("text/xml"))
 
 #
 # TwillBrowser
@@ -222,12 +200,9 @@ class TwillBrowser:
         """
         Follow the given link.
         """
-        try:
-            self._last_result = journey(self._browser.follow_link, link)
-            self._new_page()
-            print '==> at', self.get_url()
-        except urllib2.HTTPError, e:
-            raise
+        self._last_result = journey(self._browser.follow_link, link)
+        self._new_page()
+        print '==> at', self.get_url()
 
     def set_agent_string(self, agent):
         """

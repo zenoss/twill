@@ -35,3 +35,18 @@ go /restricted
 code 403
 echo url is now __url__
 back
+
+#
+# sureshvv's bug: make sure that restricted pages are properly viewed
+# as HTML/non-HTML, independent of what the last page was.
+#
+
+showhistory
+go /plaintext
+code 200
+
+showhistory
+go /restricted
+code 403
+show
+showforms

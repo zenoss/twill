@@ -278,7 +278,11 @@ class Browser(UserAgent, OpenerMixin):
         self.request = self._request(url, data)
         self._previous_scheme = self.request.get_type()
 
-        self._response = UserAgent.open(self, self.request, data)
+        try:                            # CTB: catch urllib2.HTTPErrors.
+            self._response = UserAgent.open(self, self.request, data)
+        except urllib2.HTTPError, e:
+            self._response = e
+            
         if not hasattr(self._response, "seek"):
             self._response = response_seek_wrapper(self._response)
         self._parse_html(self._response)
