@@ -1,0 +1,7 @@
+code 200
+
+# test http-equiv=refresh
+go /test_refresh
+url /login
+code 200
+

@@ -1,3 +1,8 @@
+2005-11-28  Titus Brown  <t@issola.caltech.edu>
+
+	* Made http-equiv=refresh stuff work by overriding it in utils.py.
+	  My fix is probably bad.  oh well, shouldn't make a difference...
+
 2005-11-27  Titus Brown  <t@issola.caltech.edu>
 
 	* Verified that eggs stuff now "just works".

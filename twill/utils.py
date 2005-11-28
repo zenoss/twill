@@ -1,7 +1,7 @@
 """
 Various ugly utility functions for twill.
 """
-import ClientForm
+import ClientForm, ClientCookie
 import urllib2, re
 import pullparser
 from cStringIO import StringIO
@@ -9,6 +9,7 @@ import os
 import tempfile
 import mechanize
 import base64
+from ClientCookie._Util import getheaders, time
 
 class FakeResponse:
     def __init__(self, data, url):
@@ -295,3 +296,39 @@ class FixedHTTPBasicAuthHandler(urllib2.HTTPBasicAuthHandler):
         else:
             return None
     
+
+###
+
+class FunctioningHTTPRefreshProcessor(ClientCookie.HTTPRefreshProcessor):
+    """
+    Fix an issue where the 'content' component of the http-equiv=refresh
+    tag may not contain 'url='.  CTB hack.
+    """
+    def http_response(self, request, response):
+        code, msg, hdrs = response.code, response.msg, response.info()
+
+        if code == 200 and hdrs.has_key("refresh"):
+            refresh = getheaders(hdrs, "refresh")[0]
+            i = refresh.find(";")
+            if i != -1:
+                pause, newurl_spec = refresh[:i], refresh[i+1:]
+                pause = int(pause)
+                
+                j = newurl_spec.find("=")
+                if j != -1:
+                    newurl = newurl_spec[j+1:]
+                else:
+                    newurl = newurl_spec
+                    
+                if (self.max_time is None) or (pause <= self.max_time):
+                    if pause != 0 and 0:  # CTB hack! ==#  and self.honor_time:
+                        time.sleep(pause)
+                    hdrs["location"] = newurl
+                    # hardcoded http is NOT a bug
+                    response = self.parent.error(
+                        "http", request, response,
+                        "refresh", msg, hdrs)
+
+        return response
+
+    https_response = http_response

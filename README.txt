@@ -660,6 +660,10 @@ Miscellaneous implementation details
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  * twill ignores robots.txt.
+
+ * http-equiv=refresh headers are handled immediately, independent of the
+   'pause' component of the 'content' attribute.
+
  * twill does not understand javascript.
 
 Future Plans
@@ -667,11 +671,7 @@ Future Plans
 
 TODO:
 
-0.8 release:
-
- 1. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
-
-after that:
+after 8.0:
 
  1. break "unit tests" down into smaller units.
  2. execute directories/directory trees?

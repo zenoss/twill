@@ -23,7 +23,8 @@ from ClientCookie._Util import response_seek_wrapper
 # twill package imports
 from twill import myhttplib
 from utils import trunc, print_form, journey, TidyAwareLinksParser, \
-     TidyAwareFormsFactory, run_tidy, StringIO, FixedHTTPBasicAuthHandler
+     TidyAwareFormsFactory, run_tidy, StringIO, FixedHTTPBasicAuthHandler, \
+     FunctioningHTTPRefreshProcessor
 
 class PatchedMechanizeBrowser(MechanizeBrowser):
     """
@@ -37,9 +38,12 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
 
         # fix basic auth.
         self.handler_classes['_authen'] = FixedHTTPBasicAuthHandler
-        
+
+        # make refresh work even for somewhat mangled refresh directives.
+        self.handler_classes['_refresh'] = FunctioningHTTPRefreshProcessor
+
         MechanizeBrowser.__init__(self, *args, **kwargs)
-        
+
     def title(self):
         import pullparser
         if not self.viewing_html():

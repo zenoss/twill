@@ -81,7 +81,7 @@ class TwillTest(Directory):
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
                   'simpleform', 'upload_file', 'http_auth', 'formpostredirect',
                   'exit', 'multisubmitform', "exception", "plaintext",
-                  "testform", "testformaction"]
+                  "testform", "testformaction", "test_refresh"]
 
     def __init__(self):
         self.restricted = Restricted()
@@ -90,6 +90,12 @@ class TwillTest(Directory):
     def _q_index(self):
         session = get_session()
         return message(session)
+
+    def test_refresh(self):
+        return """\
+<meta http-equiv="refresh" content="2; ./login">
+hello, world.
+"""
 
     def exception(self):
         raise Exception("500 error -- fail out!")
