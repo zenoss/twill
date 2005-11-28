@@ -41,12 +41,19 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
         if self._title is None:
-            data = self._response.read()
-            (clean_html, errors) = run_tidy(data)
-            if clean_html:
-                data = clean_html
+            from twill.commands import _options
+            do_run_tidy = _options.get('do_run_tidy')
+            
+            if do_run_tidy:
+                data = self._response.read()
+                (clean_html, errors) = run_tidy(data)
+                if clean_html:
+                    data = clean_html
+                fp = StringIO(data)
+            else:
+                fp = self._response
 
-            p = pullparser.TolerantPullParser(StringIO(data),
+            p = pullparser.TolerantPullParser(fp,
                                       encoding=self._encoding(self._response))
             try:
                 p.get_tag("title")

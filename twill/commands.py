@@ -42,7 +42,8 @@ __all__ = ['reset_browser',
            'debug',
            'title',
            'exit',
-           'config'
+           'config',
+           'tidy_ok'
            ]
 
 import re, getpass, time
@@ -50,7 +51,7 @@ import re, getpass, time
 from browser import TwillBrowser
 
 from errors import TwillAssertionError
-from utils import set_form_control_value
+from utils import set_form_control_value, run_tidy
 from namespaces import get_twill_glocals
         
 browser = TwillBrowser()
@@ -104,6 +105,29 @@ def code(should_be):
     if browser.get_code() != int(should_be):
         raise TwillAssertionError("code is %s != %s" % (browser.get_code(),
                                                         should_be))
+
+def tidy_ok():
+    """
+    >> tidy_ok
+
+    Assert that 'tidy' produces no warnings or errors when run on the current
+    page.
+
+    If 'tidy' cannot be run, will fail silently (unless 'tidy_should_exist'
+    option is true; see 'config' command).
+    """
+    page = browser.get_html()
+    if page is None:
+        raise TwillAssertionError("not viewing HTML!")
+        
+    (clean_page, errors) = run_tidy(page)
+    if clean_page is None:              # tidy doesn't exist...
+        if _options.get('tidy_should_exist'):
+            raise TwillAssertionError("cannot run 'tidy'")
+    elif errors:
+        raise TwillAssertionError("tidy errors:\n====\n%s\n====\n" % (errors,))
+
+    # page is fine.
 
 def url(should_be):
     """
@@ -534,13 +558,15 @@ def title(what):
 
 ### options
 
-_orig_options = dict(readonly_controls_writeable=False)
+_orig_options = dict(readonly_controls_writeable=False,
+                     do_run_tidy=True,
+                     tidy_should_exist=False)
 _options = {}
 _options.update(_orig_options)           # make a copy
 
 def config(key=None, value=None):
     """
-    >> config [<key> [<value>]]
+    >> config [<key> [<int value>]]
 
     Configure/report various options.  If no <value> is given, report
     the current key value; if no <key> given, report current settings.
@@ -548,6 +574,8 @@ def config(key=None, value=None):
     So far:
 
      * 'readonly_controls_writeable', default 0;
+     * 'do_run_tidy', default 1;
+     ' 'tidy_should_exist', default 0;
     """
     if key is None:
         keys = _options.keys()
@@ -567,6 +595,9 @@ def config(key=None, value=None):
             print 'key %s: value %s' % (key, v)
             print ''
         else:
-            _options[key] = bool(value)
+            try:
+                value = int(value)
+            except ValueError:
+                pass
 
-
+            _options[key] = value

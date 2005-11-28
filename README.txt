@@ -219,6 +219,8 @@ they exist.
 Other commands
 ~~~~~~~~~~~~~~
 
+**tidy_ok** -- check to see if 'tidy' runs on this page without any errors or warnings.  (`tidy` is very stringent -- you've been warned!)
+
 **exit** *[<code>]* -- exit with the given integer code, if specified.  'code' defaults to 0.
 
 **run** *<command>* -- execute the given Python command.
@@ -316,6 +318,9 @@ Requirements, Availability and Licensing
 twill is developed in python 2.3, and should work fine with python 2.4.
 You don't need any other software; both pyparsing_ and mechanize_ are
 required, but they are included with twill.
+
+If ``tidy`` is installed and available in the path, twill will use it
+in several ways.  See below for more information.
 
 Version 0.8 is available for download here_.  The latest development
 version can always be found at twill-latest.tar.gz_.  There's a darcs
@@ -464,6 +469,24 @@ measured between the start and end of script execution.
 Try `twill-fork -h` to get a list of other command line arguments.
 
 Note that twill-fork still needs a lot of work...
+
+Running and using tidy
+~~~~~~~~~~~~~~~~~~~~~~
+
+The ``tidy`` program does a nice job of producing correct HTML from
+mangled, broken, eeevil Web pages.  By default, twill will run pages
+through ``tidy`` before processing them.  This is on by default
+because the Python libraries that parse HTML are very bad at dealing
+with incorrect HTML, and will often return incorrect results on "real
+world" Web pages.
+
+To disable this feature, set ``config do_run_tidy 0``.
+
+If ``tidy`` is not installed, twill will silently ignore it.  It may
+be desirable to *require* a functioning ``tidy`` installation; so, to fail
+when ``tidy`` *isn't* installed, set ``config tidy_should_exist 1``.
+
+See the `tidy page`_ for more information on ``tidy``.
 
 twill and Python
 ----------------
@@ -646,7 +669,7 @@ Longer term fixes & cleanups:
  4. command line completion doesn't understand extend_with results yet.
  5. extend_with etc. -- module namespaces, e.g. extmodule.fn?
  6. doc reorganization: separate out commands, make source docs.
- 7. implement more complex proxy support.
+ 7. implement more complex proxy support.  proxies proxies proxies.
  8. add config directives for socket timeout.
 
 Random ideas:
@@ -716,3 +739,4 @@ Last updated November '05.
 .. _PAMIE: http://pamie.sourceforge.net/
 .. _PAMIE examples page: tutoriala.html
 .. _PyXPCOM: http://kb.mozillazine.org/PyXPCOM
+.. _tidy page: http://tidy.sourceforge.net/

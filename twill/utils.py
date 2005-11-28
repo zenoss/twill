@@ -125,6 +125,12 @@ def set_form_control_value(control, val):
     else:
         control.value = val
 
+#
+# stuff to run 'tidy'...
+#
+
+_tidy_cmd = "tidy -q -ashtml -o %(output)s -f %(err)s %(input)s >& %(err)s"
+
 def run_tidy(html):
     """
     Run the 'tidy' command-line program on the given HTML string.
@@ -132,7 +138,10 @@ def run_tidy(html):
     Return a 2-tuple (output, errors).  (None, None) will be returned if
     'tidy' doesn't exist or otherwise fails.
     """
-    cmd = "tidy -q -ashtml -o %(output)s -f %(err)s %(input)s >& %(err)s"
+    global _tidy_cmd
+
+    from commands import _options
+    tidy_should_exist = _options.get('tidy_should_exist')
 
     # build the input filename.
     (fd, inp_filename) = tempfile.mkstemp('.tidy')
@@ -149,7 +158,8 @@ def run_tidy(html):
     os.close(fd)
     
     # build the command to run
-    cmd = cmd % dict(input=inp_filename, err=err_filename, output=out_filename)
+    cmd = _tidy_cmd % dict(input=inp_filename, err=err_filename,
+                           output=out_filename)
 
     #
     # run the command
@@ -171,9 +181,18 @@ def run_tidy(html):
     if success:
         try:
             clean_html = open(out_filename).read()
-            errors = open(err_filename).read()
         except IOError:
             pass
+
+        try:
+            errors = open(err_filename).read().strip()
+        except IOError:
+            pass
+
+        # complain if no output file: that means we couldn't run tidy...
+        if clean_html is None and tidy_should_exist:
+            print '***', tidy_should_exist
+            raise Exception("cannot run 'tidy'; \n\t%s\n" % (errors,))
 
     #
     # remove temp files
@@ -201,15 +220,19 @@ def run_tidy(html):
 
 class TidyAwareLinksParser(pullparser.TolerantPullParser):
     def __init__(self, fh, *args, **kwargs):
-        
+        from twill.commands import _options
+        do_run_tidy = _options.get('do_run_tidy')
+
         # use 'tidy' to tidy up the HTML, if desired.
-        html = fh.read()
-        (clean_html, errors) = run_tidy(html)
-        if clean_html:
-            html = clean_html
+        if do_run_tidy:
+            html = fh.read()
+            (clean_html, errors) = run_tidy(html)
+            if clean_html:
+                html = clean_html
+
+            fh = StringIO(html)
             
-        new_fp = StringIO(html)
-        pullparser.TolerantPullParser.__init__(self, new_fp, *args, **kwargs)
+        pullparser.TolerantPullParser.__init__(self, fh, *args, **kwargs)
 
 ###
 
@@ -219,25 +242,34 @@ class TidyAwareLinksParser(pullparser.TolerantPullParser):
 
 class TidyAwareFormsFactory(mechanize._mechanize.FormsFactory):
     def parse_response(self, response):
-        
+        from twill.commands import _options
+        do_run_tidy = _options.get('do_run_tidy')
+
         # use 'tidy' to tidy up the HTML, if desired.
-        data = response.read()
-        (clean_html, errors) = run_tidy(data)
-        if clean_html:
-            data = clean_html
-            
-        url = response.geturl()
-        fake = FakeResponse(data, url)
+        if do_run_tidy:
+            data = response.read()
+            (clean_html, errors) = run_tidy(data)
+            if clean_html:
+                data = clean_html
+
+            url = response.geturl()
+            fake = FakeResponse(data, url)
+        else:
+            fake = response
 
         return mechanize._mechanize.FormsFactory.parse_response(self, fake)
 
     def parse_file(self, file_obj, base_url):
-        data = read(file_obj)
-        (clean_html, errors ) = run_tidy(data)
-        if clean_html:
-            data = clean_html
+        from twill.commands import _options
+        do_run_tidy = _options.get('do_run_tidy')
 
-        file_obj = StringIO(data)
+        if do_run_tidy:
+            data = read(file_obj)
+            (clean_html, errors ) = run_tidy(data)
+            if clean_html:
+                data = clean_html
+
+            file_obj = StringIO(data)
         return mechanize._mechanize.FormsFactory.parse_file(file_obj, base_url)
 
 ###
