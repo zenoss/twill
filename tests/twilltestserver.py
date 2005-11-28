@@ -81,7 +81,7 @@ class TwillTest(Directory):
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
                   'simpleform', 'upload_file', 'http_auth', 'formpostredirect',
                   'exit', 'multisubmitform', "exception", "plaintext",
-                  "testform"]
+                  "testform", "testformaction"]
 
     def __init__(self):
         self.restricted = Restricted()
@@ -170,6 +170,14 @@ class TwillTest(Directory):
         return "<form method=POST>%s %s %s</form>" % (s,
                                                       submit1.render(),
                                                       submit2.render())
+
+    def testformaction(self):
+        request = get_request()
+
+        keys = [ k for k in request.form.keys() if request.form[k] ]
+        keys.sort()
+        
+        return "==" + " AND ".join(keys) + "=="
 
     def testform(self):
         request = get_request()

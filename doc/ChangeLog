@@ -1,5 +1,7 @@
 2005-11-27  Titus Brown  <t@issola.caltech.edu>
 
+	* Added in a test of 'formaction'.
+
 	* Added in a bunch of form tests to test-form, fixed bugs discovered
 	  thereby.
 
