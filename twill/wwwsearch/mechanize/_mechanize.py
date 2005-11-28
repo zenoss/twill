@@ -91,7 +91,6 @@ class LinksFactory:
 
     def links(self, fh, base_url, encoding=None):
         """Return an iterator that provides links of the document."""
-        import pullparser
         p = self.link_parser_class(fh, encoding=encoding)
 
         for token in p.tags(*(self.urltags.keys()+["base"])):
