@@ -650,7 +650,6 @@ TODO:
 0.8 release:
 
  1. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
- 2. eggggz.
 
 after that:
 

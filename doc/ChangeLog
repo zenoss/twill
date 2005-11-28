@@ -1,5 +1,9 @@
 2005-11-27  Titus Brown  <t@issola.caltech.edu>
 
+	* Verified that eggs stuff now "just works".
+
+	* Put in a fix for an HTTP Basic Auth bug (that is fixed in Py 2.5!)
+
 	* Added in a test of 'formaction'.
 
 	* Added in a bunch of form tests to test-form, fixed bugs discovered

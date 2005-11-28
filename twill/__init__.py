@@ -15,25 +15,29 @@ __version__ = "0.8"
 #import warnings
 #warnings.defaultaction = "error"
 
-__all__ = [ "TwillCommandLoop", "execute_file", "get_browser_state",
-            "add_wsgi_intercept", "remove_wsgi_intercept" ]
+__all__ = [ "TwillCommandLoop",
+            "execute_file",
+            "get_browser_state",
+            "add_wsgi_intercept",
+            "remove_wsgi_intercept" ]
 
+#
 # add the wwwsearch & pyparsing stuff from twill/wwwsearch/.
+# NOTE: this works with eggs! hooray!
+#
+
 import sys, os.path
 thisdir = os.path.dirname(__file__)
-sys.path.insert(0, thisdir)             # @@CTB
+sys.path.insert(0, thisdir)
 
 wwwsearchlib = os.path.join(thisdir, 'wwwsearch/')
 sys.path.insert(0, wwwsearchlib)
 
-import myhttplib
-
-# the two core components
+# the two core components of twill:
 from shell import TwillCommandLoop
 from parse import execute_file
 
 # convenience function or two...
-
 import commands
 def get_browser_state():
     return commands.browser
