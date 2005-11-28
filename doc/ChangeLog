@@ -1,5 +1,11 @@
 2005-11-27  Titus Brown  <t@issola.caltech.edu>
 
+	* Put in a rough 'tidy' implementation by wrapping FormsFactory and
+	  LinksFactory.parser_class.
+
+	* Removed 'get_title' from RequestWrapper, moved to using
+	  MechanizeBrowser.title().
+
 	* Added 'utils.run_tidy' function & 'test-tidy.py' under tests/.
 
 	* Moved the journey-exception-wrapping into the mechanize mech_open

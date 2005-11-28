@@ -23,7 +23,7 @@ from ClientCookie._Util import response_seek_wrapper
 # twill package imports
 from twill import myhttplib
 from utils import trunc, print_form, journey, TidyAwareLinksParser, \
-     TidyAwareFormsFactory
+     TidyAwareFormsFactory, run_tidy, StringIO
 
 class PatchedMechanizeBrowser(MechanizeBrowser):
     """
@@ -36,8 +36,25 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
         
         MechanizeBrowser.__init__(self, *args, **kwargs)
         
-#    def title(self):
-#        return MechanizeBrowser.title(self)
+    def title(self):
+        import pullparser
+        if not self.viewing_html():
+            raise BrowserStateError("not viewing HTML")
+        if self._title is None:
+            data = self._response.read()
+            (clean_html, errors) = run_tidy(data)
+            if clean_html:
+                data = clean_html
+
+            p = pullparser.TolerantPullParser(StringIO(data),
+                                      encoding=self._encoding(self._response))
+            try:
+                p.get_tag("title")
+            except pullparser.NoMoreTokensError:
+                pass
+            else:
+                self._title = p.get_text()
+        return self._title
 
 #
 # TwillBrowser
