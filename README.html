@@ -33,29 +33,31 @@
 </ul>
 </li>
 <li><a class="reference" href="#requirements-availability-and-licensing" id="id17" name="id17">Requirements, Availability and Licensing</a><ul>
-<li><a class="reference" href="#licensing" id="id18" name="id18">Licensing</a></li>
-<li><a class="reference" href="#mailing-list" id="id19" name="id19">Mailing list</a></li>
+<li><a class="reference" href="#installing-twill-the-easy-way" id="id18" name="id18">Installing twill the easy way</a></li>
+<li><a class="reference" href="#obtaining-twill-with-darcs" id="id19" name="id19">Obtaining twill with darcs</a></li>
+<li><a class="reference" href="#licensing" id="id20" name="id20">Licensing</a></li>
+<li><a class="reference" href="#mailing-list" id="id21" name="id21">Mailing list</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#installation-and-using-twill" id="id20" name="id20">Installation and Using twill</a><ul>
-<li><a class="reference" href="#proxy-servers" id="id21" name="id21">Proxy servers</a></li>
-<li><a class="reference" href="#package-tests" id="id22" name="id22">Package tests</a></li>
-<li><a class="reference" href="#recording-scripts" id="id23" name="id23">Recording scripts</a></li>
-<li><a class="reference" href="#stress-testing" id="id24" name="id24">Stress testing</a></li>
-<li><a class="reference" href="#running-and-using-tidy" id="id25" name="id25">Running and using tidy</a></li>
+<li><a class="reference" href="#installation-and-using-twill" id="id22" name="id22">Installation and Using twill</a><ul>
+<li><a class="reference" href="#proxy-servers" id="id23" name="id23">Proxy servers</a></li>
+<li><a class="reference" href="#package-tests" id="id24" name="id24">Package tests</a></li>
+<li><a class="reference" href="#recording-scripts" id="id25" name="id25">Recording scripts</a></li>
+<li><a class="reference" href="#stress-testing" id="id26" name="id26">Stress testing</a></li>
+<li><a class="reference" href="#running-and-using-tidy" id="id27" name="id27">Running and using tidy</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#twill-and-python" id="id26" name="id26">twill and Python</a><ul>
-<li><a class="reference" href="#extending-twill" id="id27" name="id27">Extending twill</a></li>
-<li><a class="reference" href="#using-twill-in-other-python-programs" id="id28" name="id28">Using twill in other Python programs</a></li>
-<li><a class="reference" href="#unit-testing" id="id29" name="id29">Unit testing</a></li>
-<li><a class="reference" href="#testing-wsgi-applications-in-process" id="id30" name="id30">Testing WSGI applications &quot;in-process&quot;</a></li>
-<li><a class="reference" href="#advanced-documentation" id="id31" name="id31">Advanced documentation</a></li>
-<li><a class="reference" href="#miscellaneous-implementation-details" id="id32" name="id32">Miscellaneous implementation details</a></li>
+<li><a class="reference" href="#twill-and-python" id="id28" name="id28">twill and Python</a><ul>
+<li><a class="reference" href="#extending-twill" id="id29" name="id29">Extending twill</a></li>
+<li><a class="reference" href="#using-twill-in-other-python-programs" id="id30" name="id30">Using twill in other Python programs</a></li>
+<li><a class="reference" href="#unit-testing" id="id31" name="id31">Unit testing</a></li>
+<li><a class="reference" href="#testing-wsgi-applications-in-process" id="id32" name="id32">Testing WSGI applications &quot;in-process&quot;</a></li>
+<li><a class="reference" href="#advanced-documentation" id="id33" name="id33">Advanced documentation</a></li>
+<li><a class="reference" href="#miscellaneous-implementation-details" id="id34" name="id34">Miscellaneous implementation details</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#future-plans" id="id33" name="id33">Future Plans</a></li>
-<li><a class="reference" href="#acknowledgements-and-credits" id="id34" name="id34">Acknowledgements and Credits</a></li>
+<li><a class="reference" href="#future-plans" id="id35" name="id35">Future Plans</a></li>
+<li><a class="reference" href="#acknowledgements-and-credits" id="id36" name="id36">Acknowledgements and Credits</a></li>
 </ul>
 </div>
 <div class="section" id="what-is-twill">
@@ -304,24 +306,42 @@ required, but they are included with twill.</p>
 <p>If <tt class="docutils literal"><span class="pre">tidy</span></tt> is installed and available in the path, twill will use it
 in several ways.  See below for more information.</p>
 <p>Version 0.8 is available for download <a class="reference" href="http://darcs.idyll.org/~t/projects/twill-0.8.tar.gz">here</a>.  The latest development
-version can always be found at <a class="reference" href="http://darcs.idyll.org/~t/projects/twill-latest.tar.gz">twill-latest.tar.gz</a>.  There's a darcs
-repository for the project at
-<a class="reference" href="http://darcs.idyll.org/~t/projects/twill/">http://darcs.idyll.org/~t/projects/twill/</a>.</p>
+version can always be found at <a class="reference" href="http://darcs.idyll.org/~t/projects/twill-latest.tar.gz">twill-latest.tar.gz</a>.</p>
+<div class="section" id="installing-twill-the-easy-way">
+<h2><a class="toc-backref" href="#id18" name="installing-twill-the-easy-way">Installing twill the easy way</a></h2>
+<p>The best way to obtain twill is to use <a class="reference" href="http://peak.telecommunity.com/DevCenter/EasyInstall">easy_install/setuptools</a>.</p>
+<p>After <a class="reference" href="http://peak.telecommunity.com/DevCenter/EasyInstall#installing-easy-install">installing easy_install</a>, just type:</p>
+<pre class="literal-block">
+easy_install twill
+</pre>
+<p>If you want to work off of the latest developer release instead, type:</p>
+<pre class="literal-block">
+easy_install -f http://issola.caltech.edu/~t/twill-dist/ twill
+</pre>
+</div>
+<div class="section" id="obtaining-twill-with-darcs">
+<h2><a class="toc-backref" href="#id19" name="obtaining-twill-with-darcs">Obtaining twill with darcs</a></h2>
+<p><a class="reference" href="http://abridgegame.org/darcs/">darcs</a> is a distributed version control system that allows users to
+maintain their own versions of various programs.  It's a convenient
+way for me to make the latest source code available quickly, and
+it also is a dandy way to submit patches.</p>
 <p>To obtain twill using darcs, install darcs and then type</p>
 <pre class="literal-block">
 darcs get http://darcs.idyll.org/~t/projects/twill/
 </pre>
-<p>To propose a change to the lead developer, after making the changes</p>
+<p>To propose a change to the lead developer, make the changes and
+then do a 'send':</p>
 <pre class="literal-block">
 darcs record -am &quot;explanation of change&quot;
 darcs send -a
 </pre>
-<p>To pull in changes made by the lead developer some time later</p>
+<p>To pull in changes made by the lead developer some time later:</p>
 <pre class="literal-block">
 darcs pull
 </pre>
+</div>
 <div class="section" id="licensing">
-<h2><a class="toc-backref" href="#id18" name="licensing">Licensing</a></h2>
+<h2><a class="toc-backref" href="#id20" name="licensing">Licensing</a></h2>
 <p>twill 0.8 is licensed under the <a class="reference" href="http://www.gnu.org/copyleft/lesser.html">GNU LGPL</a>, although I am amenable
 to changing to an MIT-like license in the future.  All code currently
 contained in twill is Copyright (C) 2005, C. Titus Brown
@@ -339,7 +359,7 @@ their own licenses.  (Both are currently more lenient than the LGPL,
 so you should have no problems.)</p>
 </div>
 <div class="section" id="mailing-list">
-<h2><a class="toc-backref" href="#id19" name="mailing-list">Mailing list</a></h2>
+<h2><a class="toc-backref" href="#id21" name="mailing-list">Mailing list</a></h2>
 <p>There is a <a class="reference" href="http://lists.idyll.org/listinfo/twill">twill mailing list</a> for discussion and help purposes; for
 announcements, either subscribe to the twill list, or monitor
 <tt class="docutils literal"><span class="pre">comp.lang.python.announce</span></tt>/PyPi.  You can also check out the
@@ -347,7 +367,7 @@ announcements, either subscribe to the twill list, or monitor
 </div>
 </div>
 <div class="section" id="installation-and-using-twill">
-<h1><a class="toc-backref" href="#id20" name="installation-and-using-twill">Installation and Using twill</a></h1>
+<h1><a class="toc-backref" href="#id22" name="installation-and-using-twill">Installation and Using twill</a></h1>
 <p>To install twill, just run</p>
 <pre class="literal-block">
 python setup.py install
@@ -366,7 +386,7 @@ site, and a script for clearing out SourceForge Mailman lists.  The
 latter script makes use of the (very simple!) extension feature, if
 you're interested...</p>
 <div class="section" id="proxy-servers">
-<h2><a class="toc-backref" href="#id21" name="proxy-servers">Proxy servers</a></h2>
+<h2><a class="toc-backref" href="#id23" name="proxy-servers">Proxy servers</a></h2>
 <p>twill understands the <tt class="docutils literal"><span class="pre">http_proxy</span></tt> environment variable generically
 used to set proxy server information.  To use a proxy in UNIX or
 Windows, just set the <tt class="docutils literal"><span class="pre">http_proxy</span></tt> environment variable, e.g.</p>
@@ -379,13 +399,13 @@ Windows, just set the <tt class="docutils literal"><span class="pre">http_proxy<
 </pre>
 </div>
 <div class="section" id="package-tests">
-<h2><a class="toc-backref" href="#id22" name="package-tests">Package tests</a></h2>
+<h2><a class="toc-backref" href="#id24" name="package-tests">Package tests</a></h2>
 <p>twill comes with several unit tests.  They depend on <a class="reference" href="http://somethingaboutorange.com/mrl/projects/nose/">nose</a> and
 <a class="reference" href="http://www.mems-exchange.org/software/quixote/">Quixote 2.3</a>.  To run them, simply type 'nosetests' in the top
 package directory.</p>
 </div>
 <div class="section" id="recording-scripts">
-<h2><a class="toc-backref" href="#id23" name="recording-scripts">Recording scripts</a></h2>
+<h2><a class="toc-backref" href="#id25" name="recording-scripts">Recording scripts</a></h2>
 <p>Writing twill scripts is boring.  One simple way to get at least a
 rough initial script is to use the <a class="reference" href="http://maxq.tigris.org/">maxq</a> recorder to generate a twill
 script.  <a class="reference" href="http://maxq.tigris.org/">maxq</a> acts as an HTTP proxy and records all HTTP traffic; I
@@ -394,7 +414,7 @@ generator and installation docs are included in the twill distribution
 under the directory <tt class="docutils literal"><span class="pre">maxq/</span></tt>.</p>
 </div>
 <div class="section" id="stress-testing">
-<h2><a class="toc-backref" href="#id24" name="stress-testing">Stress testing</a></h2>
+<h2><a class="toc-backref" href="#id26" name="stress-testing">Stress testing</a></h2>
 <p>You can use the <cite>twill-fork</cite> script to do some stress testing.  The syntax is</p>
 <pre class="literal-block">
 twill-fork -n &lt;number to execute&gt; -p &lt;number of processes&gt; script [ scripts... ]
@@ -414,7 +434,7 @@ measured between the start and end of script execution.</p>
 <p>Note that twill-fork still needs a lot of work...</p>
 </div>
 <div class="section" id="running-and-using-tidy">
-<h2><a class="toc-backref" href="#id25" name="running-and-using-tidy">Running and using tidy</a></h2>
+<h2><a class="toc-backref" href="#id27" name="running-and-using-tidy">Running and using tidy</a></h2>
 <p>The <tt class="docutils literal"><span class="pre">tidy</span></tt> program does a nice job of producing correct HTML from
 mangled, broken, eeevil Web pages.  By default, twill will run pages
 through <tt class="docutils literal"><span class="pre">tidy</span></tt> before processing them.  This is on by default
@@ -429,7 +449,7 @@ when <tt class="docutils literal"><span class="pre">tidy</span></tt> <em>isn't</
 </div>
 </div>
 <div class="section" id="twill-and-python">
-<h1><a class="toc-backref" href="#id26" name="twill-and-python">twill and Python</a></h1>
+<h1><a class="toc-backref" href="#id28" name="twill-and-python">twill and Python</a></h1>
 <p>twill is essentially a thin shell around the
 <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> package.  All twill commands are implemented in the
 <tt class="docutils literal"><span class="pre">commands.py</span></tt> file, and <a class="reference" href="http://pyparsing.sourceforge.net/">pyparsing</a> does the work of parsing the
@@ -437,7 +457,7 @@ input and converting it into Python commands (see <tt class="docutils literal"><
 Interactive shell work and readline support is implemented via the
 <a class="reference" href="http://docs.python.org/lib/module-cmd.html">cmd</a> module (from the standard Python library).</p>
 <div class="section" id="extending-twill">
-<h2><a class="toc-backref" href="#id27" name="extending-twill">Extending twill</a></h2>
+<h2><a class="toc-backref" href="#id29" name="extending-twill">Extending twill</a></h2>
 <p>Right now twill is very easy to extend: just build a Python module
 that exports the functions you want to call, place it in the
 PYTHONPATH, and run <tt class="docutils literal"><span class="pre">extend_with</span> <span class="pre">&lt;modulename&gt;</span></tt>.  See
@@ -455,7 +475,7 @@ script.</li>
 </blockquote>
 </div>
 <div class="section" id="using-twill-in-other-python-programs">
-<h2><a class="toc-backref" href="#id28" name="using-twill-in-other-python-programs">Using twill in other Python programs</a></h2>
+<h2><a class="toc-backref" href="#id30" name="using-twill-in-other-python-programs">Using twill in other Python programs</a></h2>
 <p>All of the commands available in twill are implemented as top-level functions
 in the <cite>twill.commands</cite> module.  For example, to use twill functionality from
 another Python program, you can do:</p>
@@ -480,7 +500,7 @@ the <cite>browser.py</cite> module.  This may be useful for twill extensions as
 well as for other toolkits, but the API is still unstable.</p>
 </div>
 <div class="section" id="unit-testing">
-<h2><a class="toc-backref" href="#id29" name="unit-testing">Unit testing</a></h2>
+<h2><a class="toc-backref" href="#id31" name="unit-testing">Unit testing</a></h2>
 <p>twill can be used in unit testing, and it contains
 some Python support infrastructure for this purpose.</p>
 <p>As an example, here's the code from twill's own unit test, testing the
@@ -533,7 +553,7 @@ kills the server after script completion.</li>
 <p>This is still new code, and it would be good to hear people's opinions.</p>
 </div>
 <div class="section" id="testing-wsgi-applications-in-process">
-<h2><a class="toc-backref" href="#id30" name="testing-wsgi-applications-in-process">Testing WSGI applications &quot;in-process&quot;</a></h2>
+<h2><a class="toc-backref" href="#id32" name="testing-wsgi-applications-in-process">Testing WSGI applications &quot;in-process&quot;</a></h2>
 <p>twill has some built-in support for testing <a class="reference" href="http://www.python.org/peps/pep-0333.html">WSGI
 applications</a>.</p>
 <p>twill contains two functions,
@@ -553,7 +573,7 @@ twill.add_wsgi_intercept('localhost', 80, create_app)
 <p>See the <tt class="docutils literal"><span class="pre">tests/test-wsgi-intercept.py</span></tt> unit test for more information.</p>
 </div>
 <div class="section" id="advanced-documentation">
-<h2><a class="toc-backref" href="#id31" name="advanced-documentation">Advanced documentation</a></h2>
+<h2><a class="toc-backref" href="#id33" name="advanced-documentation">Advanced documentation</a></h2>
 <p>twill uses a melange of different packages.  Here are some potentially
 useful links:</p>
 <blockquote>
@@ -564,7 +584,7 @@ functionality that can be directly applied to twill.</li>
 </blockquote>
 </div>
 <div class="section" id="miscellaneous-implementation-details">
-<h2><a class="toc-backref" href="#id32" name="miscellaneous-implementation-details">Miscellaneous implementation details</a></h2>
+<h2><a class="toc-backref" href="#id34" name="miscellaneous-implementation-details">Miscellaneous implementation details</a></h2>
 <blockquote>
 <ul class="simple">
 <li>twill ignores robots.txt.</li>
@@ -574,13 +594,12 @@ functionality that can be directly applied to twill.</li>
 </div>
 </div>
 <div class="section" id="future-plans">
-<h1><a class="toc-backref" href="#id33" name="future-plans">Future Plans</a></h1>
+<h1><a class="toc-backref" href="#id35" name="future-plans">Future Plans</a></h1>
 <p>TODO:</p>
 <p>0.8 release:</p>
 <blockquote>
 <ol class="arabic simple">
 <li>HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)</li>
-<li>eggggz.</li>
 </ol>
 </blockquote>
 <p>after that:</p>
@@ -626,7 +645,7 @@ hard work, at least for PAMIE, is already done; check out the
 <p>Contributions are welcome &amp; will be duly acknowledged!</p>
 </div>
 <div class="section" id="acknowledgements-and-credits">
-<h1><a class="toc-backref" href="#id34" name="acknowledgements-and-credits">Acknowledgements and Credits</a></h1>
+<h1><a class="toc-backref" href="#id36" name="acknowledgements-and-credits">Acknowledgements and Credits</a></h1>
 <p>twill was designed and written by C. Titus Brown.  All of the good
 design ideas were stolen from other people; all of the bad ones are
 my fault.</p>

@@ -327,9 +327,28 @@ If ``tidy`` is installed and available in the path, twill will use it
 in several ways.  See below for more information.
 
 Version 0.8 is available for download here_.  The latest development
-version can always be found at twill-latest.tar.gz_.  There's a darcs
-repository for the project at
-http://darcs.idyll.org/~t/projects/twill/.
+version can always be found at twill-latest.tar.gz_.
+
+Installing twill the easy way
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The best way to obtain twill is to use `easy_install/setuptools`_.
+
+After `installing easy_install`_, just type: ::
+
+   easy_install twill
+
+If you want to work off of the latest developer release instead, type: ::
+
+   easy_install -f http://issola.caltech.edu/~t/twill-dist/ twill
+
+Obtaining twill with darcs
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+darcs_ is a distributed version control system that allows users to
+maintain their own versions of various programs.  It's a convenient
+way for me to make the latest source code available quickly, and
+it also is a dandy way to submit patches.
 
 To obtain twill using darcs, install darcs and then type
 
@@ -337,14 +356,15 @@ To obtain twill using darcs, install darcs and then type
 
    darcs get http://darcs.idyll.org/~t/projects/twill/
 
-To propose a change to the lead developer, after making the changes
+To propose a change to the lead developer, make the changes and
+then do a 'send':
 
 ::
 
    darcs record -am "explanation of change"
    darcs send -a
 
-To pull in changes made by the lead developer some time later
+To pull in changes made by the lead developer some time later:
 
 ::
 
@@ -739,3 +759,6 @@ Last updated November '05.
 .. _PAMIE examples page: tutoriala.html
 .. _PyXPCOM: http://kb.mozillazine.org/PyXPCOM
 .. _tidy page: http://tidy.sourceforge.net/
+.. _easy_install/setuptools: http://peak.telecommunity.com/DevCenter/EasyInstall
+.. _installing easy_install: http://peak.telecommunity.com/DevCenter/EasyInstall#installing-easy-install
+.. _darcs: http://abridgegame.org/darcs/

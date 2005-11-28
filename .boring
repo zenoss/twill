@@ -27,3 +27,5 @@
 \.cookies$
 \.twill-history$
 build
+dist
+twill.egg-info
