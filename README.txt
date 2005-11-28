@@ -250,7 +250,7 @@ it in ``__password__``.
 
    add_auth IdyllStuff http://www.idyll.org/ titus test
 
-would tell twill that a request from the authentication realm
+tells twill that a request from the authentication realm
 "IdyllStuff" under http://www.idyll.org/ should be answered with
 username 'titus', password 'test'.
 
@@ -650,18 +650,16 @@ TODO:
 0.8 release:
 
  1. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
- 2. Test HTTP basic auth & basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
+ 2. eggggz.
 
 after that:
 
  1. break "unit tests" down into smaller units.
  2. execute directories/directory trees?
  3. record scripts fix.
- 4. systematize variable handling a bit better: __ vs $
+ 4. systematize variable handling a bit better: __ vs $; TemplateString?
  5. expose 'browser' & document re Grig; regexp esp.
  6. twill-fork: make file writing stuff optional; test massive fork fn.
- 7. eggggz.
- 8. think about 'go' & test-go.
 
 Longer term fixes & cleanups:
 

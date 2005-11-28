@@ -143,10 +143,6 @@ go ../logout
 go ./restricted
 code 403
 
-# ok, try http basic auth
-#go ./http_auth
-#code 401
-
 ### test input/password
 
 back

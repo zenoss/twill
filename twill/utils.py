@@ -8,6 +8,7 @@ from cStringIO import StringIO
 import os
 import tempfile
 import mechanize
+import base64
 
 class FakeResponse:
     def __init__(self, data, url):
@@ -276,3 +277,21 @@ class TidyAwareFormsFactory(mechanize._mechanize.FormsFactory):
         return mechanize._mechanize.FormsFactory.parse_file(file_obj, base_url)
 
 ###
+
+class FixedHTTPBasicAuthHandler(urllib2.HTTPBasicAuthHandler):
+    """
+    Fix a bug that exists through Python 2.4 (but NOT in 2.5!)
+    """
+    def retry_http_basic_auth(self, host, req, realm):
+        user,pw = self.passwd.find_user_password(realm, req.get_full_url())
+        # ----------------------------------------------^^^^^^^^^^^^^^^^^^ CTB
+        if pw is not None:
+            raw = "%s:%s" % (user, pw)
+            auth = 'Basic %s' % base64.encodestring(raw).strip()
+            if req.headers.get(self.auth_header, None) == auth:
+                return None
+            req.add_header(self.auth_header, auth)
+            return self.parent.open(req)
+        else:
+            return None
+    

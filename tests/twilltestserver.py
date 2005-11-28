@@ -284,13 +284,10 @@ class HttpAuthRestricted(AccessControlled, Directory):
             print '***', k, ':', v
 
         ha = r.get_environ('HTTP_AUTHORIZATION', None)
-        print 'ACCESS'
         if ha:
-            print 'HA'
             auth_type, auth_string = ha.split()
             login, passwd = base64.decodestring(auth_string).split(':')
-
-            print 'YO', login, passwd
+ 
             if login == 'test' and passwd == 'password':
                 return
             

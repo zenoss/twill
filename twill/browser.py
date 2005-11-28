@@ -23,16 +23,20 @@ from ClientCookie._Util import response_seek_wrapper
 # twill package imports
 from twill import myhttplib
 from utils import trunc, print_form, journey, TidyAwareLinksParser, \
-     TidyAwareFormsFactory, run_tidy, StringIO
+     TidyAwareFormsFactory, run_tidy, StringIO, FixedHTTPBasicAuthHandler
 
 class PatchedMechanizeBrowser(MechanizeBrowser):
     """
-    A patched version of the mechanize browser class.  Currently only
-    installs the WSGI intercept handler.
+    A patched version of the mechanize browser class.  Currently
+    installs the WSGI intercept handler & fixes a problem with
+    urllib2 Basic Authentication.
     """
     def __init__(self, *args, **kwargs):
         # install WSGI intercept handler.
         self.handler_classes['http'] = myhttplib.get_my_handler()
+
+        # fix basic auth.
+        self.handler_classes['_authen'] = FixedHTTPBasicAuthHandler
         
         MechanizeBrowser.__init__(self, *args, **kwargs)
         
