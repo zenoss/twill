@@ -1,4 +1,52 @@
 go /multisubmitform
 code 200
 
-# stuff here. @CTB.
+go /testform
+code 200
+
+fv 1 selecttest val
+submit
+find "SELECTTEST: ==val=="
+
+###
+
+formclear 1
+submit
+find "NO FORM"
+
+###
+# test multiselect set
+
+fv 1 selecttest value1
+fv 1 selecttest value2
+fv 1 selecttest value3
+submit
+show
+find "SELECTTEST: ==value1 AND value2 AND value3=="
+
+##
+# test formclear after set
+
+fv 1 selecttest value1
+fv 1 selecttest value2
+fv 1 selecttest value3
+
+formclear 1
+submit
+show
+find "NO FORM"
+
+###
+
+showforms
+fv 1 item test
+submit
+find "NAMETEST: ==item=="
+
+###
+
+fv 1 3 test
+showforms
+submit
+show
+find "NAMETEST: ==item_a=="

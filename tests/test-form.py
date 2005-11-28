@@ -4,6 +4,7 @@ import twill
 from twill import namespaces, commands
 from twill.errors import TwillAssertionError
 from mechanize import BrowserStateError
+import ClientForm
 
 def setup():
     global url
@@ -12,9 +13,6 @@ def setup():
     url = testlib.run_server(twilltestserver.create_publisher)
 
 def test():
-    # test the twill script.
-    testlib.execute_twill_script('test-form.twill', initial_url=url)
-
     # test empty page get_title
     namespaces.new_local_dict()
     twill.commands.reset_browser()
@@ -25,20 +23,44 @@ def test():
     except BrowserStateError:
         pass
 
-    # now test a few special cases
+    ### now test a few special cases
+    
     commands.go(url)
     commands.go('/login')
     commands.showforms()
+
+    # test no matching forms
     try:
         commands.fv('2', 'submit', '1')
         assert 0
     except TwillAssertionError:
         pass
 
+    # test regexp match
     commands.fv('1', '.*you', '1')
+
+
+    # test ambiguous match to value
+    commands.go('/testform')
+    try:
+        commands.fv('1', 'selecttest', 'value')
+        assert 0
+    except ClientForm.ItemNotFoundError:
+        pass
+
+    # test ambiguous match to name
+    commands.go('/testform')
+    try:
+        commands.fv('1', 'item_', 'value')
+        assert 0
+    except Exception:
+        pass
 
     commands.go('http://www.example.com/')
     browser.get_title()
+
+    # test the twill script.
+    testlib.execute_twill_script('test-form.twill', initial_url=url)
     
 def teardown():
     testlib.kill_server()

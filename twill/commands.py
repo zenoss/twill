@@ -352,21 +352,17 @@ def formvalue(formname, fieldname, value):
 
     control = browser.get_form_field(form, fieldname)
 
-    if control:
-        browser.clicked(form, control)
+    browser.clicked(form, control)
 
-        if _options['readonly_controls_writeable']:
-            print 'forcing read-only control to writeable'
-            control.readonly = False
+    if _options['readonly_controls_writeable']:
+        print 'forcing read-only control to writeable'
+        control.readonly = False
         
-        if control.readonly:
-            print 'control is read-only; nothing done.'
-            return
+    if control.readonly:
+        print 'control is read-only; nothing done.'
+        return
 
-        set_form_control_value(control, value)
-    else:
-        print 'NO SUCH FIELD FOUND / MULTIPLE MATCHES TO NAME'
-        assert 0
+    set_form_control_value(control, value)
 
 fv = formvalue
 

@@ -292,11 +292,11 @@ what form field to use (function `twill.commands.browser.get_form_field`)::
    search current form for control name with exact match to fieldname;
    if single (unique) match, select.
 
-   if no match, search current form for control name with regexp match to fieldname;
-   if single (unique) match, select.
-
    if no match, convert fieldname into a number and use as an index, if
    possible.
+
+   if no match, search current form for control name with regexp match to fieldname;
+   if single (unique) match, select.
 
    if *still* no match, look for exact matches to submit-button values.
    if single (unique) match, select.
@@ -649,9 +649,8 @@ TODO:
 
 0.8 release:
 
- 1. test the documented fieldname spec for fv/submit.
- 2. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
- 3. Test HTTP basic auth & basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
+ 1. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
+ 2. Test HTTP basic auth & basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
 
 after that:
 

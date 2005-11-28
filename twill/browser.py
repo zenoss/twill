@@ -310,31 +310,41 @@ class TwillBrowser:
         a *unique* regexp/exact string match.
         """
         found = None
+        found_multiple = False
         
         matches = [ c for c in form.controls if str(c.name) == fieldname ]
 
-        if matches and len(matches) == 1:
-            found = matches[0]
+        # test exact match.
+        if matches:
+            if len(matches) == 1:
+                found = matches[0]
+            else:
+                found_multiple = True   # record for error reporting.
 
+        # test index.
+        if found is None:
+            # try num
+            clickies = [c for c in form.controls]
+            try:
+                fieldnum = int(fieldname) - 1
+                found = clickies[fieldnum]
+            except ValueError:          # int() failed
+                pass
+            except IndexError:          # fieldnum was incorrect
+                pass
+
+        # test regexp match
         if found is None:
             regexp = re.compile(fieldname)
 
             matches = [ ctl for ctl in form.controls \
                         if regexp.search(str(ctl.name)) ]
 
-            if matches and len(matches) == 1:
-                found = matches[0]
-                
-        if found is None:
-            # try num
-            clickies = [c for c in form.controls if c.is_of_kind('clickable')]
-            try:
-                fieldnum = int(fieldname)
-                found = clickies[fieldnum]
-            except ValueError:          # int() failed
-                pass
-            except IndexError:          # fieldnum was incorrect
-                pass
+            if matches:
+                if len(matches) == 1:
+                    found = matches[0]
+                else:
+                    found_multiple = True # record for error
 
         if found is None:
             # try value, for readonly controls like submit keys
@@ -342,6 +352,15 @@ class TwillBrowser:
                          and c.readonly ]
             if len(clickies) == 1:
                 found = clickies[0]
+            else:
+                found_multiple = True   # record for error
+
+        # error out?
+        if found is None:
+            if not found_multiple:
+                raise Exception('no field matches "%s"' % (fieldname,))
+            else:
+                raise Exception('multiple matches to "%s"' % (fieldname,))
 
         return found
 

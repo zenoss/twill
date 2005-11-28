@@ -90,9 +90,9 @@ def print_form(n, f):
     nonclickies = [c for c in f.controls if c not in clickies]
 
     for field in nonclickies:
-        if hasattr(field, 'possible_items'):
-            value_displayed = "%s of %s" % (field.value,
-                                            field.possible_items())
+        if hasattr(field, 'items'):
+            items = [ i.name for i in field.items ]
+            value_displayed = "%s of %s" % (field.value, items)
         else:
             value_displayed = "%s" % (field.value,)
         strings = ("  ",
@@ -121,7 +121,10 @@ def set_form_control_value(control, val):
     Helper function to deal with setting form values on lists etc.
     """
     if isinstance(control, ClientForm.ListControl):
-        control.set(1, val)
+        try:
+            control.get(val).selected = 1
+        except ClientForm.ItemNotFoundError:
+            raise ClientForm.ItemNotFoundError('cannot find value "%s" in list control' % (val,))
     else:
         control.value = val
 

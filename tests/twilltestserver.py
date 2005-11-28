@@ -80,7 +80,8 @@ class TwillTest(Directory):
     _q_exports = ['logout', 'increment', 'incrementfail', "", 'restricted',
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
                   'simpleform', 'upload_file', 'http_auth', 'formpostredirect',
-                  'exit', 'multisubmitform', "exception", "plaintext"]
+                  'exit', 'multisubmitform', "exception", "plaintext",
+                  "testform"]
 
     def __init__(self):
         self.restricted = Restricted()
@@ -170,7 +171,54 @@ class TwillTest(Directory):
                                                       submit1.render(),
                                                       submit2.render())
 
+    def testform(self):
+        request = get_request()
+
+        s = ""
+        if not request.form:
+            s = "NO FORM"
+            
+        if request.form and request.form.has_key('selecttest'):
+            vals = request.form['selecttest']
+
+            if isinstance(vals, str):
+                vals = [vals,]
+
+            s += "SELECTTEST: ==%s==<p>" % " AND ".join(vals,)
+
+        if request.form:
+            l = []
+            for name in ('item', 'item_a', 'item_b', 'item_c'):
+                if request.form.get(name):
+                    l.append(name)
+
+            s += "NAMETEST: ==%s==<p>" % " AND ".join(l)
+
+
+        return """\
+%s
+<form method=POST>
+<select name=selecttest multiple>
+<option> val
+<option> value1
+<option> value2
+<option> value3
+</select>
+
+<input type=text name=item>
+<input type=text name=item_a>
+<input type=text name=item_b>
+<input type=text name=item_c>
+
+<input type=submit value=post>
+</form>
+""" % (s,)
+
     def formpostredirect(self):
+        """
+        Test redirect after a form POST.  This tests a specific bug in
+        mechanize...
+        """
         request = get_request()
 
         if not request.form:

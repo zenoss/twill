@@ -219,7 +219,7 @@ find "twill: a simple language"
 ## @@CTB
 go ./formpostredirect
 fv 1 test "hello"
-submit 1
+submit
 
 show
 code 200
