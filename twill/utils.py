@@ -7,6 +7,18 @@ import pullparser
 from cStringIO import StringIO
 import os
 import tempfile
+import mechanize
+
+class FakeResponse:
+    def __init__(self, data, url):
+        self.fp = StringIO(data)
+        self.url = url
+
+    def read(self, *args):
+        return self.fp.read(*args)
+
+    def geturl(self):
+        return self.url
 
 class ResultWrapper:
     """
@@ -190,3 +202,50 @@ def run_tidy(html):
         pass
 
     return (clean_html, errors)
+
+#
+# TidyAwareLinksParser
+#
+
+class TidyAwareLinksParser(pullparser.TolerantPullParser):
+    def __init__(self, fh, *args, **kwargs):
+        
+        # use 'tidy' to tidy up the HTML, if desired.
+        html = fh.read()
+        (clean_html, errors) = run_tidy(html)
+        if clean_html:
+            html = clean_html
+            
+        new_fp = StringIO(html)
+        pullparser.TolerantPullParser.__init__(self, new_fp, *args, **kwargs)
+
+###
+
+#
+# TidyAwareFormsFactory
+#
+
+class TidyAwareFormsFactory(mechanize._mechanize.FormsFactory):
+    def parse_response(self, response):
+        
+        # use 'tidy' to tidy up the HTML, if desired.
+        data = response.read()
+        (clean_html, errors) = run_tidy(data)
+        if clean_html:
+            data = clean_html
+            
+        url = response.geturl()
+        fake = FakeResponse(data, url)
+
+        return mechanize._mechanize.FormsFactory.parse_response(self, fake)
+
+    def parse_file(self, file_obj, base_url):
+        data = read(file_obj)
+        (clean_html, errors ) = run_tidy(data)
+        if clean_html:
+            data = clean_html
+
+        file_obj = StringIO(data)
+        return mechanize._mechanize.FormsFactory.parse_file(file_obj, base_url)
+
+###

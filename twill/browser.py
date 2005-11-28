@@ -10,15 +10,20 @@ is what is used directly by `commands.py`.
 # Python imports
 import urllib2
 import re
+import urlparse
 
 # wwwsearch imports
+import mechanize
 from mechanize import Browser as MechanizeBrowser
 from mechanize._mechanize import BrowserStateError, LinkNotFoundError
+from mechanize._useragent import UserAgent
 import ClientCookie, ClientForm
+from ClientCookie._Util import response_seek_wrapper
 
 # twill package imports
 from twill import myhttplib
-from utils import trunc, print_form, journey
+from utils import trunc, print_form, journey, TidyAwareLinksParser, \
+     TidyAwareFormsFactory
 
 class PatchedMechanizeBrowser(MechanizeBrowser):
     """
@@ -30,6 +35,9 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
         self.handler_classes['http'] = myhttplib.get_my_handler()
         
         MechanizeBrowser.__init__(self, *args, **kwargs)
+        
+    def title(self):
+        return MechanizeBrowser.title(self)
 
 #
 # TwillBrowser
@@ -40,7 +48,14 @@ class TwillBrowser:
     Wrap mechanize behavior in a simple stateful way.
     """
     def __init__(self):
-        self._browser = PatchedMechanizeBrowser()
+        links_factory = mechanize._mechanize.LinksFactory(link_parser_class=TidyAwareLinksParser)
+
+        forms_factory = TidyAwareFormsFactory()
+        
+        b = PatchedMechanizeBrowser(links_factory=links_factory,
+                                    forms_factory=forms_factory)
+        self._browser = b
+        
         self._last_result = None
         self._last_submit = None
 
