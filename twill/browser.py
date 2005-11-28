@@ -36,8 +36,8 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
         
         MechanizeBrowser.__init__(self, *args, **kwargs)
         
-    def title(self):
-        return MechanizeBrowser.title(self)
+#    def title(self):
+#        return MechanizeBrowser.title(self)
 
 #
 # TwillBrowser
@@ -166,9 +166,7 @@ class TwillBrowser:
         """
         Get content of the HTML title element for the current page.
         """
-        if self._last_result:
-            return self._last_result.get_title()
-        return None
+        return self._browser.title()
 
     def get_url(self):
         """

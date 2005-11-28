@@ -3,6 +3,7 @@ import twilltestserver
 import twill
 from twill import namespaces, commands
 from twill.errors import TwillAssertionError
+from mechanize import BrowserStateError
 
 def setup():
     global url
@@ -18,7 +19,11 @@ def test():
     namespaces.new_local_dict()
     twill.commands.reset_browser()
     browser = twill.get_browser_state()
-    browser.get_title()
+    try:
+        browser.get_title()
+        assert 0, "should never get here"
+    except BrowserStateError:
+        pass
 
     # now test a few special cases
     commands.go(url)

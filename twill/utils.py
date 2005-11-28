@@ -39,14 +39,6 @@ class ResultWrapper:
     def get_page(self):
         return self.page
 
-    def get_title(self):
-        p = pullparser.PullParser(StringIO(self.get_page()))
-
-        title = None
-        if p.get_tag("title"):
-            title = p.get_compressed_text()
-        return title
-
 def journey(func, *args, **kwargs):
     """
     Wrap 'func' so that HTTPErrors and other things are captured when
