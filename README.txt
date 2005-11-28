@@ -652,7 +652,6 @@ TODO:
  1. test the documented fieldname spec for fv/submit.
  2. HTTP-EQUIV refresh/redirect commands w/in mechanize? (issola.caltech.edu/~t/transfer/redir-test.html)
  3. Test HTTP basic auth & basic auth (http://www.quixote.ca/qx/HttpBasicAuthentication?) example.
- 4. switch to using pullparser for 'title' command.
 
 after that:
 
