@@ -12,6 +12,9 @@
 
 __version__ = "0.8"
 
+#import warnings
+#warnings.defaultaction = "error"
+
 __all__ = [ "TwillCommandLoop", "execute_file", "get_browser_state",
             "add_wsgi_intercept", "remove_wsgi_intercept" ]
 
