@@ -181,7 +181,11 @@ unless the 'config' command has changed the default behavior.
 See 'config' and `details on form handling`_ for more information on
 the 'formvalue' command.
 
-**fv** -- abbreviation for 'formvalue'
+**fv** -- abbreviation for 'formvalue'.
+
+**formaction** *<formnum> <action>* -- change the form action URL to the given URL.
+
+**fa** -- abbreviation for 'fa'.
 
 **formclear** -- clear all values in the form.
 
@@ -710,7 +714,7 @@ MATSUNO Tokuhiro, Elvelind Grandin, Mike Rovner, and sureshvv.
 
 Patches have been submitted by Joeri van Ruth, Paul McGuire, Ed Rahn,
 Nic Ferrier, Robert Leftwich, James Cameron, William Volkman,
-Tommi Virtanen, and Simon Buenzli.  Thanks!
+Tommi Virtanen, Simon Buenzli, and sureshvv.  Thanks!
 
 ---------
 

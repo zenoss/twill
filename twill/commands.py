@@ -26,6 +26,8 @@ __all__ = ['reset_browser',
            'submit',
            'formvalue',
            'fv',
+           'formaction',
+           'fa',
            'formclear',
            'formfile',
            'getinput',
@@ -367,6 +369,17 @@ def formvalue(formname, fieldname, value):
         assert 0
 
 fv = formvalue
+
+def formaction(formname, action):
+    """
+    >> formaction <formname> <action_url>
+
+    Sets action parameter on form to action_url
+    """
+    form = browser.get_form(formname)
+    form.action = action
+
+fa = formaction
 
 def formfile(formname, fieldname, filename, content_type=None):
     """
