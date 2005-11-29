@@ -53,6 +53,7 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
             do_run_tidy = _options.get('do_run_tidy')
             
             if do_run_tidy:
+                self._response.seek(0)
                 data = self._response.read()
                 (clean_html, errors) = run_tidy(data)
                 if clean_html:

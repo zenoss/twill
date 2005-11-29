@@ -22,7 +22,7 @@ fv 1 selecttest value2
 fv 1 selecttest value3
 submit
 show
-find "SELECTTEST: ==value1 AND value2 AND value3=="
+find "SELECTTEST: ==selvalue1 AND selvalue2 AND selvalue3=="
 
 ##
 # test formclear after set

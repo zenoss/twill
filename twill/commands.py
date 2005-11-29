@@ -386,20 +386,15 @@ def formfile(formname, fieldname, filename, content_type=None):
     form = browser.get_form(formname)
     control = browser.get_form_field(form, fieldname)
 
-    if control:
-        if not control.is_of_kind('file'):
-            print 'ERROR: field is not a file upload field!'
-            assert 0
-            
-        browser.clicked(form, control)
-        fp = open(filename)
-        control.add_file(fp, content_type, filename)
+    if not control.is_of_kind('file'):
+        raise Exception('ERROR: field is not a file upload field!')
 
-        print '\nAdded file "%s" to file upload field "%s"\n' % (filename,
-                                                                 control.name,)
-    else:
-        print 'NO SUCH FIELD FOUND / MULTIPLE MATCHES TO NAME'
-        assert 0
+    browser.clicked(form, control)
+    fp = open(filename)
+    control.add_file(fp, content_type, filename)
+
+    print '\nAdded file "%s" to file upload field "%s"\n' % (filename,
+                                                             control.name,)
 
 def extend_with(module_name):
     """
@@ -491,11 +486,13 @@ def debug(what, level):
     
     if what == "http":
         browser._browser.set_debug_http(int(level))
-    elif what == 'twill':
-        if level > 0:
+    elif what == 'commands':
+        if int(level) > 0:
             parse.debug_print_commands(True)
         else:
             parse.debug_print_commands(False)
+    else:
+        raise Exception('unknown debugging type: "%s"' % (what,))
 
 def run(cmd):
     """
@@ -529,7 +526,7 @@ def runfile(files):
 
     filenames = files.split(' ')
     for f in filenames:
-        parse.execute_file(f)
+        parse.execute_file(f, no_reset=True)
 
 def setglobal(name, value):
     """

@@ -60,6 +60,11 @@ def create_publisher():
 
 def message(session):
         return """\
+<html>
+<head>
+<title>Hello, world!</title>
+</head>
+<body>
 Hello, world!
 <p>
 Your session ID is %s; this is visit #%d.
@@ -71,6 +76,8 @@ You are logged in as "%s".
 <a href="logout">log out</a>
 <p>
 (<a href="test spaces">test spaces</a> / <a href="test_spaces">test spaces2</a>)
+</body>
+</html>
 """ % (session.id, session.n, session.user)
 
 class TwillTest(Directory):
@@ -214,9 +221,9 @@ hello, world.
 <form method=POST>
 <select name=selecttest multiple>
 <option> val
-<option> value1
-<option> value2
-<option> value3
+<option value='selvalue1'> value1
+<option value='selvalue2'> value2
+<option value='selvalue3'> value3
 </select>
 
 <input type=text name=item>

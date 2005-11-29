@@ -219,3 +219,5 @@ submit
 
 show
 code 200
+
+runfile test-go.twill

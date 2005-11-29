@@ -123,7 +123,8 @@ def execute_file(filename, **kw):
     locals_dict['__url__'] = commands.browser.url()
 
     # reset browser
-    commands.reset_browser()
+    if not kw.get('no_reset'):
+        commands.reset_browser()
 
     # go to a specific URL?
     init_url = kw.get('initial_url')

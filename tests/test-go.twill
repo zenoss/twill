@@ -1,5 +1,9 @@
+echo __url__
 setglobal init __url__
 code 200
+
+show
+title "Hello"
 
 showhistory
 

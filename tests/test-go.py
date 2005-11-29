@@ -45,6 +45,13 @@ def test():
         except TwillAssertionError:
             pass
 
+        commands.go(url)
+        try:
+            commands.code(400)
+            assert 0
+        except TwillAssertionError:
+            pass
+
         #
         # no such command (NameError)
         #

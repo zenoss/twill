@@ -42,6 +42,10 @@ def test():
 
     # test ambiguous match to value
     commands.go('/testform')
+    commands.fv('1', 'selecttest', 'val')
+    commands.fv('1', 'selecttest', 'value1')
+    commands.fv('1', 'selecttest', 'selvalue1')
+    commands.formclear('1')
     try:
         commands.fv('1', 'selecttest', 'value')
         assert 0
@@ -52,6 +56,12 @@ def test():
     commands.go('/testform')
     try:
         commands.fv('1', 'item_', 'value')
+        assert 0
+    except Exception:
+        pass
+
+    try:
+        commands.formfile('1', 'selecttest', 'null')
         assert 0
     except Exception:
         pass

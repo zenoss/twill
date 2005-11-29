@@ -124,9 +124,16 @@ def set_form_control_value(control, val):
     """
     if isinstance(control, ClientForm.ListControl):
         try:
-            control.get(val).selected = 1
+            v = control.get(name=val)
         except ClientForm.ItemNotFoundError:
-            raise ClientForm.ItemNotFoundError('cannot find value "%s" in list control' % (val,))
+            try:
+                v = control.get(label=val)
+            except ClientForm.AmbiguityError:
+                raise ClientForm.ItemNotFoundError('multiple matches to value/label "%s" in list control' % (val,))
+            except ClientForm.ItemNotFoundError:
+                raise ClientForm.ItemNotFoundError('cannot find value/label "%s" in list control' % (val,))
+
+        v.selected = 1
     else:
         control.value = val
 
