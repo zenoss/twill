@@ -1,0 +1,3 @@
+darcs tag --checkpoint -m release-0.8
+
+ -- tag release-0.8, and allow for --partial get.
