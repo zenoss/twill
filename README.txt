@@ -340,7 +340,7 @@ After `installing easy_install`_, just type: ::
 
 If you want to work off of the latest developer release instead, type: ::
 
-   easy_install -f http://issola.caltech.edu/~t/twill-dist/ twill
+   easy_install -f http://issola.caltech.edu/~t/dist/ twill
 
 Obtaining twill with darcs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
