@@ -368,10 +368,11 @@ class TwillBrowser:
             # try value, for readonly controls like submit keys
             clickies = [ c for c in form.controls if c.value == fieldname \
                          and c.readonly ]
-            if len(clickies) == 1:
-                found = clickies[0]
-            else:
-                found_multiple = True   # record for error
+            if clickies:
+                if len(clickies) == 1:
+                    found = clickies[0]
+                else:
+                    found_multiple = True   # record for error
 
         # error out?
         if found is None:
