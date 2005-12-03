@@ -312,7 +312,7 @@ class MyHTTPConnection(HTTPConnection):
             else:
                 HTTPConnection.connect(self)
                 
-        except Exception, e:
+        except Exception:
             if debuglevel:              # intercept & print out tracebacks
                 traceback.print_exc()
             raise

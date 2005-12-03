@@ -42,7 +42,9 @@ def get_twill_glocals():
     """
     global global_dict, _local_dict_stack
     assert global_dict is not None, "must initialize global namespace first!"
-    assert len(_local_dict_stack) >= 1, "must create a local namespace!"
+
+    if len(_local_dict_stack) == 0:
+        new_local_dict()
 
     return global_dict, _local_dict_stack[-1]
 

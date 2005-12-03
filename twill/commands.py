@@ -503,8 +503,9 @@ def run(cmd):
     # @CTB: use pyparsing to grok the command?  make sure that quoting works...
     
     # execute command.
-    import commands
     global_dict, local_dict = get_twill_glocals()
+    
+    import commands
 
     # set __url__
     local_dict['__cmd__'] = cmd
@@ -521,7 +522,7 @@ def runfile(files):
     # filenames with spaces in them can be used, e.g.
     #     runfile "test 1" "test 2"
 
-    import parse, sys
+    import parse
     global_dict, local_dict = get_twill_glocals()
 
     filenames = files.split(' ')

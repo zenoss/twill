@@ -147,7 +147,7 @@ class TwillBrowser:
                 self._new_page()
                 success = True
                 break
-            except Exception, e:
+            except Exception:
                 pass
 
         if success:
@@ -171,7 +171,7 @@ class TwillBrowser:
         try:
             self._last_result = journey(back_url)
             self._new_page()
-        except BrowserStateError, e:
+        except BrowserStateError:
             self._last_result = None
 
         if self._last_result is not None:

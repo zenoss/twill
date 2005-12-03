@@ -101,10 +101,10 @@ def parse_command(line, globals_dict, locals_dict):
         if _print_commands:
             print "twill: executing cmd '%s'" % (line.strip(),)
             
-        command = res[0]
+        cmd = res[0]
         args = process_args(res[1:], globals_dict, locals_dict)
 
-        return (command, args)
+        return (cmd, args)
 
     return None, None                   # e.g. a comment
 
@@ -114,8 +114,6 @@ def execute_file(filename, **kw):
     """
     Execute commands from a file.
     """
-    finished = 0
-
     # initialize new local dictionary & get global + current local
     namespaces.new_local_dict()
     globals_dict, locals_dict = namespaces.get_twill_glocals()
@@ -134,10 +132,10 @@ def execute_file(filename, **kw):
         
     # read the input lines
     if filename == "-":
-        input = sys.stdin
+        inp = sys.stdin
     else:
-        input = open(filename)
-    lines = input.readlines()
+        inp = open(filename)
+    lines = inp.readlines()
 
     try:
 
