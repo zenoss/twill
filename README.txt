@@ -446,8 +446,8 @@ Package tests
 ~~~~~~~~~~~~~
 
 twill comes with several unit tests.  They depend on nose_ and
-`Quixote 2.3`_.  To run them, simply type 'nosetests' in the top
-package directory.
+`Quixote 2.3`_.  To run them, type 'python setup.py test'
+in the top package directory.
 
 .. _nose: http://somethingaboutorange.com/mrl/projects/nose/
 .. _Quixote 2.3: http://www.mems-exchange.org/software/quixote/
