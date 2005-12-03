@@ -2,7 +2,7 @@
 Various ugly utility functions for twill.
 """
 import ClientForm, ClientCookie
-import urllib2, re
+import urllib2
 import pullparser
 from cStringIO import StringIO
 import os
@@ -181,7 +181,7 @@ def run_tidy(html):
     try:
         os.system(cmd)
         success = True
-    except Exception, e:
+    except Exception:
         pass
 
     #
@@ -276,7 +276,7 @@ class TidyAwareFormsFactory(mechanize._mechanize.FormsFactory):
         do_run_tidy = _options.get('do_run_tidy')
 
         if do_run_tidy:
-            data = read(file_obj)
+            data = file_obj.read()
             (clean_html, errors ) = run_tidy(data)
             if clean_html:
                 data = clean_html
