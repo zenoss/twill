@@ -329,8 +329,8 @@ in several ways.  See below for more information.
 Version 0.8 is available for download here_.  The latest development
 version can always be found at twill-latest.tar.gz_.
 
-Installing twill the easy way
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Installing twill (the easy way)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The best way to obtain twill is to use `easy_install/setuptools`_.
 
@@ -406,14 +406,8 @@ archives_.
 .. _twill mailing list: http://lists.idyll.org/listinfo/twill
 .. _archives: http://lists.idyll.org/pipermail/twill/
 
-Installation and Using twill
-----------------------------
-
-To install twill, just run
-
-::
-
-   python setup.py install
+Using twill
+-----------
 
 To run twill, type 'twill-sh' and try
 
@@ -421,6 +415,8 @@ To run twill, type 'twill-sh' and try
 
    go http://www.python.org/
    show
+   showforms
+   showhistory
 
 You can also run scripts (e.g. the files in ``examples/``) directly by
 specifying them on the command line.
@@ -671,25 +667,22 @@ Future Plans
 
 TODO:
 
-after 8.0:
+for 9.0 (beta).
 
- 1. break "unit tests" down into smaller units.
- 2. execute directories/directory trees?
- 3. record scripts fix.
- 4. systematize variable handling a bit better: __ vs $; TemplateString?
- 5. expose 'browser' & document re Grig; regexp esp.
- 6. twill-fork: make file writing stuff optional; test massive fork fn.
+ 1. RECORDING.
+ 2. execute directories/directory trees.
+ 3. systematize variable handling a bit better: __ vs $; TemplateString?
+ 4. expose 'browser' & document re Grig; regexp esp.; make source docs.
+ 5. twill-fork: make file writing stuff optional; test massive fork fn.
+ 6. add config directives for socket timeout.
 
-Longer term fixes & cleanups:
+Misc fixes & cleanups:
 
- 1. fix spaces-in-URLs problem more generally (in urllib2).
- 2. Paul McGuire's pyparsing suggestions.
- 3. cookie "1" vs 1, in cookielib.
- 4. command line completion doesn't understand extend_with results yet.
- 5. extend_with etc. -- module namespaces, e.g. extmodule.fn?
- 6. doc reorganization: separate out commands, make source docs.
- 7. implement more complex proxy support.  proxies proxies proxies.
- 8. add config directives for socket timeout.
+ 1. Paul McGuire's pyparsing suggestions.
+ 2. cookie "1" vs 1, in cookielib.
+ 3. command line completion doesn't understand extend_with results yet.
+ 4. extend_with etc. -- module namespaces, e.g. extmodule.fn?
+ 5. implement more complex proxy support.  proxies proxies proxies.
 
 Random ideas:
 
@@ -742,7 +735,7 @@ Last updated November '05.
 .. _pyparsing: http://pyparsing.sourceforge.net/
 .. _cmd: http://docs.python.org/lib/module-cmd.html
 .. _funkload: http://funkload.nuxeo.org/
-.. _webunit: http://webunit.sourceforge.net/
+.. _webunit: http://mechanicalcat.net/tech/webunit/
 .. _webtest: http://www.cherrypy.org/file/trunk/cherrypy/test/webtest.py
 .. _zope.testbrowser: http://cheeseshop.python.org/pypi?:action=display&name=zope.testbrowser
 .. _zope.testbrowser README: http://svn.zope.org/*checkout*/Zope3/trunk/src/zope/testbrowser/README.txt

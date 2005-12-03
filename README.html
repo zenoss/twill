@@ -33,13 +33,13 @@
 </ul>
 </li>
 <li><a class="reference" href="#requirements-availability-and-licensing" id="id17" name="id17">Requirements, Availability and Licensing</a><ul>
-<li><a class="reference" href="#installing-twill-the-easy-way" id="id18" name="id18">Installing twill the easy way</a></li>
+<li><a class="reference" href="#installing-twill-the-easy-way" id="id18" name="id18">Installing twill (the easy way)</a></li>
 <li><a class="reference" href="#obtaining-twill-with-darcs" id="id19" name="id19">Obtaining twill with darcs</a></li>
 <li><a class="reference" href="#licensing" id="id20" name="id20">Licensing</a></li>
 <li><a class="reference" href="#mailing-list" id="id21" name="id21">Mailing list</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#installation-and-using-twill" id="id22" name="id22">Installation and Using twill</a><ul>
+<li><a class="reference" href="#using-twill" id="id22" name="id22">Using twill</a><ul>
 <li><a class="reference" href="#proxy-servers" id="id23" name="id23">Proxy servers</a></li>
 <li><a class="reference" href="#package-tests" id="id24" name="id24">Package tests</a></li>
 <li><a class="reference" href="#recording-scripts" id="id25" name="id25">Recording scripts</a></li>
@@ -131,7 +131,7 @@ more-or-less defunct.  There are still one or two things that
 PBP does that twill doesn't, but we're working on that ;).
 Both twill and PBP are based on <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a>.</p>
 <p><a class="reference" href="http://funkload.nuxeo.org/">funkload</a> is a nifty looking tool that does functional load testing.
-It is built on <a class="reference" href="http://webunit.sourceforge.net/">webunit</a>.</p>
+It is built on <a class="reference" href="http://mechanicalcat.net/tech/webunit/">webunit</a>.</p>
 <p><a class="reference" href="http://www.cherrypy.org/file/trunk/cherrypy/test/webtest.py">webtest</a> is an extension to <tt class="docutils literal"><span class="pre">unittest</span></tt> for testing Web frameworks.
 It's primarily used for CherryPy, I think.</p>
 <p><a class="reference" href="http://cheeseshop.python.org/pypi?:action=display&amp;name=zope.testbrowser">zope.testbrowser</a> is a wrapper around <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> that exposes a more
@@ -308,7 +308,7 @@ in several ways.  See below for more information.</p>
 <p>Version 0.8 is available for download <a class="reference" href="http://darcs.idyll.org/~t/projects/twill-0.8.tar.gz">here</a>.  The latest development
 version can always be found at <a class="reference" href="http://darcs.idyll.org/~t/projects/twill-latest.tar.gz">twill-latest.tar.gz</a>.</p>
 <div class="section" id="installing-twill-the-easy-way">
-<h2><a class="toc-backref" href="#id18" name="installing-twill-the-easy-way">Installing twill the easy way</a></h2>
+<h2><a class="toc-backref" href="#id18" name="installing-twill-the-easy-way">Installing twill (the easy way)</a></h2>
 <p>The best way to obtain twill is to use <a class="reference" href="http://peak.telecommunity.com/DevCenter/EasyInstall">easy_install/setuptools</a>.</p>
 <p>After <a class="reference" href="http://peak.telecommunity.com/DevCenter/EasyInstall#installing-easy-install">installing easy_install</a>, just type:</p>
 <pre class="literal-block">
@@ -366,16 +366,14 @@ announcements, either subscribe to the twill list, or monitor
 <a class="reference" href="http://lists.idyll.org/pipermail/twill/">archives</a>.</p>
 </div>
 </div>
-<div class="section" id="installation-and-using-twill">
-<h1><a class="toc-backref" href="#id22" name="installation-and-using-twill">Installation and Using twill</a></h1>
-<p>To install twill, just run</p>
-<pre class="literal-block">
-python setup.py install
-</pre>
+<div class="section" id="using-twill">
+<h1><a class="toc-backref" href="#id22" name="using-twill">Using twill</a></h1>
 <p>To run twill, type 'twill-sh' and try</p>
 <pre class="literal-block">
 go http://www.python.org/
 show
+showforms
+showhistory
 </pre>
 <p>You can also run scripts (e.g. the files in <tt class="docutils literal"><span class="pre">examples/</span></tt>) directly by
 specifying them on the command line.</p>
@@ -598,28 +596,25 @@ functionality that can be directly applied to twill.</li>
 <div class="section" id="future-plans">
 <h1><a class="toc-backref" href="#id35" name="future-plans">Future Plans</a></h1>
 <p>TODO:</p>
-<p>after 8.0:</p>
+<p>for 9.0 (beta).</p>
 <blockquote>
 <ol class="arabic simple">
-<li>break &quot;unit tests&quot; down into smaller units.</li>
-<li>execute directories/directory trees?</li>
-<li>record scripts fix.</li>
+<li>RECORDING.</li>
+<li>execute directories/directory trees.</li>
 <li>systematize variable handling a bit better: __ vs $; TemplateString?</li>
-<li>expose 'browser' &amp; document re Grig; regexp esp.</li>
+<li>expose 'browser' &amp; document re Grig; regexp esp.; make source docs.</li>
 <li>twill-fork: make file writing stuff optional; test massive fork fn.</li>
+<li>add config directives for socket timeout.</li>
 </ol>
 </blockquote>
-<p>Longer term fixes &amp; cleanups:</p>
+<p>Misc fixes &amp; cleanups:</p>
 <blockquote>
 <ol class="arabic simple">
-<li>fix spaces-in-URLs problem more generally (in urllib2).</li>
 <li>Paul McGuire's pyparsing suggestions.</li>
 <li>cookie &quot;1&quot; vs 1, in cookielib.</li>
 <li>command line completion doesn't understand extend_with results yet.</li>
 <li>extend_with etc. -- module namespaces, e.g. extmodule.fn?</li>
-<li>doc reorganization: separate out commands, make source docs.</li>
 <li>implement more complex proxy support.  proxies proxies proxies.</li>
-<li>add config directives for socket timeout.</li>
 </ol>
 </blockquote>
 <p>Random ideas:</p>
