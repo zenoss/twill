@@ -63,3 +63,10 @@ def test():
 
 def teardown_module():
     pass
+
+if __name__ == '__main__':
+    try:
+       setup_module()
+       test()
+    finally:
+       teardown_module()

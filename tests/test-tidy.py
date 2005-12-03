@@ -21,6 +21,6 @@ def teardown_module():
     pass
 
 if __name__ == '__main__':
-    setup()
+    setup_module()
     test()
-    teardown()
+    teardown_module()

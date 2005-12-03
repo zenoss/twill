@@ -43,4 +43,6 @@ Web pages or grabbing data from password-protected sites automatically.
                      'Topic :: Internet :: WWW/HTTP',
                      'Topic :: Software Development :: Testing',
                      ],
+
+      test_suite = 'nose.collector'
       )

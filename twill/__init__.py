@@ -15,6 +15,8 @@ __version__ = "0.8.1"
 #import warnings
 #warnings.defaultaction = "error"
 
+#import pychecker.checker
+
 __all__ = [ "TwillCommandLoop",
             "execute_file",
             "get_browser_state",
@@ -46,4 +48,4 @@ def get_browser_state():
 import namespaces
 namespaces.init_global_dict()
 
-from myhttplib import add_wsgi_intercept, remove_wsgi_intercept
+from wsgi_intercept import add_wsgi_intercept, remove_wsgi_intercept

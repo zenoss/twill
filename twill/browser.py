@@ -21,10 +21,19 @@ import ClientCookie, ClientForm
 from ClientCookie._Util import response_seek_wrapper
 
 # twill package imports
-from twill import myhttplib
+import wsgi_intercept
 from utils import trunc, print_form, journey, TidyAwareLinksParser, \
      TidyAwareFormsFactory, run_tidy, StringIO, FixedHTTPBasicAuthHandler, \
      FunctioningHTTPRefreshProcessor
+
+def build_http_handler():
+    from ClientCookie import HTTPHandler
+
+    class MyHTTPHandler(HTTPHandler):
+        def http_open(self, req):
+            return self.do_open(wsgi_intercept.WSGI_HTTPConnection, req)
+
+    return MyHTTPHandler
 
 class PatchedMechanizeBrowser(MechanizeBrowser):
     """
@@ -34,7 +43,7 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
     """
     def __init__(self, *args, **kwargs):
         # install WSGI intercept handler.
-        self.handler_classes['http'] = myhttplib.get_my_handler()
+        self.handler_classes['http'] = build_http_handler()
 
         # fix basic auth.
         self.handler_classes['_authen'] = FixedHTTPBasicAuthHandler

@@ -1,3 +1,7 @@
+2005-12-03  Titus Brown  <t@issola.caltech.edu>
+
+	* Fixed tests: setup -> setup_module, teardown -> teardown_module.
+
 2005-11-29  Titus Brown  <t@issola.caltech.edu>
 
 	* Additional coverage and some miscellaneous fixes.

@@ -1,14 +1,15 @@
 import testlib
 import twill
-from twill import myhttplib
 
-from twill.myhttplib import MyHTTPConnection
+from twill.wsgi_intercept import WSGI_HTTPConnection
+
 import ClientCookie
 import urllib2
 from ClientCookie._urllib2_support import HTTPHandler
+
 class MyHTTPHandler(HTTPHandler):
     def http_open(self, req):
-        return self.do_open(MyHTTPConnection, req)
+        return self.do_open(WSGI_HTTPConnection, req)
 
 opener = ClientCookie._urllib2_support.build_opener(MyHTTPHandler())
 ClientCookie._urllib2_support.install_opener(opener)
@@ -33,10 +34,7 @@ def create_simple_app():
 
 ###
 
-_saved_debuglevel = None
-
 def setup_module():
-    _saved_debuglevel, myhttplib.debuglevel = myhttplib.debuglevel, 1
     twill.add_wsgi_intercept('localhost', 80, create_simple_app)
 
 def test():
@@ -70,11 +68,11 @@ def test():
     assert not simple_app_was_hit       # <-- but *this* is what's important.
 
 def teardown_module():
-    myhttplib.debuglevel = _saved_debuglevel
+    pass
 
 if __name__ == '__main__':
     try:
-        setup()
+        setup_module()
         test()
     finally:
-        teardown()
+        teardown_module()

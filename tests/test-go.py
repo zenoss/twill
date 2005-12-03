@@ -106,7 +106,7 @@ def teardown_module():
 
 if __name__ == '__main__':
     try:
-        setup()
+        setup_module()
         test()
     finally:
-        teardown()
+        teardown_module()
