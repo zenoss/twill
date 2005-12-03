@@ -5,7 +5,7 @@ from mechanize import BrowserStateError
 from cStringIO import StringIO
 from twill.errors import TwillAssertionError
 
-def setup():
+def setup_module():
     pass
 
 def test():
@@ -61,5 +61,5 @@ def test():
 
     twill.commands.run("print 'hello'")
 
-def teardown():
+def teardown_module():
     pass

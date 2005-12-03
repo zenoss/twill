@@ -6,7 +6,7 @@ from twill.errors import TwillAssertionError
 from mechanize import BrowserStateError
 import ClientForm
 
-def setup():
+def setup_module():
     global url
     
     testlib.cd_testdir()
@@ -72,7 +72,7 @@ def test():
     # test the twill script.
     testlib.execute_twill_script('test-form.twill', initial_url=url)
     
-def teardown():
+def teardown_module():
     testlib.kill_server()
     testlib.pop_testdir()
 

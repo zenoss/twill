@@ -2,7 +2,7 @@ import os
 import testlib
 import twilltestserver
 
-def setup():
+def setup_module():
     testlib.cd_testdir()
     
     global url
@@ -13,7 +13,7 @@ def test():
     
     testlib.execute_twill_script('test-basic.twill', inp, initial_url=url)
     
-def teardown():
+def teardown_module():
     testlib.kill_server()
     testlib.pop_testdir()
 

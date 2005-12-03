@@ -7,7 +7,7 @@ from twill.errors import TwillAssertionError
 import twill.parse
 from cStringIO import StringIO
 
-def setup():
+def setup_module():
     testlib.cd_testdir()
 
     global url
@@ -98,7 +98,7 @@ def test():
     except SystemExit:
         pass
     
-def teardown():
+def teardown_module():
     testlib.kill_server()
     testlib.pop_testdir()
     

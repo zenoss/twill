@@ -2,7 +2,7 @@ import os
 import testlib
 import twilltestserver
 
-def setup():
+def setup_module():
     testlib.cd_testdir()
 
     global url
@@ -11,7 +11,7 @@ def setup():
 def test():
     testlib.execute_twill_script('test-http-auth.twill', initial_url=url)
     
-def teardown():
+def teardown_module():
     testlib.kill_server()
     testlib.pop_testdir()
 

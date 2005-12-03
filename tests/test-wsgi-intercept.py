@@ -35,7 +35,7 @@ def create_simple_app():
 
 _saved_debuglevel = None
 
-def setup():
+def setup_module():
     _saved_debuglevel, myhttplib.debuglevel = myhttplib.debuglevel, 1
     twill.add_wsgi_intercept('localhost', 80, create_simple_app)
 
@@ -69,7 +69,7 @@ def test():
     go('http://localhost/')             # may or may not succeed!
     assert not simple_app_was_hit       # <-- but *this* is what's important.
 
-def teardown():
+def teardown_module():
     myhttplib.debuglevel = _saved_debuglevel
 
 if __name__ == '__main__':

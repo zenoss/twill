@@ -7,7 +7,7 @@ that the function runs without error.
 import testlib
 from twill import utils
 
-def setup():
+def setup_module():
     pass
 
 def test():
@@ -17,7 +17,7 @@ def test():
     print output
     print errors
 
-def teardown():
+def teardown_module():
     pass
 
 if __name__ == '__main__':
