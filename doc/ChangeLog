@@ -1,5 +1,7 @@
 2005-12-03  Titus Brown  <t@issola.caltech.edu>
 
+	* Fixed form submission to add referer headers.
+
 	* Fixed tests: setup -> setup_module, teardown -> teardown_module.
 
 2005-11-29  Titus Brown  <t@issola.caltech.edu>

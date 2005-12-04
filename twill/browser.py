@@ -431,7 +431,8 @@ class TwillBrowser:
             ctl = self.get_form_field(form, fieldname)
 
         #
-        # now set up the submission:
+        # now set up the submission by building the request object that
+        # will be sent in the form submission.
         #
         
         if ctl:
@@ -440,16 +441,30 @@ class TwillBrowser:
                   (ctl.name, ctl.value)
             
             if isinstance(ctl, ClientForm.ImageControl):
-                control = ctl._click(form, (1,1), urllib2.Request)
+                request = ctl._click(form, (1,1), urllib2.Request)
             else:
-                control = ctl._click(form, True, urllib2.Request)
+                request = ctl._click(form, True, urllib2.Request)
                 
         else:
             # submit w/o submit button.
-            control = form._click(None, None, None, None, 0, None, urllib2.Request)
+            request = form._click(None, None, None, None, 0, None,
+                                  urllib2.Request)
 
+        #
+        # add referer information.  this may require upgrading the
+        # request object to have an 'add_unredirected_header' function.
+        #
+
+        upgrade = self._browser._ua_handlers.get('_http_request_upgrade')
+        if upgrade:
+            request = upgrade.http_request(request)
+            request = self._browser._add_referer_header(request)
+
+        #
         # now actually GO.
-        self._last_result = journey(self._browser.open, control)
+        #
+        
+        self._last_result = journey(self._browser.open, request)
         self._new_page()
 
     def save_cookies(self, filename):

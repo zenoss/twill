@@ -180,6 +180,11 @@ hello, world.
             if not used:
                 assert 0
 
+            # print out the referer, too.
+            referer = request.environ.get('HTTP_REFERER')
+            if referer:
+                s += "<p>referer: %s" % (referer,)
+
         return "<form method=POST>%s %s %s</form>" % (s,
                                                       submit1.render(),
                                                       submit2.render())
