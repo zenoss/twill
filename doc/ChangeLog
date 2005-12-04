@@ -1,10 +1,17 @@
 2005-12-03  Titus Brown  <t@issola.caltech.edu>
 
+	* local namespace now automatically created if it doesn't exist.
+
+	* Applied tv's patches for checkbox/hidden problems and incorrect
+	  error messages.
+
 	* Fixed form submission to add referer headers; updated tests.
 
 	* Fixed tests: setup -> setup_module, teardown -> teardown_module.
 
 2005-11-29  Titus Brown  <t@issola.caltech.edu>
+
+	* RELEASE 0.8.
 
 	* Additional coverage and some miscellaneous fixes.
 

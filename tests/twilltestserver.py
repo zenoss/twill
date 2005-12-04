@@ -226,9 +226,11 @@ hello, world.
 <form method=POST>
 <select name=selecttest multiple>
 <option> val
-<option value='selvalue1'> value1
-<option value='selvalue2'> value2
-<option value='selvalue3'> value3
+<option value='selvalue1'> value1 </option>
+<option value='selvalue2'> value2 </option>
+<option value='selvalue3'> value3 </option>
+<option value='test.value3'> testme.val </option>
+<option value=Test.Value4> testme4.val </option>
 </select>
 
 <input type=text name=item>
