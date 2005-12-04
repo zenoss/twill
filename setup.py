@@ -10,7 +10,7 @@ use_setuptools()
 
 setup(name = 'twill',
       
-      version = '0.8.1a2',
+      version = '0.8.1a3',
       download_url = 'http://darcs.idyll.org/~t/projects/twill-0.8.tar.gz',
       
       description = 'twill Web testing environment',

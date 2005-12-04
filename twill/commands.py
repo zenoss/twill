@@ -390,7 +390,7 @@ def formfile(formname, fieldname, filename, content_type=None):
         raise Exception('ERROR: field is not a file upload field!')
 
     browser.clicked(form, control)
-    fp = open(filename)
+    fp = open(filename, 'rb')
     control.add_file(fp, content_type, filename)
 
     print '\nAdded file "%s" to file upload field "%s"\n' % (filename,
