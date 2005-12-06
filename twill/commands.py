@@ -556,6 +556,8 @@ def title(what):
     regexp = re.compile(what)
     title = browser.get_title()
 
+    print "title is '%s'." % (title,)
+
     m = regexp.search(title)
     if not m:
         raise TwillAssertionError("title does not contain '%s'" % (what,))

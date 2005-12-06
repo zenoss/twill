@@ -1,6 +1,14 @@
+2005-12-05  Titus Brown  <t@issola.caltech.edu>
+
+	* Fixed a problem where tidy was occasionally mangling long titles
+	  with unnecessary newlines.
+
+	* Fixed a bug in PatchedMechanizeBrowser.title() where seek(0) was
+	  not getting called.
+
 2005-12-03  Titus Brown  <t@issola.caltech.edu>
 
-	* formfile now uses 'rb' to open files.
+	* formfile now uses 'rb' to open files.  (Tom Parker)
 
 	* local namespace now automatically created if it doesn't exist.
 
@@ -8,6 +16,7 @@
 	  error messages.
 
 	* Fixed form submission to add referer headers; updated tests.
+	  (Tom Parker)
 
 	* Fixed tests: setup -> setup_module, teardown -> teardown_module.
 

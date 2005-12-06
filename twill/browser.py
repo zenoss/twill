@@ -61,8 +61,8 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
             from twill.commands import _options
             do_run_tidy = _options.get('do_run_tidy')
             
+            self._response.seek(0)
             if do_run_tidy:
-                self._response.seek(0)
                 data = self._response.read()
                 (clean_html, errors) = run_tidy(data)
                 if clean_html:
@@ -78,7 +78,13 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
             except pullparser.NoMoreTokensError:
                 pass
             else:
-                self._title = p.get_text()
+                title = p.get_text()
+
+                # replace newlines with spaces.
+                title = title.replace("\n", " ") # @CTB fix this tidy bug.
+                title = title.replace("\r", " ")
+                
+                self._title = title
         return self._title
 
 #
