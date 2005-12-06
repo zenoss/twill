@@ -19,6 +19,7 @@ setup(name = 'twill',
       license='LGPL',
 
       packages = ['twill', 'twill.wwwsearch',
+                  'twill.extensions',
                   'twill.wwwsearch.ClientCookie',
                   'twill.wwwsearch.mechanize'],
       scripts = ['twill-sh', 'twill-fork'],
