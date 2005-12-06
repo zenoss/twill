@@ -24,13 +24,16 @@ __all__ = [ "TwillCommandLoop",
             "remove_wsgi_intercept" ]
 
 #
-# add the wwwsearch & pyparsing stuff from twill/wwwsearch/.
-# NOTE: this works with eggs! hooray!
+# add extensions (twill/extensions) and the the wwwsearch & pyparsing
+# stuff from twill/wwwsearch/.  NOTE: this works with eggs! hooray!
 #
 
 import sys, os.path
 thisdir = os.path.dirname(__file__)
 sys.path.insert(0, thisdir)
+
+wwwsearchlib = os.path.join(thisdir, 'extensions/')
+sys.path.insert(0, wwwsearchlib)
 
 wwwsearchlib = os.path.join(thisdir, 'wwwsearch/')
 sys.path.insert(0, wwwsearchlib)

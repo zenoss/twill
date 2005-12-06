@@ -1,3 +1,10 @@
+2005-12-06  Titus Brown  <t@issola.caltech.edu>
+
+	* Added sureshvv's commands in as 'match_parse' extension.
+
+	* Moved extensions/ into twill/extensions; modified sys.path
+	  accordingly in package import.
+
 2005-12-05  Titus Brown  <t@issola.caltech.edu>
 
 	* Fixed a problem where tidy was occasionally mangling long titles
