@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.3.7: http://docutils.sourceforge.net/" />
+<title>Testing Web sites with twill</title>
+<link rel="stylesheet" href="default.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="testing-web-sites-with-twill">
+<h1 class="title">Testing Web sites with twill</h1>
+<div class="section" id="stress-testing">
+<h1><a name="stress-testing">Stress testing</a></h1>
+<p>You can use the <cite>twill-fork</cite> script to do some stress testing.  The syntax is</p>
+<pre class="literal-block">
+twill-fork -n &lt;number to execute&gt; -p &lt;number of processes&gt; script [ scripts... ]
+</pre>
+<p>For example,</p>
+<pre class="literal-block">
+twill-fork -n 500 -p 10 test-script
+</pre>
+<p>will fork 10 times and run <cite>test-script</cite> 50 times in each process.
+<cite>twill-fork</cite> will record the time it takes to run all of the scripts specified
+on the command and print a summary at the end.</p>
+<p>The time recorded is <em>not</em> the CPU time used.  (This would lead to an
+inaccurate estimate because the client code uses blocking calls to
+retrieve Web pages.)  Rather, the time recorded is the clock time
+measured between the start and end of script execution.</p>
+<p>Try <cite>twill-fork -h</cite> to get a list of other command line arguments.</p>
+<p>Note that twill-fork still needs a lot of work...</p>
+</div>
+<div class="section" id="unit-testing">
+<h1><a name="unit-testing">Unit testing</a></h1>
+<p>twill can be used in unit testing, and it contains
+some Python support infrastructure for this purpose.</p>
+<p>As an example, here's the code from twill's own unit test, testing the
+unit-test support code:</p>
+<pre class="literal-block">
+import os
+import testlib
+import twill.unit
+import twilltestserver
+from quixote.server.simple_server import run as quixote_run
+
+def test():
+    # port to run the server on
+    PORT=8090
+
+    # create a function to run the server
+    def run_server_fn():
+        quixote_run(twilltestserver.create_publisher, port=PORT)
+
+    # abspath to the script
+    script = os.path.join(testlib.testdir, 'test-unit-support.twill')
+
+    # create test_info object
+    test_info = twill.unit.TestInfo(script, run_server_fn, PORT)
+
+    # run tests!
+    twill.unit.run_test(test_info)
+</pre>
+<p>Here, I'm unit testing the Quixote application <tt class="docutils literal"><span class="pre">twilltestserver</span></tt>, which
+is run by <tt class="docutils literal"><span class="pre">quixote_run</span></tt> (a.k.a. <tt class="docutils literal"><span class="pre">quixote.server.simple_server.run</span></tt>) on
+port <tt class="docutils literal"><span class="pre">PORT</span></tt>, using the twill script <tt class="docutils literal"><span class="pre">test-unit-support.twill</span></tt>.  That
+script contains this code:</p>
+<pre class="literal-block">
+# starting URL is provided to it by the unit test support framework.
+
+go ./multisubmitform
+code 200
+</pre>
+<p>A few things to note:</p>
+<blockquote>
+<ul class="simple">
+<li>the initial URL is set based on the URL reported by <tt class="docutils literal"><span class="pre">TestInfo</span></tt>,
+which calculates it based on the <tt class="docutils literal"><span class="pre">PORT</span></tt> argument.  (This can be overriden
+by subclasses.)</li>
+<li><tt class="docutils literal"><span class="pre">TestInfo</span></tt> contains code to (a) run the server function in a new
+process, and (b) run the twill script against that server.  It then
+kills the server after script completion.</li>
+</ul>
+</blockquote>
+<p>This is still new code, and it would be good to hear people's opinions.</p>
+</div>
+<div class="section" id="testing-wsgi-applications-in-process">
+<h1><a name="testing-wsgi-applications-in-process">Testing WSGI applications &quot;in-process&quot;</a></h1>
+<p>twill has some built-in support for testing <a class="reference" href="http://www.python.org/peps/pep-0333.html">WSGI
+applications</a>.</p>
+<p>twill contains two functions,
+<cite>add_wsgi_intercept</cite> and <cite>remove_wsgi_intercept</cite>, that allow Python
+applications to redirect HTTP calls into a WSGI application
+&quot;in-process&quot;, without going via an external Internet call.  This is
+particularly useful for unit tests, where setting up an externally
+available Web server can be inconvenient.</p>
+<p>For example, the following code redirects all <tt class="docutils literal"><span class="pre">localhost:80</span></tt> calls to
+the given WSGI app:</p>
+<pre class="literal-block">
+def create_app():
+    return wsgi_app
+
+twill.add_wsgi_intercept('localhost', 80, create_app)
+</pre>
+<p>See the <tt class="docutils literal"><span class="pre">tests/test-wsgi-intercept.py</span></tt> unit test for more information.</p>
+</div>
+</div>
+</body>
+</html>

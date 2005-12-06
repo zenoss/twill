@@ -1,0 +1,122 @@
+===================================================
+twill: a simple scripting language for Web browsing
+===================================================
+
+twill is a simple language that allows users to browse the Web from
+a command-line interface.  With twill, you can navigate through Web
+sites that use forms, cookies, and most standard Web features.
+
+twill supports automated Web testing and has a simple Python interface.
+Check out the examples_!
+
+twill is open source and written in Python.
+
+Downloading twill
+-----------------
+
+The latest release of twill is `twill 0.8.1`_, released @CTB; it is available
+for download at http://darcs.idyll.org/~t/projects/twill-0.8.1.tar.gz.
+You can also use Python's easy_install_ to install or upgrade it.
+
+twill works with Python 2.3 or later.
+
+To start using twill, install it and then type ``twill-sh``.  At the
+prompt type: ::
+
+   go http://www.slashdot.org/
+   show
+   showforms
+   showhistory
+
+Documentation
+-------------
+
+The documentation for the latest release is always at
+http://www.idyll.org/~t/www-tools/twill/.
+
+The in-development version of the docs can be found at
+http://darcs.idyll.org/~t/projects/twill/doc/.
+
+Documentation is available for the following topics:
+
+ * `Language reference`_ -- the twill scripting language.
+
+ * `Testing Web sites with twill`_ -- how to use twill to test Web sites.
+
+ * `Python API`_ -- for Python programmers interested in using twill from
+   Python.
+
+ * `Developer information`_ -- for Python developers interested in extending
+   or fixing twill.
+
+ * `Other tools and packages`_ -- projects relevant to, or based upon, twill.
+
+Mailing List
+------------
+
+There's a moderately active mailing list at twill@lists.idyll.org; there is
+also an archive_.
+
+Contributing
+------------
+
+Bug reports, fixes, extensions, and links to interesting blog or
+use case reports are always welcome!  You can send them to the mailing
+list or to Titus directly.
+
+When reporting bugs, please be sure to use the '-f' flag for ``twill-sh``
+so that we can see the full traceback.
+
+Authors and License
+-------------------
+
+The main author of twill is C. Titus Brown, titus@caltech.edu.  A
+number of people have contributed bug reports and code since the first
+release; they are acknowledged below.
+
+The twill source code is Copyright (C) 2005, C. Titus Brown.  twill is
+currently available under the LGPL_.
+
+pyparsing_ and mechanize_ are both included with twill, but are under
+their own licenses.  (Both are currently more lenient than the LGPL,
+so you should have no problems.)
+
+Acknowledgements
+----------------
+
+Cory Dodt had a great idea with PBP, and I thank him for his insight.
+Ian Bicking gave me the idea of reimplementing PBP on top of IPython
+(since abandoned in favor of cmd_), and suggested the "in-process"
+hack.  Grig Gheorghiu was strangely enthusiastic about the simple demo
+I showed him and has religiously promoted twill ever since.  John
+J. Lee has promptly and enthusiastically checked in my various patches
+to mechanize.  Michele Simionato is an early adopter who has helped
+quite a bit.  Thanks, guys...
+
+Bug reports have come in from the following fine people: Chris Miles,
+MATSUNO Tokuhiro, Elvelind Grandin, Mike Rovner, and sureshvv.
+
+Patches have been submitted by Joeri van Ruth, Paul McGuire, Ed Rahn,
+Nic Ferrier, Robert Leftwich, James Cameron, William Volkman,
+Tommi Virtanen, Simon Buenzli, and sureshvv.  Thanks!
+
+----
+
+.. _Language reference: commands.html
+.. _Developer information: developer.html
+.. _Python API: python-api.html
+.. _Testing Web sites with twill: testing.html
+.. _Other tools and packages: other.html
+.. _archive: http://lists.idyll.org/pipermail/twill/
+
+.. _cmd: http://docs.python.org/lib/module-cmd.html
+.. _twill 0.8.1: ANNOUNCE-0.8.1.txt
+
+.. _LGPL: http://www.gnu.org/copyleft/lesser.html
+.. _easy_install: http://peak.telecommunity.com/DevCenter/EasyInstall
+
+.. _mechanize: http://wwwsearch.sf.net/
+.. _pyparsing: http://pyparsing.sourceforge.net/
+
+.. _examples: @CTB
+

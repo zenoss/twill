@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.3.7: http://docutils.sourceforge.net/" />
+<title>twill: a simple scripting language for Web browsing</title>
+<link rel="stylesheet" href="default.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="twill-a-simple-scripting-language-for-web-browsing">
+<h1 class="title">twill: a simple scripting language for Web browsing</h1>
+<p>twill is a simple language that allows users to browse the Web from
+a command-line interface.  With twill, you can navigate through Web
+sites that use forms, cookies, and most standard Web features.</p>
+<p>twill supports automated Web testing and has a simple Python interface.
+Check out the <a class="reference" href="&#64;CTB">examples</a>!</p>
+<p>twill is open source and written in Python.</p>
+<div class="section" id="downloading-twill">
+<h1><a name="downloading-twill">Downloading twill</a></h1>
+<p>The latest release of twill is <a class="reference" href="ANNOUNCE-0.8.1.txt">twill 0.8.1</a>, released &#64;CTB; it is available
+for download at <a class="reference" href="http://darcs.idyll.org/~t/projects/twill-0.8.1.tar.gz">http://darcs.idyll.org/~t/projects/twill-0.8.1.tar.gz</a>.
+You can also use Python's <a class="reference" href="http://peak.telecommunity.com/DevCenter/EasyInstall">easy_install</a> to install or upgrade it.</p>
+<p>twill works with Python 2.3 or later.</p>
+<p>To start using twill, install it and then type <tt class="docutils literal"><span class="pre">twill-sh</span></tt>.  At the
+prompt type:</p>
+<pre class="literal-block">
+go http://www.slashdot.org/
+show
+showforms
+showhistory
+</pre>
+</div>
+<div class="section" id="documentation">
+<h1><a name="documentation">Documentation</a></h1>
+<p>The documentation for the latest release is always at
+<a class="reference" href="http://www.idyll.org/~t/www-tools/twill/">http://www.idyll.org/~t/www-tools/twill/</a>.</p>
+<p>The in-development version of the docs can be found at
+<a class="reference" href="http://darcs.idyll.org/~t/projects/twill/doc/">http://darcs.idyll.org/~t/projects/twill/doc/</a>.</p>
+<p>Documentation is available for the following topics:</p>
+<blockquote>
+<ul class="simple">
+<li><a class="reference" href="commands.html">Language reference</a> -- the twill scripting language.</li>
+<li><a class="reference" href="testing.html">Testing Web sites with twill</a> -- how to use twill to test Web sites.</li>
+<li><a class="reference" href="python-api.html">Python API</a> -- for Python programmers interested in using twill from
+Python.</li>
+<li><a class="reference" href="developer.html">Developer information</a> -- for Python developers interested in extending
+or fixing twill.</li>
+<li><a class="reference" href="other.html">Other tools and packages</a> -- projects relevant to, or based upon, twill.</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="mailing-list">
+<h1><a name="mailing-list">Mailing List</a></h1>
+<p>There's a moderately active mailing list at <a class="reference" href="mailto:twill&#64;lists.idyll.org">twill&#64;lists.idyll.org</a>; there is
+also an <a class="reference" href="http://lists.idyll.org/pipermail/twill/">archive</a>.</p>
+</div>
+<div class="section" id="contributing">
+<h1><a name="contributing">Contributing</a></h1>
+<p>Bug reports, fixes, extensions, and links to interesting blog or
+use case reports are always welcome!  You can send them to the mailing
+list or to Titus directly.</p>
+<p>When reporting bugs, please be sure to use the '-f' flag for <tt class="docutils literal"><span class="pre">twill-sh</span></tt>
+so that we can see the full traceback.</p>
+</div>
+<div class="section" id="authors-and-license">
+<h1><a name="authors-and-license">Authors and License</a></h1>
+<p>The main author of twill is C. Titus Brown, <a class="reference" href="mailto:titus&#64;caltech.edu">titus&#64;caltech.edu</a>.  A
+number of people have contributed bug reports and code since the first
+release; they are acknowledged below.</p>
+<p>The twill source code is Copyright (C) 2005, C. Titus Brown.  twill is
+currently available under the <a class="reference" href="http://www.gnu.org/copyleft/lesser.html">LGPL</a>.</p>
+<p><a class="reference" href="http://pyparsing.sourceforge.net/">pyparsing</a> and <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> are both included with twill, but are under
+their own licenses.  (Both are currently more lenient than the LGPL,
+so you should have no problems.)</p>
+</div>
+<div class="section" id="acknowledgements">
+<h1><a name="acknowledgements">Acknowledgements</a></h1>
+<p>Cory Dodt had a great idea with PBP, and I thank him for his insight.
+Ian Bicking gave me the idea of reimplementing PBP on top of IPython
+(since abandoned in favor of <a class="reference" href="http://docs.python.org/lib/module-cmd.html">cmd</a>), and suggested the &quot;in-process&quot;
+hack.  Grig Gheorghiu was strangely enthusiastic about the simple demo
+I showed him and has religiously promoted twill ever since.  John
+J. Lee has promptly and enthusiastically checked in my various patches
+to mechanize.  Michele Simionato is an early adopter who has helped
+quite a bit.  Thanks, guys...</p>
+<p>Bug reports have come in from the following fine people: Chris Miles,
+MATSUNO Tokuhiro, Elvelind Grandin, Mike Rovner, and sureshvv.</p>
+<p>Patches have been submitted by Joeri van Ruth, Paul McGuire, Ed Rahn,
+Nic Ferrier, Robert Leftwich, James Cameron, William Volkman,
+Tommi Virtanen, Simon Buenzli, and sureshvv.  Thanks!</p>
+<hr class="docutils" />
+</div>
+</div>
+</body>
+</html>

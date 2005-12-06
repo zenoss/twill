@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.3.7: http://docutils.sourceforge.net/" />
+<title>Developing twill</title>
+<link rel="stylesheet" href="default.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="developing-twill">
+<h1 class="title">Developing twill</h1>
+<p>dev docs:</p>
+<blockquote>
+<ul class="simple">
+<li>advanced docs;</li>
+<li>todo</li>
+</ul>
+</blockquote>
+<div class="section" id="package-tests">
+<h1><a name="package-tests">Package tests</a></h1>
+<p>twill comes with several unit tests.  They depend on <a class="reference" href="http://somethingaboutorange.com/mrl/projects/nose/">nose</a> and
+<a class="reference" href="http://www.mems-exchange.org/software/quixote/">Quixote 2.3</a>.  To run them, type 'python setup.py test'
+in the top package directory.</p>
+</div>
+<div class="section" id="licensing">
+<h1><a name="licensing">Licensing</a></h1>
+<p>twill 0.8 is licensed under the <a class="reference" href="http://www.gnu.org/copyleft/lesser.html">GNU LGPL</a>, although I am amenable
+to changing to an MIT-like license in the future.  All code currently
+contained in twill is Copyright (C) 2005, C. Titus Brown
+&lt;<a class="reference" href="mailto:titus&#64;caltech.edu">titus&#64;caltech.edu</a>&gt;.</p>
+<p>In plain English: I own the code, but you're welcome to use it and
+even subsume it into other projects.  Either way you are currently
+obligated to make any changes to twill publicly available, in source
+code form, if and only if you are distributing those changes in some
+<em>other</em> form (e.g. as part of another package).  You do <em>not</em> need to
+provide the source to packages that use twill, and you are not
+obligated to publish your own private changes to twill.  You do not need
+to publish your twill scripts or twill extensions, either.</p>
+<p><a class="reference" href="http://pyparsing.sourceforge.net/">pyparsing</a> and <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> are both included with twill, but are under
+their own licenses.  (Both are currently more lenient than the LGPL,
+so you should have no problems.)</p>
+</div>
+<div class="section" id="developer-releases">
+<h1><a name="developer-releases">Developer releases</a></h1>
+<p>&quot;Developer releases&quot; incorporating all recent significant changes are
+made available in egg format at <a class="reference" href="http://issola.caltech.edu/~t/dist/">http://issola.caltech.edu/~t/dist/</a>.</p>
+<p>You can install them with easy_install by typing</p>
+<pre class="literal-block">
+easy_install -f http://issola.caltech.edu/~t/dist/ twill
+</pre>
+</div>
+<div class="section" id="obtaining-twill-with-darcs">
+<h1><a name="obtaining-twill-with-darcs">Obtaining twill with darcs</a></h1>
+<p><a class="reference" href="http://abridgegame.org/darcs/">darcs</a> is a distributed version control system that allows users to
+maintain their own versions of various programs.  It's a convenient
+way for me to make the latest source code available quickly, and
+it also is a dandy way to submit patches.</p>
+<p>To obtain twill using darcs, install darcs and then type</p>
+<pre class="literal-block">
+darcs get http://darcs.idyll.org/~t/projects/twill/
+</pre>
+<p>To propose a change to the lead developer, make the changes and
+then do a 'send':</p>
+<pre class="literal-block">
+darcs record -am &quot;explanation of change&quot;
+darcs send -a
+</pre>
+<p>To pull in changes made by the lead developer some time later:</p>
+<pre class="literal-block">
+darcs pull
+</pre>
+</div>
+<div class="section" id="advanced-documentation">
+<h1><a name="advanced-documentation">Advanced documentation</a></h1>
+<p>twill uses a melange of different packages.  Here are some potentially
+useful links:</p>
+<blockquote>
+<ul class="simple">
+<li><a class="reference" href="http://www.voidspace.org.uk/python/articles/urllib2.shtml">urllib2.py: the missing manual</a> -- a detailed discussion of urllib2
+functionality that can be directly applied to twill.</li>
+</ul>
+</blockquote>
+<div class="section" id="future-plans">
+<h2><a name="future-plans">Future Plans</a></h2>
+<p>TODO:</p>
+<p>for 9.0 (beta).</p>
+<blockquote>
+<ol class="arabic simple">
+<li>RECORDING.</li>
+<li>execute directories/directory trees.</li>
+<li>systematize variable handling a bit better: __ vs $; TemplateString?</li>
+<li>expose 'browser' &amp; document re Grig; regexp esp.; make source docs.</li>
+<li>twill-fork: make file writing stuff optional; test massive fork fn.</li>
+<li>add config directives for socket timeout.</li>
+</ol>
+</blockquote>
+<p>Misc fixes &amp; cleanups:</p>
+<blockquote>
+<ol class="arabic simple">
+<li>Paul McGuire's pyparsing suggestions.</li>
+<li>cookie &quot;1&quot; vs 1, in cookielib.</li>
+<li>command line completion doesn't understand extend_with results yet.</li>
+<li>extend_with etc. -- module namespaces, e.g. extmodule.fn?</li>
+<li>implement more complex proxy support.  proxies proxies proxies.</li>
+</ol>
+</blockquote>
+<p>Random ideas:</p>
+<blockquote>
+<ol class="arabic">
+<li><p class="first">Build twill interfaces for zope.testbrowser and mechanoid.</p>
+<p>(This shouldn't be too difficult, since both are based on mechanize...)</p>
+</li>
+<li><p class="first">Write a sizeable Web app and then test it with all of the different tools,
+above.</p>
+<p>Draw broad conclusions that are unsubstantiated by the work.</p>
+</li>
+<li><p class="first">Develop twill-like languages for <a class="reference" href="http://pamie.sourceforge.net/">PAMIE</a> and <a class="reference" href="http://kb.mozillazine.org/PyXPCOM">PyXPCOM</a>.  Note that the
+hard work, at least for PAMIE, is already done; check out the
+<a class="reference" href="tutoriala.html">PAMIE examples page</a>.</p>
+</li>
+</ol>
+</blockquote>
+<p>Contributions are welcome &amp; will be duly acknowledged!</p>
+</div>
+</div>
+</div>
+</body>
+</html>
