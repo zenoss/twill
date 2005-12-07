@@ -328,15 +328,17 @@ class TwillBrowser:
 
         return None
 
-    def _all_the_same_checkbox(self, matches):
+    def _all_the_same_control(self, matches):
         name = None
+		value = None
         for match in matches:
-            if match.type not in ['checkbox', 'hidden']:
+            if match.type not in ['checkbox', 'hidden', 'submit']:
                 return False
             if name is None:
                 name = match.name
+				value = match.value
             else:
-                if match.name != name:
+                if match.name != name or match.value!= value:
                     return False
         return True
 
@@ -353,7 +355,7 @@ class TwillBrowser:
         # test exact match.
         if matches:
             if (len(matches) == 1
-                or self._all_the_same_checkbox(matches)):
+                or self._all_the_same_control(matches)):
                 found = matches[0]
             else:
                 found_multiple = True   # record for error reporting.
@@ -379,7 +381,7 @@ class TwillBrowser:
 
             if matches:
                 if (len(matches) == 1
-                    or self._all_the_same_checkbox(matches)):
+                    or self._all_the_same_control(matches)):
                     found = matches[0]
                 else:
                     found_multiple = True # record for error
