@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.3.7: http://docutils.sourceforge.net/" />
+<title>Web browsing with twill</title>
+<link rel="stylesheet" href="default.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="web-browsing-with-twill">
+<h1 class="title">Web browsing with twill</h1>
+<div class="section" id="proxy-servers">
+<h1><a name="proxy-servers">Proxy servers</a></h1>
+<p>twill understands the <tt class="docutils literal"><span class="pre">http_proxy</span></tt> environment variable generically
+used to set proxy server information.  To use a proxy in UNIX or
+Windows, just set the <tt class="docutils literal"><span class="pre">http_proxy</span></tt> environment variable, e.g.</p>
+<pre class="literal-block">
+% export http_proxy=&quot;http://www.someproxy.com:3128&quot;
+</pre>
+<p>or</p>
+<pre class="literal-block">
+% setenv http_proxy=&quot;http://www.someotherproxy.com:3148&quot;
+</pre>
+</div>
+<div class="section" id="recording-scripts">
+<h1><a name="recording-scripts">Recording scripts</a></h1>
+<p>Writing twill scripts is boring.  One simple way to get at least a
+rough initial script is to use the <a class="reference" href="http://maxq.tigris.org/">maxq</a> recorder to generate a twill
+script.  <a class="reference" href="http://maxq.tigris.org/">maxq</a> acts as an HTTP proxy and records all HTTP traffic; I
+have written a simple twill script generator for it.  The script
+generator and installation docs are included in the twill distribution
+under the directory <tt class="docutils literal"><span class="pre">maxq/</span></tt>.</p>
+</div>
+<div class="section" id="running-and-using-tidy">
+<h1><a name="running-and-using-tidy">Running and using tidy</a></h1>
+<p>The <tt class="docutils literal"><span class="pre">tidy</span></tt> program does a nice job of producing correct HTML from
+mangled, broken, eeevil Web pages.  By default, twill will run pages
+through <tt class="docutils literal"><span class="pre">tidy</span></tt> before processing them.  This is on by default
+because the Python libraries that parse HTML are very bad at dealing
+with incorrect HTML, and will often return incorrect results on &quot;real
+world&quot; Web pages.</p>
+<p>To disable this feature, set <tt class="docutils literal"><span class="pre">config</span> <span class="pre">do_run_tidy</span> <span class="pre">0</span></tt>.</p>
+<p>If <tt class="docutils literal"><span class="pre">tidy</span></tt> is not installed, twill will silently ignore it.  It may
+be desirable to <em>require</em> a functioning <tt class="docutils literal"><span class="pre">tidy</span></tt> installation; so, to fail
+when <tt class="docutils literal"><span class="pre">tidy</span></tt> <em>isn't</em> installed, set <tt class="docutils literal"><span class="pre">config</span> <span class="pre">tidy_should_exist</span> <span class="pre">1</span></tt>.</p>
+<p>See the <a class="reference" href="http://tidy.sourceforge.net/">tidy page</a> for more information on <tt class="docutils literal"><span class="pre">tidy</span></tt>.</p>
+</div>
+<div class="section" id="miscellaneous-implementation-details">
+<h1><a name="miscellaneous-implementation-details">Miscellaneous implementation details</a></h1>
+<blockquote>
+<ul class="simple">
+<li>twill ignores robots.txt.</li>
+<li>http-equiv=refresh headers are handled immediately, independent of the
+'pause' component of the 'content' attribute.</li>
+<li>twill does not understand javascript.</li>
+</ul>
+</blockquote>
+</div>
+</div>
+</body>
+</html>
