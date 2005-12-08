@@ -79,9 +79,11 @@ by subclasses.)</li>
 <li><tt class="docutils literal"><span class="pre">TestInfo</span></tt> contains code to (a) run the server function in a new
 process, and (b) run the twill script against that server.  It then
 kills the server after script completion.</li>
+<li>You can also pass a 'sleep' argument to the <tt class="docutils literal"><span class="pre">TestInfo</span></tt> constructor that
+specifies how many seconds to wait for the server to start before
+executing the script.</li>
 </ul>
 </blockquote>
-<p>This is still new code, and it would be good to hear people's opinions.</p>
 </div>
 <div class="section" id="testing-wsgi-applications-in-process">
 <h1><a name="testing-wsgi-applications-in-process">Testing WSGI applications &quot;in-process&quot;</a></h1>

@@ -2,7 +2,7 @@
 Support functionality for using twill in unit tests.
 """
 
-import sys, os
+import sys, os, time
 from cStringIO import StringIO
 
 # package import
@@ -13,14 +13,18 @@ class TestInfo:
     Object containing info for a test: script to run, server function to
     run, and port to run it on.  Note that information about server port
     *must* be decided by the end of the __init__ function.
+
+    The optional sleep argument specifies how many seconds to wait for the
+    server to set itself up.  Default is 0.
     """
     
-    def __init__(self, script, server_fn, port):
+    def __init__(self, script, server_fn, port, sleep=0):
         self.script = script
         self.server_fn = server_fn
         self.port = port
         self.stdout = None
         self.stderr = None
+        self.sleep = sleep
 
     def start_server(self):
         # save old stdout/stderr
@@ -40,6 +44,7 @@ class TestInfo:
         """
         Run the given twill script on the given server.
         """
+        time.sleep(self.sleep)
         url = self.get_url()
         execute_file(self.script, initial_url=url)
 

@@ -83,7 +83,9 @@ A few things to note:
    process, and (b) run the twill script against that server.  It then
    kills the server after script completion.
 
-This is still new code, and it would be good to hear people's opinions.
+ * You can also pass a 'sleep' argument to the ``TestInfo`` constructor that
+   specifies how many seconds to wait for the server to start before
+   executing the script.
 
 Testing WSGI applications "in-process"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
