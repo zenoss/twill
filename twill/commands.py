@@ -58,6 +58,9 @@ from namespaces import get_twill_glocals
         
 browser = TwillBrowser()
 
+def get_browser():
+    return browser
+
 def reset_browser():
     """
     >> reset_browser
@@ -509,7 +512,7 @@ def run(cmd):
 
     # set __url__
     local_dict['__cmd__'] = cmd
-    local_dict['__url__'] = commands.browser.url()
+    local_dict['__url__'] = commands.browser.get_url()
 
     exec(cmd, global_dict, local_dict)
 

@@ -1,4 +1,14 @@
+2005-12-11  Titus Brown  <t@issola.caltech.edu>
+
+	* Added twill.get_browser(); deprecated twill.get_browser_state().
+
+	* Broke mechanize stuff out into _browser.py.
+
+	* Removed browser.url() in favor of get_url().
+
 2005-12-10  Titus Brown  <t@issola.caltech.edu>
+
+	* RELEASE 0.8.1.
 
 	* Added Tom Parker's patch for multiple identical submit buttons.
 

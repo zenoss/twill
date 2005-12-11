@@ -84,7 +84,7 @@ def execute_command(cmd, args, globals_dict, locals_dict):
     result = eval(eval_str, globals_dict, locals_dict)
     
     # set __url__
-    locals_dict['__url__'] = commands.browser.url()
+    locals_dict['__url__'] = commands.browser.get_url()
 
     return result
 
@@ -118,7 +118,7 @@ def execute_file(filename, **kw):
     namespaces.new_local_dict()
     globals_dict, locals_dict = namespaces.get_twill_glocals()
     
-    locals_dict['__url__'] = commands.browser.url()
+    locals_dict['__url__'] = commands.browser.get_url()
 
     # reset browser
     if not kw.get('no_reset'):
@@ -128,7 +128,7 @@ def execute_file(filename, **kw):
     init_url = kw.get('initial_url')
     if init_url:
         commands.go(init_url)
-        locals_dict['__url__'] = commands.browser.url()
+        locals_dict['__url__'] = commands.browser.get_url()
         
     # read the input lines
     if filename == "-":

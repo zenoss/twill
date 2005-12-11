@@ -10,7 +10,7 @@ def setup_module():
 
 def test():
     # get the current browser obj.
-    browser = twill.get_browser_state()
+    browser = twill.get_browser()
     assert browser is twill.commands.browser
 
     old_err, sys.stderr = sys.stderr, StringIO()

@@ -16,7 +16,7 @@ def test():
     # test empty page get_title
     namespaces.new_local_dict()
     twill.commands.reset_browser()
-    browser = twill.get_browser_state()
+    browser = twill.get_browser()
     try:
         browser.get_title()
         assert 0, "should never get here"

@@ -1,10 +1,7 @@
 """
-Python classes for proper browser behavior.
+Implements TwillBrowser, a simple stateful wrapper for mechanize.Browser.
 
-Contains both `PatchedMechanizeBrowser`, which contains twill-specific
-fixes/patches/overrides for mechanize behavior, and `TwillBrowser`, a
-more stateful browser with a somewhat simpler interface.  `TwillBrowser`
-is what is used directly by `commands.py`.
+See _browser.py for mechanize code.
 """
 
 # Python imports
@@ -13,79 +10,13 @@ import re
 import urlparse
 
 # wwwsearch imports
-import mechanize
-from mechanize import Browser as MechanizeBrowser
+import mechanize, ClientCookie, ClientForm
 from mechanize._mechanize import BrowserStateError, LinkNotFoundError
-from mechanize._useragent import UserAgent
-import ClientCookie, ClientForm
-from ClientCookie._Util import response_seek_wrapper
 
 # twill package imports
-import wsgi_intercept
+from _browser import PatchedMechanizeBrowser
 from utils import trunc, print_form, journey, TidyAwareLinksParser, \
-     TidyAwareFormsFactory, run_tidy, StringIO, FixedHTTPBasicAuthHandler, \
-     FunctioningHTTPRefreshProcessor
-
-def build_http_handler():
-    from ClientCookie import HTTPHandler
-
-    class MyHTTPHandler(HTTPHandler):
-        def http_open(self, req):
-            return self.do_open(wsgi_intercept.WSGI_HTTPConnection, req)
-
-    return MyHTTPHandler
-
-class PatchedMechanizeBrowser(MechanizeBrowser):
-    """
-    A patched version of the mechanize browser class.  Currently
-    installs the WSGI intercept handler & fixes a problem with
-    urllib2 Basic Authentication.
-    """
-    def __init__(self, *args, **kwargs):
-        # install WSGI intercept handler.
-        self.handler_classes['http'] = build_http_handler()
-
-        # fix basic auth.
-        self.handler_classes['_authen'] = FixedHTTPBasicAuthHandler
-
-        # make refresh work even for somewhat mangled refresh directives.
-        self.handler_classes['_refresh'] = FunctioningHTTPRefreshProcessor
-
-        MechanizeBrowser.__init__(self, *args, **kwargs)
-
-    def title(self):
-        import pullparser
-        if not self.viewing_html():
-            raise BrowserStateError("not viewing HTML")
-        if self._title is None:
-            from twill.commands import _options
-            do_run_tidy = _options.get('do_run_tidy')
-            
-            self._response.seek(0)
-            if do_run_tidy:
-                data = self._response.read()
-                (clean_html, errors) = run_tidy(data)
-                if clean_html:
-                    data = clean_html
-                fp = StringIO(data)
-            else:
-                fp = self._response
-
-            p = pullparser.TolerantPullParser(fp,
-                                      encoding=self._encoding(self._response))
-            try:
-                p.get_tag("title")
-            except pullparser.NoMoreTokensError:
-                pass
-            else:
-                title = p.get_text()
-
-                # replace newlines with spaces.
-                title = title.replace("\n", " ") # @CTB fix this tidy bug.
-                title = title.replace("\r", " ")
-                
-                self._title = title
-        return self._title
+     TidyAwareFormsFactory
 
 #
 # TwillBrowser
@@ -96,9 +27,17 @@ class TwillBrowser:
     Wrap mechanize behavior in a simple stateful way.
     """
     def __init__(self):
+        #
+        # create special link/forms parsing code to run tidy on HTML first.
+        #
+        
         links_factory = mechanize._mechanize.LinksFactory(link_parser_class=TidyAwareLinksParser)
 
         forms_factory = TidyAwareFormsFactory()
+
+        #
+        # Create the mechanize browser.
+        #
         
         b = PatchedMechanizeBrowser(links_factory=links_factory,
                                     forms_factory=forms_factory)
@@ -107,7 +46,10 @@ class TwillBrowser:
         self._last_result = None
         self._last_submit = None
 
+        #
         # create & set a cookie jar.
+        #
+        
         policy = ClientCookie.DefaultCookiePolicy(rfc2965=True)
         cj = ClientCookie.LWPCookieJar(policy=policy)
         self._browser.set_cookiejar(cj)
@@ -129,16 +71,10 @@ class TwillBrowser:
 
     def _new_page(self):
         """
-        Reset various things.
+        Reset page-specific stuff -- to be called when visiting a new page.
         """
         self._last_submit = None
         
-    def url(self):
-        if self._last_result is None:
-            return " *empty page* "
-
-        return self.get_url()
-
     def go(self, url):
         """
         Visit given URL.
@@ -329,6 +265,11 @@ class TwillBrowser:
         return None
 
     def _all_the_same_control(self, matches):
+        """
+        Utility function to check to see if a list of controls all really
+        belong to the same control: for use with checkboxes, hidden, and
+        submit buttons.
+        """
         name = None
         value = None
         for match in matches:
@@ -406,7 +347,9 @@ class TwillBrowser:
         return found
 
     def clicked(self, form, control):
-
+        """
+        Record a 'click' in a specific form.
+        """
         if self._browser.form != form:
             # construct a function to choose a particular form; select_form
             # can use this to pick out a precise form.
@@ -425,6 +368,9 @@ class TwillBrowser:
             self._last_submit = control
 
     def submit(self, fieldname):
+        """
+        Submit the currently clicked form using the given field.
+        """
         if not self._browser.forms():
             raise Exception("no forms on this page!")
         
@@ -491,15 +437,27 @@ class TwillBrowser:
         self._new_page()
 
     def save_cookies(self, filename):
+        """
+        Save cookies into the given file.
+        """
         self.cj.save(filename, ignore_discard=True, ignore_expires=True)
 
     def load_cookies(self, filename):
+        """
+        Load cookies from the given file.
+        """
         self.cj.load(filename, ignore_discard=True, ignore_expires=True)
 
     def clear_cookies(self):
+        """
+        Delete all of the cookies.
+        """
         self.cj.clear()
 
     def show_cookies(self):
+        """
+        Pretty-print all of the cookies.
+        """
         print '\nThere are %d cookie(s) in the cookiejar.\n' % (len(self.cj,))
         if len(self.cj):
             for cookie in self.cj:

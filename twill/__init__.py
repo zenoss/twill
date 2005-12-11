@@ -43,9 +43,12 @@ from shell import TwillCommandLoop
 from parse import execute_file
 
 # convenience function or two...
-import commands
+from commands import get_browser
+
 def get_browser_state():
-    return commands.browser
+    import warnings
+    warnings.warn("get_browser_state is deprecated; use 'twill.get_browser() instead.", DeprecationWarning)
+    return get_browser()
 
 # initialize global dict
 import namespaces
