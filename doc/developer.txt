@@ -2,10 +2,8 @@
 Developing twill
 ================
 
-dev docs:
-
- * advanced docs;
- * todo
+twill is entirely written in Python.  You will need Python 2.3 or later
+to develop it.
 
 Package tests
 ~~~~~~~~~~~~~
@@ -112,6 +110,7 @@ Misc fixes & cleanups:
  3. command line completion doesn't understand extend_with results yet.
  4. extend_with etc. -- module namespaces, e.g. extmodule.fn?
  5. implement more complex proxy support.  proxies proxies proxies.
+ 6. 'history' to show command history...
 
 Random ideas:
 

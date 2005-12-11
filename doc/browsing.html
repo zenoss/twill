@@ -10,6 +10,22 @@
 <body>
 <div class="document" id="web-browsing-with-twill">
 <h1 class="title">Web browsing with twill</h1>
+<p>twill strives to be a complete implementation of a Web browser,
+omitting only JavaScript support.  It includes support for cookies,
+basic authentication, and most (all?) HTTP trickery, including
+HTTP-EQUIV redirects.  Please <a class="reference" href="mailto:twill&#64;lists.idyll.org">let me know</a> if you find a situation
+where it doesn't work!</p>
+<p>twill implements a variety of <a class="reference" href="commands.html">commands</a>.  With the built-in language,
+you can do things like go to a specific URL; follow links; fill out
+forms and submit them; save, load, and delete cookies; and change the
+agent string.  You can also easily extend twill with new and specialized
+Python commands.</p>
+<div class="section" id="using-twill-interactively">
+<h1><a name="using-twill-interactively">Using twill interactively</a></h1>
+<p>twill-sh lets you interactively browse the Web.  It features built-in
+help, e.g. &quot;help go&quot; will describe the command 'go' to you;
+command-line completion with TAB; and history browsing (UP/DOWN arrows).</p>
+</div>
 <div class="section" id="proxy-servers">
 <h1><a name="proxy-servers">Proxy servers</a></h1>
 <p>twill understands the <tt class="docutils literal"><span class="pre">http_proxy</span></tt> environment variable generically
@@ -31,6 +47,9 @@ script.  <a class="reference" href="http://maxq.tigris.org/">maxq</a> acts as an
 have written a simple twill script generator for it.  The script
 generator and installation docs are included in the twill distribution
 under the directory <tt class="docutils literal"><span class="pre">maxq/</span></tt>.</p>
+<p>A more recent option is to use the Firefox extension <a class="reference" href="http://developer.spikesource.com/wiki/index.php/Projects:TestGen4Web">TestGen4Web</a>, which
+will record your Web browsing in a standard format.  Matt Harrison is
+working on converter.</p>
 </div>
 <div class="section" id="running-and-using-tidy">
 <h1><a name="running-and-using-tidy">Running and using tidy</a></h1>

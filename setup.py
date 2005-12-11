@@ -10,10 +10,10 @@ use_setuptools()
 
 setup(name = 'twill',
       
-      version = '0.8.1a6',
-      download_url = 'http://darcs.idyll.org/~t/projects/twill-0.8.tar.gz',
+      version = '0.8.1',
+      download_url = 'http://darcs.idyll.org/~t/projects/twill-0.8.1.tar.gz',
       
-      description = 'twill Web testing environment',
+      description = 'twill Web browsing language',
       author = 'C. Titus Brown',
       author_email = 'titus@caltech.edu',
       license='LGPL',

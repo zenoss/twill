@@ -2,6 +2,34 @@
 Testing Web sites with twill
 ============================
 
+twill was initially designed for testing Web sites, although since then
+people have also figured out that it's good for browsing_ unsuspecting
+Web sites.
+
+.. _browsing: browsing.html
+
+Using twill-sh
+~~~~~~~~~~~~~~
+
+The simplest way to test Web sites is to write one or more twill scripts
+and then simply run ::
+
+    twill-sh [ -u initial_url ] script(s)
+
+either from the command-line (for development purposes), via a cron job
+(to check to see if sites are up and responding), or from your functional
+or unit tests (see below).
+
+twill-sh will try to run each script given to it on the command line
+once, and will report the number of scripts that failed.  The exit value
+of the script will be 0 if there are no failures, so you can use it in
+a shell script easily enough.
+
+The ``-u`` flag can be used to give twill-sh an initial URL; this is
+equivalent to placing a "go (initial_url)" command at the top of the
+script, but is particularly handy for test frameworks where the URL
+might change depending on the developer.
+
 Stress testing
 ~~~~~~~~~~~~~~
 

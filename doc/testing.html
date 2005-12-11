@@ -10,6 +10,28 @@
 <body>
 <div class="document" id="testing-web-sites-with-twill">
 <h1 class="title">Testing Web sites with twill</h1>
+<p>twill was initially designed for testing Web sites, although since then
+people have also figured out that it's good for <a class="reference" href="browsing.html">browsing</a> unsuspecting
+Web sites.</p>
+<div class="section" id="using-twill-sh">
+<h1><a name="using-twill-sh">Using twill-sh</a></h1>
+<p>The simplest way to test Web sites is to write one or more twill scripts
+and then simply run</p>
+<pre class="literal-block">
+twill-sh [ -u initial_url ] script(s)
+</pre>
+<p>either from the command-line (for development purposes), via a cron job
+(to check to see if sites are up and responding), or from your functional
+or unit tests (see below).</p>
+<p>twill-sh will try to run each script given to it on the command line
+once, and will report the number of scripts that failed.  The exit value
+of the script will be 0 if there are no failures, so you can use it in
+a shell script easily enough.</p>
+<p>The <tt class="docutils literal"><span class="pre">-u</span></tt> flag can be used to give twill-sh an initial URL; this is
+equivalent to placing a &quot;go (initial_url)&quot; command at the top of the
+script, but is particularly handy for test frameworks where the URL
+might change depending on the developer.</p>
+</div>
 <div class="section" id="stress-testing">
 <h1><a name="stress-testing">Stress testing</a></h1>
 <p>You can use the <cite>twill-fork</cite> script to do some stress testing.  The syntax is</p>

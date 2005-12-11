@@ -330,13 +330,13 @@ class TwillBrowser:
 
     def _all_the_same_control(self, matches):
         name = None
-		value = None
+        value = None
         for match in matches:
             if match.type not in ['checkbox', 'hidden', 'submit']:
                 return False
             if name is None:
                 name = match.name
-				value = match.value
+                value = match.value
             else:
                 if match.name != name or match.value!= value:
                     return False

@@ -1,6 +1,6 @@
-========================
-Other tools and packages
-========================
+==============================
+Propaganda, tools and packages
+==============================
 
 Other opinions
 ~~~~~~~~~~~~~~
@@ -13,16 +13,39 @@ Nitesh Djanjani `tried it out`_ as well.
 .. _Testing Web Apps: http://www.onlamp.com/pub/a/python/2005/11/03/twill.html
 .. _tried it out: http://www.oreillynet.com/pub/wlg/8201
 
-Other tools
-~~~~~~~~~~~
+Tools based on twill
+~~~~~~~~~~~~~~~~~~~~
+
+Petrik De Heus wrote a Wikipedia `watchlist RSS feed`_ with twill.
+
+.. _watchlist RSS feed: http://www.deheus.net/petrik/blog/post/68/
+
+Tools useful for twill users
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Matt Harrison is working on a `TestGen4Web-to-twill converter`_.
+
+.. _TestGen4Web-to-twill converter:  http://panela.blog-city.com/generate_twill_scripts_and_mechanize_unittests_from_testgen4.htm
+
+Offshoots from the twill project
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I wrote a simple `wsgi_intercept`_ standalone package based on the WSGI
+interception stuff for in-process testing of WSGI apps by twill.  This
+is for people who want to talk directly to their Web
+apps without going through a network connection.
+
+.. _wsgi_intercept: http://darcs.idyll.org/~t/projects/wsgi_intercept/README.html
+
+Other Python-based Web testing and browsing tools
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For those who want to use Python-based toolkits to test their Web
-apps, there are a lot of great options.  Here are the ones I know
+apps, there are many great options.  Here are the ones I know
 about:
 
-PBP_ is very similar to twill, but the project seems to be
-more-or-less defunct.  There are still one or two things that
-PBP does that twill doesn't, but we're working on that ;).
+PBP_ is very similar to twill -- twill was initially based on it -- but the
+project seems to be more-or-less defunct.
 Both twill and PBP are based on mechanize_.
 
 funkload_ is a nifty looking tool that does functional load testing.

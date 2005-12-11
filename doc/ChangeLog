@@ -1,3 +1,13 @@
+2005-12-10  Titus Brown  <t@issola.caltech.edu>
+
+	* Added Tom Parker's patch for multiple identical submit buttons.
+
+2005-12-08  Titus Brown  <t@issola.caltech.edu>
+
+	* fixed wsgi_intercept start_response params: added exc_info.
+
+	* added 'sleep' argument to TestInfo init.
+
 2005-12-06  Titus Brown  <t@issola.caltech.edu>
 
 	* Added sureshvv's commands in as 'match_parse' extension.
