@@ -1,31 +1,26 @@
 import sys, os
-import testlib
-import twilltestserver
+import twilltestlib
 from twill import commands
 from twill import namespaces
 from twill.errors import TwillAssertionError
 import twill.parse
 from cStringIO import StringIO
+from tests import url
 
 def setup_module():
-    testlib.cd_testdir()
-
-    global url
-    url = testlib.run_server(twilltestserver.create_publisher)
-
     global _save_print
     _save_print = twill.parse._print_commands
     twill.parse.debug_print_commands(True)
 
 def test():
     # from file
-    testlib.execute_twill_script('test-go.twill', initial_url=url)
+    twilltestlib.execute_twill_script('test-go.twill', initial_url=url)
 
     # from stdin
-    filename = os.path.join(testlib.testdir, 'test-go.twill')
+    filename = os.path.join(twilltestlib.testdir, 'test-go.twill')
     old_in, sys.stdin = sys.stdin, open(filename)
     try:
-        testlib.execute_twill_script('-', initial_url=url)
+        twilltestlib.execute_twill_script('-', initial_url=url)
     finally:
         sys.stdin = old_in
 
@@ -99,14 +94,4 @@ def test():
         pass
     
 def teardown_module():
-    testlib.kill_server()
-    testlib.pop_testdir()
-    
     twill.parse.debug_print_commands(_save_print)
-
-if __name__ == '__main__':
-    try:
-        setup_module()
-        test()
-    finally:
-        teardown_module()

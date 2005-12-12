@@ -1,16 +1,10 @@
-import testlib
-import twilltestserver
+import twilltestlib
 import twill
 from twill import namespaces, commands
 from twill.errors import TwillAssertionError
 from mechanize import BrowserStateError
 import ClientForm
-
-def setup_module():
-    global url
-    
-    testlib.cd_testdir()
-    url = testlib.run_server(twilltestserver.create_publisher)
+from tests import url
 
 def test():
     # test empty page get_title
@@ -70,15 +64,4 @@ def test():
     browser.get_title()
 
     # test the twill script.
-    testlib.execute_twill_script('test-form.twill', initial_url=url)
-    
-def teardown_module():
-    testlib.kill_server()
-    testlib.pop_testdir()
-
-if __name__ == '__main__':
-    try:
-        setup_module()
-        test()
-    finally:
-        teardown_module()
+    twilltestlib.execute_twill_script('test-form.twill', initial_url=url)

@@ -1,5 +1,5 @@
 import sys
-import testlib
+import twilltestlib
 import twill, twill.browser, twill.commands
 from mechanize import BrowserStateError
 from cStringIO import StringIO
@@ -16,7 +16,7 @@ def test():
     old_err, sys.stderr = sys.stderr, StringIO()
     try:
         try:
-            browser.go('example') # what's a good "nowhere"?!?
+            browser.go('http://') # what's a good "nowhere"?!?
             assert 0, "shouldn't get here"
         except BrowserStateError:
             pass
@@ -63,10 +63,3 @@ def test():
 
 def teardown_module():
     pass
-
-if __name__ == '__main__':
-    try:
-       setup_module()
-       test()
-    finally:
-       teardown_module()

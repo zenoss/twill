@@ -1,4 +1,4 @@
-import testlib
+import twilltestlib
 import twill
 
 from twill.wsgi_intercept import WSGI_HTTPConnection

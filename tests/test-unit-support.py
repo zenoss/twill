@@ -3,7 +3,7 @@ Test the unit-test support framework using (naturally) a unit test...
 """
 
 import os
-import testlib
+import twilltestlib
 import twill.unit
 import twilltestserver
 from quixote.server.simple_server import run as quixote_run
@@ -17,7 +17,7 @@ def test():
         quixote_run(twilltestserver.create_publisher, port=PORT)
 
     # abspath to the script
-    script = os.path.join(testlib.testdir, 'test-unit-support.twill')
+    script = os.path.join(twilltestlib.testdir, 'test-unit-support.twill')
 
     # create test_info object
     test_info = twill.unit.TestInfo(script, run_server_fn, PORT)

@@ -4,7 +4,7 @@ Test the utils.run_tidy function.
 This doesn't test to see if tidy was actually run; all it does is make sure
 that the function runs without error.
 """
-import testlib
+import twilltestlib
 from twill import utils
 
 def setup_module():
