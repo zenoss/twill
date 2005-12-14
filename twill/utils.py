@@ -86,7 +86,7 @@ def print_form(n, f):
         print 'Form #%d' % (n + 1,)
 
     if f.controls:
-        print "## __Name______ __Type___ __ID________ __Value__________________"
+        print "## __Name__________________ __Type___ __ID________ __Value__________________"
 
     clickies = [c for c in f.controls if c.is_of_kind('clickable')]
     nonclickies = [c for c in f.controls if c not in clickies]
@@ -98,7 +98,7 @@ def print_form(n, f):
         else:
             value_displayed = "%s" % (field.value,)
         strings = ("  ",
-                   "%-12s %-9s" % (trunc(str(field.name), 12),
+                   "%-24s %-9s" % (trunc(str(field.name), 24),
                                    trunc(field.type, 9)),
                    "%-12s" % (trunc(field.id or "(None)", 12),),
                    trunc(value_displayed, 40),
@@ -109,7 +109,7 @@ def print_form(n, f):
 
     for n, field in enumerate(clickies):
         strings = ("%-2s" % (n+1,),
-                   "%-12s %-9s" % (trunc(field.name, 12),
+                   "%-24s %-9s" % (trunc(field.name, 24),
                                    trunc(field.type, 9)),
                    "%-12s" % (trunc(field.id or "(None)", 12),),
                    trunc(field.value, 40),
