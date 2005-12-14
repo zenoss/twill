@@ -265,10 +265,15 @@ class TwillBrowser:
         return None
 
     def _all_the_same_control(self, matches):
+        """
+        Utility function to check to see if a list of controls all really
+        belong to the same control: for use with checkboxes, hidden, and
+        submit buttons.
+        """
         name = None
         value = None
         for match in matches:
-            if match.type not in ['submit', 'hidden']:
+            if match.type not in ['checkbox', 'hidden', 'submit']:
                 return False
             if name is None:
                 name = match.name
@@ -291,8 +296,7 @@ class TwillBrowser:
         # test exact match.
         if matches:
             if (len(matches) == 1
-                or (self._all_the_same_checkbox(matches)
-                    or self._all_the_same_submit(matches))):
+                or self._all_the_same_control(matches)):
                 found = matches[0]
             else:
                 found_multiple = True   # record for error reporting.
@@ -318,8 +322,7 @@ class TwillBrowser:
 
             if matches:
                 if (len(matches) == 1
-                    or (self._all_the_same_checkbox(matches)
-                        or self._all_the_same_submit(matches))):
+                    or self._all_the_same_control(matches)):
                     found = matches[0]
                 else:
                     found_multiple = True # record for error

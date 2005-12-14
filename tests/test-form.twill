@@ -69,3 +69,16 @@ fv 1 item test
 submit
 find "==item AND selecttest=="
 
+###
+
+go /test_checkbox
+code 200
+submit
+code 200
+find "CHECKBOXTEST: ==False=="
+
+fv 1 checkboxtest True
+submit
+code 200
+find "CHECKBOXTEST: ==True=="
+

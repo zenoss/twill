@@ -88,7 +88,8 @@ class TwillTest(Directory):
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
                   'simpleform', 'upload_file', 'http_auth', 'formpostredirect',
                   'exit', 'multisubmitform', "exception", "plaintext",
-                  "testform", "testformaction", "test_refresh"]
+                  "testform", "testformaction", "test_refresh",
+                  "test_checkbox"]
 
     def __init__(self):
         self.restricted = Restricted()
@@ -237,6 +238,29 @@ hello, world.
 <input type=text name=item_a>
 <input type=text name=item_b>
 <input type=text name=item_c>
+
+<input type=submit value=post>
+</form>
+""" % (s,)
+
+    def test_checkbox(self):
+        request = get_request()
+
+        s = ""
+        if request.form and request.form.has_key('checkboxtest'):
+            val = request.form['checkboxtest']
+
+            if not isinstance(val, str):
+                val = val[0]
+
+            s += "CHECKBOXTEST: ==%s==<p>" % val
+
+        return """\
+%s
+<form method=POST>
+
+<input type="checkbox" name="checkboxtest" value="True">
+<input type="hidden" name="checkboxtest" value="False">
 
 <input type=submit value=post>
 </form>
