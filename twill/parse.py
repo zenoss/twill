@@ -6,7 +6,7 @@ import sys
 from errors import TwillAssertionError
 from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
      alphas, alphanums, ParseException, ZeroOrMore, restOfLine, Combine, \
-     Literal
+     Literal, Group, removeQuotes, CharsNotIn
 
 import twill.commands as commands
 import namespaces
@@ -15,38 +15,57 @@ import namespaces
 
 # basically, a valid Python identifier:
 command = Word(alphas + "_", alphanums + "_")
+command = command.setResultsName('command')
 command.setName("command")
 
 # arguments to it.
-arguments = OneOrMore(
-    quotedString |
-    Word(printables.replace('#', ''), printables) # ignore comments
-    )
+
+# we need to reimplement all this junk from pyparsing because pcre's
+# idea of escapable characters contains a lot more than the C-like
+# thing pyparsing implements
+_bslash = "\\"
+_sglQuote = Literal("'")
+_dblQuote = Literal('"')
+_escapables = printables
+_escapedChar = Word(_bslash, _escapables, exact=2)
+dblQuotedString = Combine( _dblQuote + ZeroOrMore( CharsNotIn('\\"\n\r') | _escapedChar | '""' ) + _dblQuote ).streamline().setName("string enclosed in double quotes")
+sglQuotedString = Combine( _sglQuote + ZeroOrMore( CharsNotIn("\\'\n\r") | _escapedChar | "''" ) + _sglQuote ).streamline().setName("string enclosed in single quotes")
+quotedArg = ( dblQuotedString | sglQuotedString )
+quotedArg.setParseAction(removeQuotes)
+quotedArg.setName("quotedArg")
+
+plainArgChars = printables.replace('#', '').replace('"', '').replace("'", "")
+plainArg = Word(plainArgChars)
+plainArg.setName("plainArg")
+
+arguments = Group(ZeroOrMore(quotedArg | plainArg))
+arguments = arguments.setResultsName('arguments')
 arguments.setName("arguments")
 
 # comment line.
 comment = Literal('#') + restOfLine
 comment = comment.suppress()
+comment.setName('comment')
 
-full_command = comment ^ (command + Optional(arguments) + Optional(comment))
+full_command = (
+    comment
+    | (command + arguments + Optional(comment))
+    )
+full_command.setName('full_command')
 
 ### command/argument handling.
 
 def process_args(args, globals_dict, locals_dict):
     """
-    Take a list of string arguments parsed via pyparsing, unquote
-    those that are quoted, and evaluate the special variables ('__*').
+    Take a list of string arguments parsed via pyparsing and evaluate
+    the special variables ('__*').
+
     Return a new list.
     """
     newargs = []
     for arg in args:
-        # strip quotes from quoted strings.
-        # don't use string.strip, which will remove more than one...
-        if arg[0] == arg[-1] and arg[0] in "\"'":
-            newargs.append(arg[1:-1])
-
         # __variable substitution.  @CTB do we need this?
-        elif arg.startswith('__'):
+        if arg.startswith('__'):
             try:
                 val = eval(arg, globals_dict, locals_dict)
             except NameError:           # not in dictionary; don't interpret.
@@ -101,10 +120,8 @@ def parse_command(line, globals_dict, locals_dict):
         if _print_commands:
             print "twill: executing cmd '%s'" % (line.strip(),)
             
-        cmd = res[0]
-        args = process_args(res[1:], globals_dict, locals_dict)
-
-        return (cmd, args)
+        args = process_args(res.arguments.asList(), globals_dict, locals_dict)
+        return (res.command, args)
 
     return None, None                   # e.g. a comment
 
