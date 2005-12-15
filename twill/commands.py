@@ -169,14 +169,37 @@ def follow(what):
 
     raise TwillAssertionError("no links match to '%s'" % (what,))
 
-def find(what):
+def _parseFindFlags(flags):
+    KNOWN_FLAGS = {
+        'i': re.IGNORECASE,
+        'm': re.MULTILINE,
+        's': re.DOTALL,
+        }
+    finalFlags = 0
+    for char in flags:
+        try:
+            finalFlags |= KNOWN_FLAGS[char]
+        except IndexError:
+            raise TwillAssertionError("unknown 'find' flag %r" % char)
+    return finalFlags
+
+def find(what, flags=''):
     """
-    >> find <regexp>
+    >> find <regexp> [<flags>]
     
     Succeed if the regular expression is on the page.  Sets the local
     variable __match__ to the matching text.
+
+    Flags is a string consisting of the following characters:
+
+    * i: ignorecase
+    * m: multiline
+    * s: dotall
+
+    For explanations of these, please see the Python re module
+    documentation.
     """
-    regexp = re.compile(what)
+    regexp = re.compile(what, _parseFindFlags(flags))
     page = browser.get_html()
 
     m = regexp.search(page)
@@ -186,13 +209,13 @@ def find(what):
     global_dict, local_dict = get_twill_glocals()
     local_dict['__match__'] = m.group()
 
-def notfind(what):
+def notfind(what, flags=''):
     """
-    >> notfind <regexp>
+    >> notfind <regexp> [<flags>]
     
     Fail if the regular expression is on the page.
     """
-    regexp = re.compile(what)
+    regexp = re.compile(what, _parseFindFlags(flags))
     page = browser.get_html()
 
     if regexp.search(page):
