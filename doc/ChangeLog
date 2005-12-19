@@ -1,3 +1,16 @@
+2005-12-19  Titus Brown  <t@issola.caltech.edu>
+
+	* Added tv@debian.org's 'find' regexp flags patch.
+
+	* Added tv@debian.org's quoted patch.
+
+	* Added tv@debian.org's patch to widen showforms field names.
+
+	* Added tv@debian.org's patch to fix checkbox/submit multiplicity
+	  errors.
+
+	* Added Jason Pellerin's tests patch.
+
 2005-12-11  Titus Brown  <t@issola.caltech.edu>
 
 	* Added twill.get_browser(); deprecated twill.get_browser_state().

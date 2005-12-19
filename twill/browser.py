@@ -264,7 +264,33 @@ class TwillBrowser:
 
         return None
 
-    def _all_the_same_control(self, matches):
+    def _all_the_same_checkbox(self, matches):
+        """
+        Check whether all these controls are actually the the same
+        checkbox.
+
+        Hidden controls can combine with checkboxes, to allow form
+        processors to ensure a False value is returned even if user
+        does not check the checkbox. Without the hidden control, no
+        value would be returned.
+        """
+        name = None
+        for match in matches:
+            if match.type not in ['checkbox', 'hidden']:
+                return False
+            if name is None:
+                name = match.name
+            else:
+                if match.name != name:
+                    return False
+        return True
+
+    def _all_the_same_submit(self, matches):
+        """
+        Utility function to check to see if a list of controls all really
+        belong to the same control: for use with checkboxes, hidden, and
+        submit buttons.
+        """
         name = None
         value = None
         for match in matches:
