@@ -19,7 +19,7 @@ __version__ = "0.8.1"
 
 __all__ = [ "TwillCommandLoop",
             "execute_file",
-            "get_browser_state",
+            "get_browser",
             "add_wsgi_intercept",
             "remove_wsgi_intercept" ]
 

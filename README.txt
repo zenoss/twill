@@ -4,10 +4,12 @@ twill: a simple scripting language for Web browsing
 twill is a simple scripting language intended for programmatic or
 automated browsing of Web sites.
 
-Documentatation is under doc/index.txt or doc/index.html.
+Documentation is available in the release package under
+doc/index.txt or doc/index.html.
 
-The documentation for the latest release is always online at
-http://www.idyll.org/~t/www-tools/twill/.
+The latest release as well as all documentation is always online at
+http://www.idyll.org/~t/www-tools/twill/.  You can also find
+information on mailing lists, bug fixes, and new releases there.
 
 twill is Copyright (C) 2005 C. Titus Brown, and is available under the
 LGPL.
