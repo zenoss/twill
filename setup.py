@@ -3,9 +3,6 @@
 from setuptools import setup
 from twill.twill_build_utils import twill_build_py
 
-from ez_setup import use_setuptools
-use_setuptools()
-
 #### twill info.
 
 setup(name = 'twill',
