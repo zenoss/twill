@@ -102,6 +102,7 @@ for 9.0 (beta).
  4. expose 'browser' & document re Grig; regexp esp.; make source docs.
  5. twill-fork: make file writing stuff optional; test massive fork fn.
  6. add config directives for socket timeout.
+ 7. can we figure out auth domain automatically?
 
 Misc fixes & cleanups:
 
