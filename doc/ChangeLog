@@ -1,3 +1,9 @@
+2006-01-23  Titus Brown  <t@issola.caltech.edu>
+
+	* Added extensions/ __init__.py
+
+	* Removed special setup cmdclass.
+
 2006-01-22  Titus Brown  <t@issola.caltech.edu>
 
 	* Removed space mangling in favor of JJL's fix in mechanize.

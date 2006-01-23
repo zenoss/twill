@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from setuptools import setup
-from twill.twill_build_utils import twill_build_py
 
 #### twill info.
 
@@ -20,7 +19,6 @@ setup(name = 'twill',
                   'twill.wwwsearch.ClientCookie',
                   'twill.wwwsearch.mechanize'],
       scripts = ['twill-sh', 'twill-fork'],
-      cmdclass = {'build_py' : twill_build_py },
       maintainer = 'C. Titus Brown',
       maintainer_email = 'titus@caltech.edu',
 
