@@ -1,7 +1,7 @@
 """Utility functions for HTTP header value parsing and construction.
 
 Copyright 1997-1998, Gisle Aas
-Copyright 2002-2004, John J. Lee
+Copyright 2002-2006, John J. Lee
 
 This code is free software; you can redistribute it and/or modify it under
 the terms of the BSD License (see the file COPYING included with the

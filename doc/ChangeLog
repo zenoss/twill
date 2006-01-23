@@ -1,3 +1,9 @@
+2006-01-22  Titus Brown  <t@issola.caltech.edu>
+
+	* Updated mechanize/ClientCookie/ClientForm.
+
+	* Removed ez_setup dependency.
+
 2005-12-19  Titus Brown  <t@issola.caltech.edu>
 
 	* Added tv@debian.org's 'find' regexp flags patch.

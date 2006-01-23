@@ -1,6 +1,6 @@
 """Mozilla / Netscape cookie loading / saving.
 
-Copyright 2002-2004 John J Lee <jjl@pobox.com>
+Copyright 2002-2006 John J Lee <jjl@pobox.com>
 Copyright 1997-1999 Gisle Aas (original libwww-perl code)
 
 This code is free software; you can redistribute it and/or modify it under

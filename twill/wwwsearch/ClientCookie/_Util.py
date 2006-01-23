@@ -1,6 +1,6 @@
 """Python backwards-compat., date/time routines, seekable file object wrapper.
 
- Copyright 2002-2004 John J Lee <jjl@pobox.com>
+ Copyright 2002-2006 John J Lee <jjl@pobox.com>
 
 This code is free software; you can redistribute it and/or modify it under
 the terms of the BSD License (see the file COPYING included with the
@@ -13,9 +13,9 @@ except NameError:
     True = 1
     False = 0
 
-import re, string, time
+import re, string, time, copy
 from types import TupleType
-from StringIO import StringIO
+from cStringIO import StringIO
 
 try:
     from exceptions import StopIteration
@@ -369,11 +369,18 @@ def iso2time(text):
     return _str2time(day, mon, yr, hr, min, sec, tz)
 
 
-
 # XXX Andrew Dalke kindly sent me a similar class in response to my request on
 # comp.lang.python, which I then proceeded to lose.  I wrote this class
 # instead, but I think he's released his code publicly since, could pinch the
 # tests from it, at least...
+
+# For testing seek_wrapper invariant (note that
+# test_urllib2.HandlerTest.test_seekable is expected to fail when this
+# invariant checking is turned on).  The invariant checking is done by module
+# ipdc, which is available here:
+# http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/436834
+## from ipdbc import ContractBase
+## class seek_wrapper(ContractBase):
 class seek_wrapper:
     """Adds a seek method to a file object.
 
@@ -392,19 +399,25 @@ class seek_wrapper:
     particular file object.
 
     """
-    # General strategy is to check that cache is full enough, then delegate
-    # everything to the cache (self._cache, which is a StringIO.StringIO
-    # instance.  Seems to be some cStringIO.StringIO problem on 1.5.2 -- I
-    # get a StringOobject, with no readlines method.
+    # General strategy is to check that cache is full enough, then delegate to
+    # the cache (self.__cache, which is a cStringIO.StringIO instance).  A seek
+    # position (self.__pos) is maintained independently of the cache, in order
+    # that a single cache may be shared between multiple seek_wrapper objects.
+    # Copying using module copy shares the cache in this way.
 
-    # Invariant: the end of the cache is always at the same place as the
-    # end of the wrapped file:
-    # self.wrapped.tell() == self.__cache.tell()
+    # XXX Does this class work sensibly in the face of exceptions raised by
+    # .read() / .readline() / .readlines() / .seek()??
 
     def __init__(self, wrapped):
         self.wrapped = wrapped
         self.__have_readline = hasattr(self.wrapped, "readline")
         self.__cache = StringIO()
+        self.__pos = 0  # seek position
+
+    def invariant(self):
+        # The end of the cache is always at the same place as the end of the
+        # wrapped file.
+        return self.wrapped.tell() == len(self.__cache.getvalue())
 
     def __getattr__(self, name):
         wrapped = self.__dict__.get("wrapped")
@@ -413,51 +426,79 @@ class seek_wrapper:
         return getattr(self.__class__, name)
 
     def seek(self, offset, whence=0):
-        # make sure we have read all data up to the point we are seeking to
-        pos = self.__cache.tell()
-        if whence == 0:  # absolute
-            to_read = offset - pos
-        elif whence == 1:  # relative to current position
-            to_read = offset
-        elif whence == 2:  # relative to end of *wrapped* file
+        assert whence in [0,1,2]
+
+        # how much data, if any, do we need to read?
+        if whence == 2:  # 2: relative to end of *wrapped* file
+            if offset < 0: raise ValueError("negative seek offset")
             # since we don't know yet where the end of that file is, we must
             # read everything
             to_read = None
-        if to_read is None or to_read >= 0:
+        else:
+            if whence == 0:  # 0: absolute
+                if offset < 0: raise ValueError("negative seek offset")
+                dest = offset
+            else:  # 1: relative to current position
+                pos = self.__pos
+                if pos < offset:
+                    raise ValueError("seek to before start of file")
+                dest = pos + offset
+            end = len(self.__cache.getvalue())
+            to_read = dest - end
+            if to_read < 0:
+                to_read = 0
+
+        if to_read != 0:
+            self.__cache.seek(0, 2)
             if to_read is None:
+                assert whence == 2
                 self.__cache.write(self.wrapped.read())
+                self.__pos = self.__cache.tell() - offset
             else:
                 self.__cache.write(self.wrapped.read(to_read))
-            self.__cache.seek(pos)
-
-        return self.__cache.seek(offset, whence)
+                # Don't raise an exception even if we've seek()ed past the end
+                # of .wrapped, since fseek() doesn't complain in that case.
+                # Also like fseek(), pretend we have seek()ed past the end,
+                # i.e. not:
+                #self.__pos = self.__cache.tell()
+                # but rather:
+                self.__pos = dest
+        else:
+            self.__pos = dest
 
     def tell(self):
-        return self.__cache.tell()
+        return self.__pos
+
+    def __copy__(self):
+        cpy = self.__class__(self.wrapped)
+        cpy.__cache = self.__cache
+        return cpy
 
     def read(self, size=-1):
-        pos = self.__cache.tell()
-
-        self.__cache.seek(pos)
-
+        pos = self.__pos
         end = len(self.__cache.getvalue())
         available = end - pos
 
         # enough data already cached?
         if size <= available and size != -1:
+            self.__cache.seek(pos)
+            self.__pos = pos+size
             return self.__cache.read(size)
 
         # no, so read sufficient data from wrapped file and cache it
-        to_read = size - available
-        assert to_read > 0 or size == -1
         self.__cache.seek(0, 2)
         if size == -1:
             self.__cache.write(self.wrapped.read())
         else:
+            to_read = size - available
+            assert to_read > 0
             self.__cache.write(self.wrapped.read(to_read))
         self.__cache.seek(pos)
 
-        return self.__cache.read(size)
+        data = self.__cache.read(size)
+        self.__pos = self.__cache.tell()
+        assert self.__pos == pos + len(data)
+        return data
 
     def readline(self, size=-1):
         if not self.__have_readline:
@@ -465,7 +506,7 @@ class seek_wrapper:
 
         # line we're about to read might not be complete in the cache, so
         # read another line first
-        pos = self.__cache.tell()
+        pos = self.__pos
         self.__cache.seek(0, 2)
         self.__cache.write(self.wrapped.readline())
         self.__cache.seek(pos)
@@ -473,20 +514,20 @@ class seek_wrapper:
         data = self.__cache.readline()
         if size != -1:
             r = data[:size]
-            self.__cache.seek(pos+size)
+            self.__pos = pos+size
         else:
             r = data
+            self.__pos = pos+len(data)
         return r
 
     def readlines(self, sizehint=-1):
-        pos = self.__cache.tell()
+        pos = self.__pos
         self.__cache.seek(0, 2)
         self.__cache.write(self.wrapped.read())
         self.__cache.seek(pos)
-        try:
-            return self.__cache.readlines(sizehint)
-        except TypeError:  # 1.5.2 hack
-            return self.__cache.readlines()
+        data = self.__cache.readlines(sizehint)
+        self.__pos = self.__cache.tell()
+        return data
 
     def __iter__(self): return self
     def next(self):
@@ -510,28 +551,17 @@ class seek_wrapper:
         self.wrapped = None
 
 class eoffile:
-    def __init__(self, headers, url, code):
-        self.code = code
-        self.headers = headers
-        self.url = url
-        
     # file-like object that always claims to be at end-of-file...
     def read(self, size=-1): return ""
     def readline(self, size=-1): return ""
-    # ...and also supports these response methods
-    def info(self):
-        return self.headers
-    def geturl(self):
-        return self.url
-    def close(self):
-        pass
-
+    def __iter__(self): return self
+    def next(self): return ""
+    def close(self): pass
 
 class response_seek_wrapper(seek_wrapper):
     """Avoids unnecessarily clobbering urllib.addinfourl methods on .close().
 
-    After .close():
-    , the following methods are supported:
+    After .close(), the following methods are supported:
 
     .read()
     .readline()
@@ -543,15 +573,59 @@ class response_seek_wrapper(seek_wrapper):
     .__iter__()
     .next()
 
-    Also supports pickling.
+    and the following attributes are supported if present (i.e. in Python 2.4
+    or newer):
+
+    .code
+    .msg
+
+    Also supports pickling (but the stdlib currently does something to prevent
+    it: http://python.org/sf/1144636).
 
     """
 
+    def __init__(self, wrapped):
+        seek_wrapper.__init__(self, wrapped)
+        self.url = self.wrapped.geturl()
+        try:
+            self.msg = wrapped.msg
+            self.code = wrapped.code
+        except AttributeError:
+            pass  # pre-2.4
+        self._headers = self.wrapped.info()
+
     def close(self):
-        self.headers = self.wrapped.headers
-        self.url = self.wrapped.url
-        self.wrapped.close()
-        self.wrapped = eoffile(self.headers, self.url, self.code)
+        wrapped = self.wrapped
+        wrapped.close()
+
+        new_wrapped = eoffile()
+        new_wrapped.url = self.url
+        try:
+            new_wrapped.url = self.url
+            new_wrapped.code = self.code
+        except AttributeError:
+            pass  # pre-2.4
+        new_wrapped._headers = self._headers
+        self.wrapped = new_wrapped
+
+    def info(self):
+        return self._headers
+
+    def geturl(self):
+        return self.url
+
+    def __copy__(self):
+        cpy = seek_wrapper.__copy__(self)
+        cpy._headers = copy.copy(self._headers)
+        return cpy
+
+    def set_data(self, data):
+        self.seek(0)
+        self.read()
+        self.close()
+        cache = self._seek_wrapper__cache = StringIO()
+        cache.write(data)
+        self.seek(0)
 
     def __getstate__(self):
         # There are three obvious options here:

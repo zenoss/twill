@@ -1,9 +1,9 @@
 import sys
 import twilltestlib
 import twill, twill.browser, twill.commands
-from mechanize import BrowserStateError
 from cStringIO import StringIO
 from twill.errors import TwillAssertionError
+import urllib2
 
 def setup_module():
     pass
@@ -18,7 +18,7 @@ def test():
         try:
             browser.go('http://') # what's a good "nowhere"?!?
             assert 0, "shouldn't get here"
-        except BrowserStateError:
+        except urllib2.URLError:
             pass
     finally:
         sys.stderr = old_err

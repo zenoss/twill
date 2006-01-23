@@ -99,6 +99,7 @@ class TwillBrowser:
                 success = True
                 break
             except Exception:
+                raise
                 pass
 
         if success:

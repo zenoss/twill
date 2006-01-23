@@ -3,7 +3,7 @@
 Also includes a redirection bugfix, support for parsing HTML HEAD blocks for
 the META HTTP-EQUIV tag contents, and following Refresh header redirects.
 
-Copyright 2002-2004 John J Lee <jjl@pobox.com>
+Copyright 2002-2006 John J Lee <jjl@pobox.com>
 
 This code is free software; you can redistribute it and/or modify it under
 the terms of the BSD License (see the file COPYING included with the
@@ -18,6 +18,7 @@ from _ClientCookie import CookieJar, request_host
 from _Util import isstringlike, startswith, getheaders
 from _HeadersUtil import is_html
 from _Debug import getLogger
+debug = getLogger("ClientCookie.cookies").debug
 
 try: True
 except NameError:
@@ -33,7 +34,7 @@ except ImportError:
     pass
 else:
     import urlparse, urllib2, urllib, httplib
-    import htmllib, sgmllib, formatter
+    import sgmllib
     from urllib2 import URLError, HTTPError
     import types, string, socket
     from cStringIO import StringIO
@@ -108,7 +109,7 @@ else:
                 headers = req.headers
                 if headers.has_key('Content-type'):
                     del headers['Content-type']
-                
+                                        
                 return Request(newurl,
                                headers=headers,
                                origin_req_host=req.get_origin_req_host(),
@@ -270,16 +271,23 @@ else:
             def unknown_charref(self, ref):
                 self.handle_data("&#%s;" % ref)
 
-    class HeadParser(AbstractHeadParser, htmllib.HTMLParser):
+    class HeadParser(AbstractHeadParser, sgmllib.SGMLParser):
+
+        def _not_called(self):
+            assert False
+
         def __init__(self):
-            htmllib.HTMLParser.__init__(self, formatter.NullFormatter())
+            sgmllib.SGMLParser.__init__(self)
             AbstractHeadParser.__init__(self)
 
         def handle_starttag(self, tag, method, attrs):
-            if tag in self.head_elems:
-                method(attrs)
-            else:
+            if tag not in self.head_elems:
                 raise EndOfHeadError()
+            if tag == "meta":
+                method(attrs)
+
+        def unknown_starttag(self, tag, attrs):
+            self.handle_starttag(tag, self._not_called, attrs)
 
         def handle_endtag(self, tag, method):
             if tag in self.head_elems:
@@ -496,21 +504,25 @@ else:
 
             if code == 200 and hdrs.has_key("refresh"):
                 refresh = getheaders(hdrs, "refresh")[0]
-                i = string.find(refresh, ";")
-                if i != -1:
-                    pause, newurl_spec = refresh[:i], refresh[i+1:]
-                    i = string.find(newurl_spec, "=")
-                    if i != -1:
-                        pause = int(pause)
-                        if (self.max_time is None) or (pause <= self.max_time):
-                            if pause != 0 and self.honor_time:
-                                time.sleep(pause)
-                            newurl = newurl_spec[i+1:]
-                            hdrs["location"] = newurl
-                            # hardcoded http is NOT a bug
-                            response = self.parent.error(
-                                "http", request, response,
-                                "refresh", msg, hdrs)
+                ii = string.find(refresh, ";")
+                if ii != -1:
+                    pause, newurl_spec = int(refresh[:ii]), refresh[ii+1:]
+                    jj = string.find(newurl_spec, "=")
+                    if jj != -1:
+                        key, newurl = newurl_spec[:jj], newurl_spec[jj+1:]
+                    if key.strip() != "url":
+                        debug("bad Refresh header: %r" % refresh)
+                        return response
+                else:
+                    pause, newurl = int(refresh), response.geturl()
+                if (self.max_time is None) or (pause <= self.max_time):
+                    if pause != 0 and self.honor_time:
+                        time.sleep(pause)
+                    hdrs["location"] = newurl
+                    # hardcoded http is NOT a bug
+                    response = self.parent.error(
+                        "http", request, response,
+                        "refresh", msg, hdrs)
 
             return response
 

@@ -10,6 +10,7 @@ import tempfile
 import mechanize
 import base64
 from ClientCookie._Util import getheaders, time
+from mechanize import BrowserStateError
 
 class FakeResponse:
     def __init__(self, data, url):
@@ -50,12 +51,19 @@ def journey(func, *args, **kwargs):
     Idea stolen straight from PBP, which used lambda functions waaaaay
     too much.
     """
-    result = func(*args, **kwargs)
+    try:
+        result = func(*args, **kwargs)
+    except urllib2.HTTPError, e:
+        result = e
 
     if result is None:
         return None
 
-    result.seek(0)
+    try:
+        result.seek(0)
+    except AttributeError:
+        pass
+    
     new_result = ResultWrapper(result.code, # HTTP response code
                                result.geturl(), #  URL
                                result.read() # HTML
@@ -253,7 +261,7 @@ class TidyAwareLinksParser(pullparser.TolerantPullParser):
 #
 
 class TidyAwareFormsFactory(mechanize._mechanize.FormsFactory):
-    def parse_response(self, response):
+    def parse_response(self, response, encoding):
         from twill.commands import _options
         do_run_tidy = _options.get('do_run_tidy')
 
@@ -269,7 +277,7 @@ class TidyAwareFormsFactory(mechanize._mechanize.FormsFactory):
         else:
             fake = response
 
-        return mechanize._mechanize.FormsFactory.parse_response(self, fake)
+        return mechanize._mechanize.FormsFactory.parse_response(self, fake, encoding)
 
     def parse_file(self, file_obj, base_url):
         from twill.commands import _options

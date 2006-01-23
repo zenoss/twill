@@ -32,7 +32,7 @@ except ImportError:
 else:
     from _BSDDBCookieJar import BSDDBCookieJar, CreateBSDDBCookieJar
 #from _MSIEDBCookieJar import MSIEDBCookieJar
-from _ConnCache import ConnectionCache
+#from _ConnCache import ConnectionCache
 try:
     from urllib2 import AbstractHTTPHandler
 except ImportError:
@@ -41,8 +41,11 @@ else:
     from ClientCookie._urllib2_support import \
          Request, \
          OpenerDirector, build_opener, install_opener, urlopen, \
-         OpenerFactory, urlretrieve, BaseHandler, \
-         XHTMLCompatibleHeadParser, HeadParser
+         OpenerFactory, urlretrieve, BaseHandler, HeadParser
+    try:
+        from ClientCookie._urllib2_support import XHTMLCompatibleHeadParser
+    except ImportError:
+        pass
     from ClientCookie._urllib2_support import \
          HTTPHandler, HTTPRedirectHandler, \
          HTTPRequestUpgradeProcessor, \

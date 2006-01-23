@@ -1,6 +1,6 @@
 """Integration with Python standard library module urllib2: Request class.
 
-Copyright 2004 John J Lee <jjl@pobox.com>
+Copyright 2004-2006 John J Lee <jjl@pobox.com>
 
 This code is free software; you can redistribute it and/or modify it under
 the terms of the BSD License (see the file COPYING included with the

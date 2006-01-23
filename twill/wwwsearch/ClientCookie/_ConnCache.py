@@ -1,5 +1,7 @@
 """Generic connection cache manager.
 
+WARNING: THIS MODULE IS UNUSED AND UNTESTED!
+
 Example:
 
  from ClientCookie import ConnectionCache
@@ -11,7 +13,7 @@ Example:
 The ConnectionCache class provides cache expiration.
 
 
-Copyright (C) 2004 John J Lee <jjl@pobox.com>.
+Copyright (C) 2004-2006 John J Lee <jjl@pobox.com>.
 Copyright (C) 2001 Gisle Aas.
 
 This code is free software; you can redistribute it and/or modify it under
@@ -30,8 +32,11 @@ except ImportError:
     StringTypes = StringType
 
 from _Util import compat_isinstance
-from _Debug import getLogger
+from _Debug import getLogger, warn
 debug = getLogger("ClientCookie").debug
+
+warn("WARNING: MODULE _ConnCache IS UNUSED AND UNTESTED!")
+
 
 class _ConnectionRecord:
     def __init__(self, conn, scheme, key, time):

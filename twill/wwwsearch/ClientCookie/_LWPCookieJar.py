@@ -9,7 +9,7 @@ It uses the version string "2.0", though really there isn't an LWP Cookies
 (domain_dot and port_spec) while still being compatible with libwww-perl,
 I hope.
 
-Copyright 2002-2004 John J Lee <jjl@pobox.com>
+Copyright 2002-2006 John J Lee <jjl@pobox.com>
 Copyright 1997-1999 Gisle Aas (original libwww-perl code)
 
 This code is free software; you can redistribute it and/or modify it under

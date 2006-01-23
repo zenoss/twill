@@ -15,7 +15,7 @@ HTML 3.2 Specification, W3C Recommendation 14 January 1997 (for ISINDEX)
 HTML 4.01 Specification, W3C Recommendation 24 December 1999
 
 
-Copyright 2002-2005 John J. Lee <jjl@pobox.com>
+Copyright 2002-2006 John J. Lee <jjl@pobox.com>
 Copyright 2005 Gary Poster
 Copyright 2005 Zope Corporation
 Copyright 1998-2000 Gisle Aas.
@@ -27,6 +27,11 @@ the distribution).
 """
 
 # XXX
+# remove unescape_attr method
+# remove parser testing hack
+# safeUrl-ize action
+# Really need to merge CC, CF, pp and mechanize as soon as mechanize
+#  goes to beta...
 # Add some more functional tests
 #  Especially single and multiple file upload on the internet.
 #  Does file upload work when name is missing?  Sourceforge tracker form
@@ -54,7 +59,6 @@ the distribution).
 #  Strictly, it should be 'name=data' (see HTML 4.01 spec., section
 #  17.13.2), but I send "name=" ATM.  What about multiple file upload??
 # Get rid of MimeWriter.
-# Should really use sgmllib, not htmllib.
 
 # Would be nice, but I'm not going to do it myself:
 # -------------------------------------------------
@@ -94,7 +98,7 @@ else:
     def deprecation(message):
         warnings.warn(message, DeprecationWarning, stacklevel=2)
 
-VERSION = "0.2.1a"
+VERSION = "0.2.2"
 
 CHUNK = 1024  # size of chunks fed to parser, in bytes
 
@@ -170,14 +174,61 @@ string.
                         l.append(k + '=' + urllib.quote_plus(str(elt)))
     return '&'.join(l)
 
-def unescape(data, entities):
-    if data is None or '&' not in data:
+def unescape(data, entities, encoding="latin-1"):
+    if data is None or "&" not in data:
         return data
-    def replace_entities(match, entities=entities):
+
+    def replace_entities(match, entities=entities, encoding=encoding):
         ent = match.group()
-        repl = entities.get(ent, ent)
+        if ent[1] == "#":
+            return unescape_charref(ent[2:-1], encoding)
+
+        repl = entities.get(ent)
+        if repl is not None:
+            if type(repl) != type(""):
+                try:
+                    repl = repl.encode(encoding)
+                except UnicodeError:
+                    repl = ent
+        else:
+            repl = ent
+
         return repl
-    return re.sub(r'&\S+?;', replace_entities, data)
+
+    return re.sub(r"&#?\S+?;", replace_entities, data)
+
+def unescape_charref(data, encoding):
+    name, base = data, 10
+    if name.startswith("x"):
+        name, base= name[1:], 16
+    uc = unichr(int(name, base))
+    if encoding is None:
+        return uc
+    else:
+        try:
+            repl = uc.encode(encoding)
+        except UnicodeError:
+            repl = "&#%s;" % data
+        return repl
+
+def get_entitydefs():
+    import htmlentitydefs
+    from codecs import latin_1_decode
+    entitydefs = {}
+    try:
+        htmlentitydefs.name2codepoint
+    except AttributeError:
+        entitydefs = {}
+        for name, char in htmlentitydefs.entitydefs.items():
+            uc = latin_1_decode(char)[0]
+            if uc.startswith("&#") and uc.endswith(";"):
+                uc = unescape_charref(uc[2:-1], None)
+            entitydefs["&%s;" % name] = uc
+    else:
+        for name, codepoint in htmlentitydefs.name2codepoint.items():
+            entitydefs["&%s;" % name] = unichr(codepoint)
+    return entitydefs
+
 
 def issequence(x):
     try:
@@ -198,7 +249,7 @@ def isstringlike(x):
 
 # --------------------------------------------------------------------
 # grabbed from Python standard library mimetools module and tweaked to
-# avoid socket.gaierror and to avoid dots ('.') in MIME boundaries
+# avoid socket.gaierror and to avoid dots (".") in MIME boundaries
 try:
     import thread
     _thread = thread; del thread
@@ -254,7 +305,8 @@ def choose_boundary():
         except AttributeError:
             pid = '1'
         _prefix = hostid + uid + pid
-    return "%s%d%d" % (_prefix, long(time.time()*100), _get_next_counter())
+    bndy = "%s%d%d" % (_prefix, long(time.time()*100), _get_next_counter())
+    return bndy.replace(".", "")
 
 # end of code from mimetools module
 # --------------------------------------------------------------------
@@ -419,10 +471,11 @@ class ParseError(Exception): pass
 class _AbstractFormParser:
     """forms attribute contains HTMLForm instances on completion."""
     # thanks to Moshe Zadka for an example of sgmllib/htmllib usage
-    def __init__(self, entitydefs=None):
+    def __init__(self, entitydefs=None, encoding="latin-1"):
         if entitydefs is None:
             entitydefs = get_entitydefs()
         self._entitydefs = entitydefs
+        self._encoding = encoding
 
         self.base = None
         self.forms = []
@@ -679,13 +732,16 @@ class _AbstractFormParser:
         table = self._entitydefs
         fullname = "&%s;" % name
         if table.has_key(fullname):
-            self.handle_data(table[fullname])
+            self.handle_data(table[fullname].encode(self._encoding))
         else:
             self.unknown_entityref(name)
             return
 
+    def handle_charref(self, name):
+        self.handle_data(unescape_charref(name, self._encoding))
+
     def unescape_attr(self, name):
-        return unescape(name, self._entitydefs)
+        return unescape(name, self._entitydefs, self._encoding)
 
     def unescape_attrs(self, attrs):
         escaped_attrs = {}
@@ -709,15 +765,15 @@ try:
     import HTMLParser
 except ImportError:
     class XHTMLCompatibleFormParser:
-        def __init__(self, entitydefs=None):
+        def __init__(self, entitydefs=None, encoding="latin-1"):
             raise ValueError("HTMLParser could not be imported")
 else:
     class XHTMLCompatibleFormParser(_AbstractFormParser, HTMLParser.HTMLParser):
         """Good for XHTML, bad for tolerance of incorrect HTML."""
         # thanks to Michael Howitz for this!
-        def __init__(self, entitydefs=None):
+        def __init__(self, entitydefs=None, encoding="latin-1"):
             HTMLParser.HTMLParser.__init__(self)
-            _AbstractFormParser.__init__(self, entitydefs)
+            _AbstractFormParser.__init__(self, entitydefs, encoding)
 
         def start_option(self, attrs):
             _AbstractFormParser._start_option(self, attrs)
@@ -746,18 +802,6 @@ else:
             else:
                 method()
 
-        # taken from sgmllib, with changes
-        def handle_charref(self, name):
-            try:
-                n = int(name)
-            except ValueError:
-                self.unknown_charref(name)
-                return
-            if not 0 <= n <= 255:
-                self.unknown_charref(name)
-                return
-            self.handle_data(chr(n))
-
         def unescape(self, name):
             # Use the entitydefs passed into constructor, not
             # HTMLParser.HTMLParser's entitydefs.
@@ -768,13 +812,10 @@ else:
         def unescape_attrs_if_required(self, attrs):
             return attrs  # ditto
 
-import htmllib, formatter
-class FormParser(_AbstractFormParser, htmllib.HTMLParser):
-    """Good for tolerance of incorrect HTML, bad for XHTML."""
-    def __init__(self, entitydefs=None):
-        htmllib.HTMLParser.__init__(self, formatter.NullFormatter())
-        _AbstractFormParser.__init__(self, entitydefs)
-
+import sgmllib
+# monkeypatch to fix http://www.python.org/sf/803422 :-(
+sgmllib.charref = re.compile("&#(x?[0-9a-fA-F]+)[^0-9a-fA-F]")
+class _AbstractSgmllibParser(_AbstractFormParser):
     def do_option(self, attrs):
         _AbstractFormParser._start_option(self, attrs)
 
@@ -783,19 +824,52 @@ class FormParser(_AbstractFormParser, htmllib.HTMLParser):
     def unescape_attrs_if_required(self, attrs):
         return self.unescape_attrs(attrs)
 
-#FormParser = XHTMLCompatibleFormParser  # testing hack
+class FormParser(_AbstractSgmllibParser, sgmllib.SGMLParser):
+    """Good for tolerance of incorrect HTML, bad for XHTML."""
+    def __init__(self, entitydefs=None, encoding="latin-1"):
+        sgmllib.SGMLParser.__init__(self)
+        _AbstractFormParser.__init__(self, entitydefs, encoding)
 
-def get_entitydefs():
-    entitydefs = {}
-    for name, char in htmlentitydefs.entitydefs.items():
-        entitydefs["&%s;" % name] = char
-    return entitydefs
+try:
+    if sys.version_info[:2] < (2, 2):
+        raise ImportError  # BeautifulSoup uses generators
+    import BeautifulSoup
+except ImportError:
+    pass
+else:
+    class _AbstractBSFormParser(_AbstractSgmllibParser):
+        bs_base_class = None
+        def __init__(self, entitydefs=None, encoding="latin-1"):
+            _AbstractFormParser.__init__(self, entitydefs, encoding)
+            self.bs_base_class.__init__(self)
+        def handle_data(self, data):
+            _AbstractFormParser.handle_data(self, data)
+            self.bs_base_class.handle_data(self, data)
+
+    class RobustFormParser(_AbstractBSFormParser, BeautifulSoup.BeautifulSoup):
+        """Tries to be highly tolerant of incorrect HTML."""
+        bs_base_class = BeautifulSoup.BeautifulSoup
+    class NestingRobustFormParser(_AbstractBSFormParser,
+                                  BeautifulSoup.ICantBelieveItsBeautifulSoup):
+        """Tries to be highly tolerant of incorrect HTML.
+
+        Different from RobustFormParser in that it more often guesses nesting
+        above missing end tags (see BeautifulSoup docs).
+
+        """
+        bs_base_class = BeautifulSoup.ICantBelieveItsBeautifulSoup
+
+#FormParser = XHTMLCompatibleFormParser  # testing hack
+#FormParser = RobustFormParser  # testing hack
 
 def ParseResponse(response, select_default=False,
                   ignore_errors=False,  # ignored!
                   form_parser_class=FormParser,
                   request_class=urllib2.Request,
-                  entitydefs=None, backwards_compat=True):
+                  entitydefs=None,
+                  backwards_compat=True,
+                  encoding="latin-1",
+                  ):
     """Parse HTTP response and return a list of HTMLForm instances.
 
     The return value of urllib2.urlopen can be conveniently passed to this
@@ -810,11 +884,17 @@ def ParseResponse(response, select_default=False,
     form_parser_class: class to instantiate and use to pass
     request_class: class to return from .click() method (default is
      urllib2.Request)
-    entitydefs: mapping like {'&amp;': '&', ...} containing HTML entity
+    entitydefs: mapping like {"&amp;": "&", ...} containing HTML entity
      definitions (a sensible default is used)
+    encoding: character encoding used for encoding numeric character references
+     when matching link text.  ClientForm does not attempt to find the encoding
+     in a META HTTP-EQUIV attribute in the document itself (mechanize, for
+     example, does do that and will pass the correct value to ClientForm using
+     this parameter).
 
     backwards_compat: boolean that determines whether the returned HTMLForm
-     objects are backwards-compatible with old code.  If backwards_compat is True:
+     objects are backwards-compatible with old code.  If backwards_compat is
+     true:
 
      - ClientForm 0.1 code will continue to work as before.
 
@@ -843,7 +923,7 @@ def ParseResponse(response, select_default=False,
 
     There is a choice of parsers.  ClientForm.XHTMLCompatibleFormParser (uses
     HTMLParser.HTMLParser) works best for XHTML, ClientForm.FormParser (uses
-    htmllib.HTMLParser) (the default) works best for ordinary grubby HTML.
+    sgmllib.SGMLParser) (the default) works better for ordinary grubby HTML.
     Note that HTMLParser is only available in Python 2.2 and later.  You can
     pass your own class in here as a hack to work around bad HTML, but at your
     own risk: there is no well-defined interface.
@@ -853,13 +933,19 @@ def ParseResponse(response, select_default=False,
                      False,
                      form_parser_class,
                      request_class,
-                     entitydefs, backwards_compat)
+                     entitydefs,
+                     backwards_compat,
+                     encoding,
+                     )
 
 def ParseFile(file, base_uri, select_default=False,
               ignore_errors=False,  # ignored!
               form_parser_class=FormParser,
               request_class=urllib2.Request,
-              entitydefs=None, backwards_compat=True):
+              entitydefs=None,
+              backwards_compat=True,
+              encoding="latin-1",
+              ):
     """Parse HTML and return a list of HTMLForm instances.
 
     ClientForm.ParseError is raised on parse errors.
@@ -875,7 +961,7 @@ def ParseFile(file, base_uri, select_default=False,
     """
     if backwards_compat:
         deprecation("operating in backwards-compatibility mode")
-    fp = form_parser_class(entitydefs)
+    fp = form_parser_class(entitydefs, encoding)
     while 1:
         data = file.read(CHUNK)
         try:
@@ -915,8 +1001,9 @@ def ParseFile(file, base_uri, select_default=False,
             type, name, attrs = controls[ii]
             attrs = fp.unescape_attrs_if_required(attrs)
             name = fp.unescape_attr_if_required(name)
+            # index=ii*10 allows ImageControl to return multiple ordered pairs
             form.new_control(type, name, attrs, select_default=select_default,
-                             index=ii)
+                             index=ii*10)
         forms.append(form)
     for form in forms:
         form.fixup()
@@ -941,12 +1028,12 @@ class Label:
 
     def __setattr__(self, name, value):
         if name == "text":
-            # don't see any need for this
+            # don't see any need for this, so make it read-only
             raise AttributeError("text attribute is read-only")
         self.__dict__[name] = value
 
     def __str__(self):
-        return '<Label(id=%r, text=%r)>' % (self.id, self.text)
+        return "<Label(id=%r, text=%r)>" % (self.id, self.text)
 
 
 def _get_label(attrs):
@@ -1048,15 +1135,14 @@ class Control:
         """
         raise NotImplementedError()
 
-    def _write_mime_data(self, mw):
-        """Write data for this control to a MimeWriter."""
+    def _write_mime_data(self, mw, name, value):
+        """Write data for a subitem of this control to a MimeWriter."""
         # called by HTMLForm
-        for name, value in self.pairs():
-            mw2 = mw.nextpart()
-            mw2.addheader("Content-disposition",
-                          'form-data; name="%s"' % name, 1)
-            f = mw2.startbody(prefix=0)
-            f.write(value)
+        mw2 = mw.nextpart()
+        mw2.addheader("Content-disposition",
+                      'form-data; name="%s"' % name, 1)
+        f = mw2.startbody(prefix=0)
+        f.write(value)
 
     def __str__(self):
         raise NotImplementedError()
@@ -1217,8 +1303,9 @@ class FileControl(ScalarControl):
             return []
         return [(self._index, self.name, "")]
 
-    def _write_mime_data(self, mw):
+    def _write_mime_data(self, mw, _name, _value):
         # called by HTMLForm
+        # assert _name == self.name and _value == ''
         if len(self._upload_data) == 1:
             # single file
             file_object, content_type, filename = self._upload_data[0]
@@ -2176,7 +2263,12 @@ class SelectControl(ListControl):
             if not self.multiple or self._select_default:
                 for o in self.items:
                     if not o.disabled:
-                        o.selected = True
+                        was_disabled = self.disabled
+                        self.disabled = False
+                        try:
+                            o.selected = True
+                        finally:
+                            o.disabled = was_disabled
                         break
         elif not self.multiple:
             # Ensure only one item selected.  Choose the last one,
@@ -2245,11 +2337,11 @@ class ImageControl(SubmitControl):
         if name is None: return []
         pairs = [
             (self._index, "%s.x" % name, str(clicked[0])),
-            (self._index, "%s.y" % name, str(clicked[1])),
+            (self._index+1, "%s.y" % name, str(clicked[1])),
             ]
         value = self._value
         if value:
-            pairs.append((self._index, name, value))
+            pairs.append((self._index+2, name, value))
         return pairs
 
     get_labels = ScalarControl.get_labels
@@ -3057,17 +3149,22 @@ class HTMLForm:
 
     def _pairs(self):
         """Return sequence of (key, value) pairs suitable for urlencoding."""
-        opairs = []
-        for control in self.controls:
-            opairs.extend(control._totally_ordered_pairs())
+        return [(k, v) for (i, k, v, c_i) in self._pairs_and_controls()]
+
+
+    def _pairs_and_controls(self):
+        """Return sequence of (index, key, value, control_index)
+        of totally ordered pairs suitable for urlencoding.
+
+        control_index is the index of the control in self.controls
+        """
+        pairs = []
+        for control_index, control in enumerate(self.controls):
+            for ii, key, val in control._totally_ordered_pairs():
+                pairs.append((ii, key, val, control_index))
 
         # stable sort by ONLY first item in tuple
-        sorter = []
-        for jj in range(len(opairs)):
-            ii, key, val = opairs[jj]
-            sorter.append((ii, jj, key, val))
-        sorter.sort()
-        pairs = [(key, val) for (ii, jj, key, val) in sorter]
+        pairs.sort()
 
         return pairs
 
@@ -3097,8 +3194,8 @@ class HTMLForm:
                 mw = MimeWriter(data, http_hdrs)
                 f = mw.startmultipartbody("form-data", add_to_http_hdrs=True,
                                           prefix=0)
-                for control in self.controls:
-                    control._write_mime_data(mw)
+                for ii, k, v, control_index in self._pairs_and_controls():
+                    self.controls[control_index]._write_mime_data(mw, k, v)
                 mw.lastpart()
                 return uri, data.getvalue(), http_hdrs
             else:
@@ -3119,7 +3216,7 @@ class HTMLForm:
             req = request_class(req_data[0], req_data[1])
             for key, val in req_data[2]:
                 add_hdr = req.add_header
-                if key.lower() == 'content-type':
+                if key.lower() == "content-type":
                     try:
                         add_hdr = req.add_unredirected_header
                     except AttributeError:

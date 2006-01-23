@@ -22,7 +22,7 @@ them clearly from Python attributes.
 Comments to John J Lee <jjl@pobox.com>.
 
 
-Copyright 2002-2005 John J Lee <jjl@pobox.com>
+Copyright 2002-2006 John J Lee <jjl@pobox.com>
 Copyright 1997-1999 Gisle Aas (original libwww-perl code)
 Copyright 2002-2003 Johnny Lee (original MSIE Perl code)
 
@@ -32,7 +32,7 @@ distribution).
 
 """
 
-VERSION = "1.0.4"
+VERSION = "1.1.1"
 
 
 # Public health warning: anyone who thought 'cookies are simple, aren't they?',
