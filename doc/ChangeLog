@@ -1,5 +1,7 @@
 2006-01-22  Titus Brown  <t@issola.caltech.edu>
 
+	* Updated pyparsing to 1.4p1 version.
+
 	* Updated mechanize/ClientCookie/ClientForm.
 
 	* Removed ez_setup dependency.
