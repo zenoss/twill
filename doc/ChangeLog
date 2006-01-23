@@ -1,5 +1,9 @@
 2006-01-22  Titus Brown  <t@issola.caltech.edu>
 
+	* Fixed multiple 'showlinks' problem (in _mechanize.py).
+
+	* Catch all parsing exceptions. (Kieran Holland)
+
 	* Added return values to a number of functions in commands.py,
 	  documented appropriately.
 

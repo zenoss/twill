@@ -39,8 +39,12 @@ class _command_loop_metaclass(type):
 
                 args = []
                 if rest_of_line.strip() != "":
-                    args = parse.arguments.parseString(rest_of_line)[0]
-                    args = parse.process_args(args, global_dict, local_dict)
+                    try:
+                        args = parse.arguments.parseString(rest_of_line)[0]
+                        args = parse.process_args(args, global_dict,local_dict)
+                    except Exception, e:
+                        print '\nINPUT ERROR: %s\n' % (str(e),)
+                        return
 
                 try:
                     parse.execute_command(cmd, args, global_dict, local_dict)
