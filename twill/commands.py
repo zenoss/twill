@@ -91,6 +91,7 @@ def go(url):
     Visit the URL given.
     """
     browser.go(url)
+    return browser.get_url()
 
 def reload():
     """
@@ -99,6 +100,7 @@ def reload():
     Reload the current URL.
     """
     browser.reload()
+    return browser.get_url()
 
 def code(should_be):
     """
@@ -153,6 +155,7 @@ def url(should_be):
 
     global_dict, local_dict = get_twill_glocals()
     local_dict['__match__'] = m.group()
+    return current_url
 
 def follow(what):
     """
@@ -165,7 +168,7 @@ def follow(what):
 
     if links:
         browser.follow_link(links)
-        return
+        return browser.get_url()
 
     raise TwillAssertionError("no links match to '%s'" % (what,))
 
@@ -228,6 +231,7 @@ def back():
     Return to the previous page.
     """
     browser.back()
+    return browser.get_url()
 
 def show():
     """
@@ -235,7 +239,9 @@ def show():
     
     Show the HTML for the current page.
     """
-    print browser.get_html()
+    html = browser.get_html()
+    print html
+    return html
 
 def echo(*strs):
     """
@@ -316,6 +322,7 @@ def showforms():
     Show all of the forms on the current page.
     """
     browser.showforms()
+    return browser._browser.forms()
 
 def showlinks():
     """
@@ -324,6 +331,7 @@ def showlinks():
     Show all of the links on the current page.
     """
     browser.showlinks()
+    return browser._browser.links()
 
 def showhistory():
     """
@@ -332,7 +340,8 @@ def showhistory():
     Show the browser history (what URLs were visited).
     """
     browser.showhistory()
-
+    return browser._browser._history
+    
 def formclear(formname):
     """
     >> formclear <formname>
@@ -442,6 +451,7 @@ def getinput(prompt):
     inp = raw_input(prompt)
 
     local_dict['__input__'] = inp
+    return inp
 
 def getpassword(prompt):
     """
@@ -454,6 +464,7 @@ def getpassword(prompt):
     inp = getpass.getpass(prompt)
 
     local_dict['__password__'] = inp
+    return inp
 
 def save_cookies(filename):
     """
@@ -590,6 +601,7 @@ def title(what):
 
     global_dict, local_dict = get_twill_glocals()
     local_dict['__match__'] = m.group()
+    return title
 
 ### options
 

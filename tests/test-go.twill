@@ -27,3 +27,20 @@ back
 
 #go ../ @CTB this should work, yes?
 #code 200
+
+####
+# test '?' behavior
+
+go /echo
+code 200
+
+go /echo?q=a1
+code 200
+find a1
+
+go ?q=a2
+url /echo
+code 200
+find a2
+
+

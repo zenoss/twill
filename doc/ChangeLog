@@ -1,5 +1,11 @@
 2006-01-22  Titus Brown  <t@issola.caltech.edu>
 
+	* Added return values to a number of functions in commands.py,
+	  documented appropriately.
+
+	* Added '?' behavior for 'go', so that 'go ?name=value' works.
+	  (Sebastjan Trepca)
+
 	* Updated pyparsing to 1.4p1 version.
 
 	* Updated mechanize/ClientCookie/ClientForm.

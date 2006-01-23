@@ -8,13 +8,17 @@ a '#' is ignored as a comment, unless it's in a quoted string.
 Browsing
 ========
 
-**go** *<url>* -- visit the given URL.
+**go** *<url>* -- visit the given URL.  The Python function returns the
+final URL visited, after all redirects.
 
-**back** -- return to the previous URL.
+**back** -- return to the previous URL.  The Python function returns that
+URL, if any.
 
-**reload** -- reload the current URL.
+**reload** -- reload the current URL.  The Python function returns that URL,
+if any.
 
-**follow** *<link name>* -- follow the given link.
+**follow** *<link name>* -- follow the given link.  The Python function
+returns the final URL visited, after all redirects.
 
 
 Assertions
@@ -28,20 +32,20 @@ e.g. ``code 200`` asserts that the page loaded fine.
 **notfind** *<regexp>* -- assert that the page *does not* contain this
 regular expression.
 
-**url** *<regexp>* -- assert that the current URL matches the given regexp.  The variable ``__match__`` is set to the matching string.
+**url** *<regexp>* -- assert that the current URL matches the given regexp.  The variable ``__match__`` is set to the matching string.  When called from Python, the current URL is returned.
 
-**title** *<regexp>* -- assert that the title of this page matches this regular expression.  The variable ``__match__`` is set to the matching string.
+**title** *<regexp>* -- assert that the title of this page matches this regular expression.  The variable ``__match__`` is set to the matching string.  When called from Python, the title string is returned.
 
 Display
 =======
 
-**show** -- show the current page's HTML.
+**show** -- show the current page's HTML.  When called from Python, this function will also return a string containing the HTML.
 
-**showlinks** -- show all of the links on the current page.
+**showlinks** -- show all of the links on the current page.  When called from Python, this function returns a list of the link objects.
 
-**showforms** -- show all of the forms on the current page.
+**showforms** -- show all of the forms on the current page.  When called from Python, this function returns a list of the forms.
 
-**showhistory** -- show the browser history.
+**showhistory** -- show the browser history.  When called from Python, this function returns the history.
 
 **echo** *<string>* -- echo the string to the screen.
 
@@ -122,10 +126,10 @@ Other commands
 like ``from <module> import *`` does in Python, so e.g. a function
 ``fn`` in ``extmodule`` would be available as ``fn``.  See *examples/extend_example.py* for an example.
 
-**getinput** *<prompt>* -- get keyboard input and store it in ``__input__``.
+**getinput** *<prompt>* -- get keyboard input and store it in ``__input__``.  When called from Python, this function returns the input value.
 
 **getpassword** *<prompt>* -- get *silent* keyboard input and store
-it in ``__password__``.
+it in ``__password__``.  When called from Python, this function returns the input value.
 
 **add_auth** *<realm> <uri> <user> <password>* -- add HTTP Basic Authentication information for the given realm/URI combination.  For example, ::
 

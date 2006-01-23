@@ -90,6 +90,14 @@ class TwillBrowser:
             full_url = 'http://%s' % (url,)  # mimic browser behavior
             try_urls.append(full_url)
 
+        # if this is a '?' URL, then assume that we want to tack it onto
+        # the end of the current URL.
+
+        if url.startswith('?'):
+            current_url = self.get_url()
+            current_url = current_url.split('?')[0]
+            try_urls = [ current_url + url, ]
+
         success = False
 
         for u in try_urls:

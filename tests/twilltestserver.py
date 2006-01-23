@@ -89,7 +89,7 @@ class TwillTest(Directory):
                   'simpleform', 'upload_file', 'http_auth', 'formpostredirect',
                   'exit', 'multisubmitform', "exception", "plaintext",
                   "testform", "testformaction", "test_refresh",
-                  "test_checkbox"]
+                  "test_checkbox", "echo"]
 
     def __init__(self):
         self.restricted = Restricted()
@@ -294,6 +294,12 @@ hello, world.
         response = get_response()
         response.set_content_type("text/plain")
         return "hello, world"
+
+    def echo(self):
+        request = get_request()
+        if request.form and request.form.has_key('q'):
+            return request.form['q']
+        return ""
 
     def upload_file(self):
         request = get_request()

@@ -14,10 +14,14 @@
 a '#' is ignored as a comment, unless it's in a quoted string.</p>
 <div class="section" id="browsing">
 <h1><a name="browsing">Browsing</a></h1>
-<p><strong>go</strong> <em>&lt;url&gt;</em> -- visit the given URL.</p>
-<p><strong>back</strong> -- return to the previous URL.</p>
-<p><strong>reload</strong> -- reload the current URL.</p>
-<p><strong>follow</strong> <em>&lt;link name&gt;</em> -- follow the given link.</p>
+<p><strong>go</strong> <em>&lt;url&gt;</em> -- visit the given URL.  The Python function returns the
+final URL visited, after all redirects.</p>
+<p><strong>back</strong> -- return to the previous URL.  The Python function returns that
+URL, if any.</p>
+<p><strong>reload</strong> -- reload the current URL.  The Python function returns that URL,
+if any.</p>
+<p><strong>follow</strong> <em>&lt;link name&gt;</em> -- follow the given link.  The Python function
+returns the final URL visited, after all redirects.</p>
 </div>
 <div class="section" id="assertions">
 <h1><a name="assertions">Assertions</a></h1>
@@ -26,15 +30,15 @@ e.g. <tt class="docutils literal"><span class="pre">code</span> <span class="pre
 <p><strong>find</strong> <em>&lt;regexp&gt;</em> -- assert that the page contains this regular expression. The variable <tt class="docutils literal"><span class="pre">__match__</span></tt> is set to the matching string.</p>
 <p><strong>notfind</strong> <em>&lt;regexp&gt;</em> -- assert that the page <em>does not</em> contain this
 regular expression.</p>
-<p><strong>url</strong> <em>&lt;regexp&gt;</em> -- assert that the current URL matches the given regexp.  The variable <tt class="docutils literal"><span class="pre">__match__</span></tt> is set to the matching string.</p>
-<p><strong>title</strong> <em>&lt;regexp&gt;</em> -- assert that the title of this page matches this regular expression.  The variable <tt class="docutils literal"><span class="pre">__match__</span></tt> is set to the matching string.</p>
+<p><strong>url</strong> <em>&lt;regexp&gt;</em> -- assert that the current URL matches the given regexp.  The variable <tt class="docutils literal"><span class="pre">__match__</span></tt> is set to the matching string.  When called from Python, the current URL is returned.</p>
+<p><strong>title</strong> <em>&lt;regexp&gt;</em> -- assert that the title of this page matches this regular expression.  The variable <tt class="docutils literal"><span class="pre">__match__</span></tt> is set to the matching string.  When called from Python, the title string is returned.</p>
 </div>
 <div class="section" id="display">
 <h1><a name="display">Display</a></h1>
-<p><strong>show</strong> -- show the current page's HTML.</p>
-<p><strong>showlinks</strong> -- show all of the links on the current page.</p>
-<p><strong>showforms</strong> -- show all of the forms on the current page.</p>
-<p><strong>showhistory</strong> -- show the browser history.</p>
+<p><strong>show</strong> -- show the current page's HTML.  When called from Python, this function will also return a string containing the HTML.</p>
+<p><strong>showlinks</strong> -- show all of the links on the current page.  When called from Python, this function returns a list of the link objects.</p>
+<p><strong>showforms</strong> -- show all of the forms on the current page.  When called from Python, this function returns a list of the forms.</p>
+<p><strong>showhistory</strong> -- show the browser history.  When called from Python, this function returns the history.</p>
 <p><strong>echo</strong> <em>&lt;string&gt;</em> -- echo the string to the screen.</p>
 <p><strong>save_html</strong> <em>&lt;filename&gt;</em> -- save the current page's HTML into a file.</p>
 </div>
@@ -89,9 +93,9 @@ they exist.</p>
 <p><strong>extend_with</strong> <em>&lt;module&gt;</em> -- import commands from Python module.  This acts
 like <tt class="docutils literal"><span class="pre">from</span> <span class="pre">&lt;module&gt;</span> <span class="pre">import</span> <span class="pre">*</span></tt> does in Python, so e.g. a function
 <tt class="docutils literal"><span class="pre">fn</span></tt> in <tt class="docutils literal"><span class="pre">extmodule</span></tt> would be available as <tt class="docutils literal"><span class="pre">fn</span></tt>.  See <em>examples/extend_example.py</em> for an example.</p>
-<p><strong>getinput</strong> <em>&lt;prompt&gt;</em> -- get keyboard input and store it in <tt class="docutils literal"><span class="pre">__input__</span></tt>.</p>
+<p><strong>getinput</strong> <em>&lt;prompt&gt;</em> -- get keyboard input and store it in <tt class="docutils literal"><span class="pre">__input__</span></tt>.  When called from Python, this function returns the input value.</p>
 <p><strong>getpassword</strong> <em>&lt;prompt&gt;</em> -- get <em>silent</em> keyboard input and store
-it in <tt class="docutils literal"><span class="pre">__password__</span></tt>.</p>
+it in <tt class="docutils literal"><span class="pre">__password__</span></tt>.  When called from Python, this function returns the input value.</p>
 <p><strong>add_auth</strong> <em>&lt;realm&gt; &lt;uri&gt; &lt;user&gt; &lt;password&gt;</em> -- add HTTP Basic Authentication information for the given realm/URI combination.  For example,</p>
 <pre class="literal-block">
 add_auth IdyllStuff http://www.idyll.org/ titus test
