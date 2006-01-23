@@ -40,6 +40,8 @@ http://darcs.idyll.org/~t/projects/twill/doc/.
 
 Documentation is available for the following topics:
 
+ * `Examples`_ -- some short examples.
+
  * `Web browsing with twill`_ -- General introduction to twill.
 
  * `Language reference`_ -- the twill scripting language.

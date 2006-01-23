@@ -7,7 +7,7 @@ from twill.twill_build_utils import twill_build_py
 
 setup(name = 'twill',
       
-      version = '0.8.2a2',
+      version = '0.8.2a3',
       download_url = 'http://darcs.idyll.org/~t/projects/twill-0.8.1.tar.gz',
       
       description = 'twill Web browsing language',
