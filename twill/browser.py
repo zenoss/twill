@@ -79,8 +79,6 @@ class TwillBrowser:
         """
         Visit given URL.
         """
-        url = url.replace(' ', '%20')
-
         try_urls = [ url, ]
 
         # if this is an absolute URL that is just missing the 'http://' at

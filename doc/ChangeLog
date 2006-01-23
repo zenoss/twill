@@ -1,5 +1,7 @@
 2006-01-22  Titus Brown  <t@issola.caltech.edu>
 
+	* Removed space mangling in favor of JJL's fix in mechanize.
+
 	* Fixed multiple 'showlinks' problem (in _mechanize.py).
 
 	* Catch all parsing exceptions. (Kieran Holland)
