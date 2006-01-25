@@ -32,8 +32,9 @@ class TwillBrowser:
         #
         
         links_factory = mechanize._mechanize.LinksFactory(link_parser_class=TidyAwareLinksParser)
-
         forms_factory = TidyAwareFormsFactory()
+
+#        factory = mechanize._mechanize.RobustFactory()
 
         #
         # Create the mechanize browser.
@@ -41,6 +42,8 @@ class TwillBrowser:
         
         b = PatchedMechanizeBrowser(links_factory=links_factory,
                                     forms_factory=forms_factory)
+#        b = PatchedMechanizeBrowser(factory=factory)
+
         self._browser = b
         
         self._last_result = None
