@@ -10,5 +10,5 @@ def test():
 def teardown_module():
     try:
         os.unlink(os.path.join(twilltestlib.testdir, 'test-basic.cookies'))
-    except IOError:
+    except OSError:
         pass
