@@ -443,14 +443,14 @@ class TwillBrowser:
                   (ctl.name, ctl.value)
             
             if isinstance(ctl, ClientForm.ImageControl):
-                request = ctl._click(form, (1,1), urllib2.Request)
+                request = ctl._click(form, (1,1), "", ClientCookie.Request)
             else:
-                request = ctl._click(form, True, urllib2.Request)
+                request = ctl._click(form, True, "", ClientCookie.Request)
                 
         else:
             # submit w/o submit button.
             request = form._click(None, None, None, None, 0, None,
-                                  urllib2.Request)
+                                  "", ClientCookie.Request)
 
         #
         # add referer information.  this may require upgrading the

@@ -107,8 +107,8 @@ else:
                 # essentially all clients do redirect in this case, so we do
                 # the same.
                 headers = req.headers
-                if headers.has_key('Content-type'):
-                    del headers['Content-type']
+#                if headers.has_key('Content-type'):
+#                    del headers['Content-type']
                                         
                 return Request(newurl,
                                headers=headers,
