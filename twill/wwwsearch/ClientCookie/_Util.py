@@ -572,6 +572,7 @@ class response_seek_wrapper(seek_wrapper):
     .geturl()
     .__iter__()
     .next()
+    .close()
 
     and the following attributes are supported if present (i.e. in Python 2.4
     or newer):

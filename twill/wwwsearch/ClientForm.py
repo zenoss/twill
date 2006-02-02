@@ -27,42 +27,34 @@ the distribution).
 """
 
 # XXX
-# remove unescape_attr method
-# remove parser testing hack
-# safeUrl-ize action
-# Really need to merge CC, CF, pp and mechanize as soon as mechanize
+# Remove unescape_attr method
+# Remove parser testing hack
+# safeUrl()-ize action
+# Really should to merge CC, CF, pp and mechanize as soon as mechanize
 #  goes to beta...
+# Switch to unicode throughout (would be 0.3.x)
+#  See Wichert Akkerman's 2004-01-22 message to c.l.py.
+# Add charset parameter to Content-type headers?  How to find value??
 # Add some more functional tests
 #  Especially single and multiple file upload on the internet.
 #  Does file upload work when name is missing?  Sourceforge tracker form
 #   doesn't like it.  Check standards, and test with Apache.  Test
 #   binary upload with Apache.
-# There have been reports that some servers are very picky about MIME
-#  boundaries, so file uploads may fail with those servers.  Should
-#  copy what IE does religiously.
-# Unicode: see Wichert Akkerman's 2004-01-22 message to c.l.py.
 # Controls can have name=None (e.g. forms constructed partly with
 #  JavaScript), but find_control can't be told to find a control
 #  with that name, because None there means 'unspecified'.  Can still
 #  get at by nr, but would be nice to be able to specify something
 #  equivalent to name=None, too.
-# Deal with character sets properly.  Not sure what the issues are here.
-#  Do URL encodings need any attention?
-#  I don't *think* any encoding of control names, filenames or data is
-#   necessary -- HTML spec. doesn't require it, and Mozilla Firebird 0.6
-#   doesn't seem to do it.
-#  Add charset parameter to Content-type headers?  How to find value??
 # mailto submission & enctype text/plain
 # I'm not going to fix this unless somebody tells me what real servers
 #  that want this encoding actually expect: If enctype is
 #  application/x-www-form-urlencoded and there's a FILE control present.
 #  Strictly, it should be 'name=data' (see HTML 4.01 spec., section
 #  17.13.2), but I send "name=" ATM.  What about multiple file upload??
-# Get rid of MimeWriter.
 
 # Would be nice, but I'm not going to do it myself:
 # -------------------------------------------------
-# Maybe a 0.3.x?
+# Maybe a 0.4.x?
 #   Replace by_label etc. with moniker / selector concept. Allows, eg.,
 #    a choice between selection by value / id / label / element
 #    contents.  Or choice between matching labels exactly or by
@@ -85,7 +77,7 @@ except NameError:
         else: return False
 
 import sys, urllib, urllib2, types, mimetools, copy, urlparse, \
-       htmlentitydefs, re
+       htmlentitydefs, re, random
 from urlparse import urljoin
 from cStringIO import StringIO
 
@@ -245,75 +237,15 @@ def isstringlike(x):
     else: return True
 
 
-# XXX don't really want to drag this along (MimeWriter, choose_boundary)
-
-# --------------------------------------------------------------------
-# grabbed from Python standard library mimetools module and tweaked to
-# avoid socket.gaierror and to avoid dots (".") in MIME boundaries
-try:
-    import thread
-    _thread = thread; del thread
-except ImportError:
-    import dummy_thread
-    _thread = dummy_thread; del dummy_thread
-_counter_lock = _thread.allocate_lock()
-del _thread
-
-_counter = 0
-def _get_next_counter():
-    global _counter
-    _counter_lock.acquire()
-    _counter = _counter + 1
-    result = _counter
-    _counter_lock.release()
-    return result
-
-_prefix = None
-
 def choose_boundary():
-    """Return a string usable as a multipart boundary.
-
-    The string chosen is unique within a single program run, and
-    incorporates the user id (if available), process id (if available),
-    and current time.  So it's very unlikely the returned string appears
-    in message text, but there's no guarantee.
-
-    The boundary contains dots so you have to quote it in the header."""
-
-    global _prefix
-    import time
-    import os
-    import socket
-    if _prefix is None:
-        try:
-            socket.gaierror
-        except AttributeError:
-            exc = socket.error
-        else:
-            exc = socket.gaierror
-
-        try:
-            hostid = socket.gethostbyname(socket.gethostname())
-        except exc:
-            hostid = 'localhost'
-        try:
-            uid = repr(os.getuid())
-        except AttributeError:
-            uid = '1'
-        try:
-            pid = repr(os.getpid())
-        except AttributeError:
-            pid = '1'
-        _prefix = hostid + uid + pid
-    bndy = "%s%d%d" % (_prefix, long(time.time()*100), _get_next_counter())
-    return bndy.replace(".", "")
-
-# end of code from mimetools module
-# --------------------------------------------------------------------
+    """Return a string usable as a multipart boundary."""
+    # follow IE and firefox
+    nonce = "".join([str(random.randint(0, sys.maxint-1)) for i in 0,1,2])
+    return "-"*27 + nonce
 
 # This cut-n-pasted MimeWriter from standard library is here so can add
 # to HTTP headers rather than message body when appropriate.  It also uses
-# \r\n in place of \n.  This is nasty.
+# \r\n in place of \n.  This is a bit nasty.
 class MimeWriter:
 
     """Generic MIME writer.
@@ -2706,7 +2638,9 @@ class HTMLForm:
 
 #---------------------------------------------------
     def __str__(self):
-        header = "%s %s %s" % (self.method, self.action, self.enctype)
+        header = "%s%s %s %s" % (
+            (self.name and self.name+" " or ""),
+            self.method, self.action, self.enctype)
         rep = [header]
         for control in self.controls:
             rep.append("  %s" % str(control))
