@@ -1,5 +1,8 @@
 2006-02-01  Titus Brown  <t@issola.caltech.edu>
 
+	* Added ignore_errors functioning into wwwsearch code; now, when
+	  ignore_errors=True on form parsing, parse errors are ignored.
+
 	* Renamed 'do_run_tidy' to 'use_tidy', and 'tidy_should_exist' to
 	  'require_tidy'.
 

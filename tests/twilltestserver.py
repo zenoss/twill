@@ -89,7 +89,8 @@ class TwillTest(Directory):
                   'simpleform', 'upload_file', 'http_auth', 'formpostredirect',
                   'exit', 'multisubmitform', "exception", "plaintext",
                   "testform", "testformaction", "test_refresh",
-                  "test_checkbox", "echo"]
+                  "test_checkbox", "echo",
+                  'tidy_fixable_html', 'BS_fixable_html', 'unfixable_html']
 
     def __init__(self):
         self.restricted = Restricted()
@@ -98,6 +99,38 @@ class TwillTest(Directory):
     def _q_index(self):
         session = get_session()
         return message(session)
+
+    def tidy_fixable_html(self):
+        return """\
+<!-- fixed by tidy, but not parseable otherwise: 0 forms on fail. -->
+<form>
+<input type=text name=blah value=thus>
+"""
+
+    def BS_fixable_html(self):
+        return """\
+<!-- tidy errors out on this, but it can be parsed by BS. -->
+<form>
+<table>
+<tr><td>
+<input name='broken'>
+</td>
+</form>
+</tr>
+</form>
+"""
+
+    def unfixable_html(self):
+        return """\
+<!-- tidy errors out on this, and it cannot be parsed by BS. -->
+<table>
+<tr><td>
+<input name='broken'>
+</td>
+</form>
+</tr>
+</form>
+"""
 
     def test_refresh(self):
         return """\

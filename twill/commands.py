@@ -609,7 +609,9 @@ _orig_options = dict(readonly_controls_writeable=False,
                      use_tidy=True,
                      require_tidy=False,
                      use_BeautifulSoup=True,
-                     require_BeautifulSoup=False)
+                     require_BeautifulSoup=False,
+                     allow_parse_errors=True,
+                     )
 
 _options = {}
 _options.update(_orig_options)           # make a copy
@@ -628,6 +630,7 @@ def config(key=None, value=None):
      * 'require_tidy', default 0;
      * 'use_BeautifulSoup', default 1;
      * 'require_BeautifulSoup', default 0;
+     * 'allow_parse_errors', default 1;
     """
     if key is None:
         keys = _options.keys()
