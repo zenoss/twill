@@ -32,7 +32,7 @@ class TwillBrowser:
         #
         
         links_factory = mechanize._mechanize.LinksFactory(link_parser_class=TidyAwareLinksParser)
-        forms_factory = TidyAwareFormsFactory()
+        forms_factory = TidyAwareFormsFactory(ignore_errors=True)
 
 #        factory = mechanize._mechanize.RobustFactory()
 
@@ -108,7 +108,6 @@ class TwillBrowser:
                 success = True
                 break
             except Exception:
-                raise
                 pass
 
         if success:

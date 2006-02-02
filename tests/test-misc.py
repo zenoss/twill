@@ -18,7 +18,7 @@ def test():
         try:
             browser.go('http://') # what's a good "nowhere"?!?
             assert 0, "shouldn't get here"
-        except urllib2.URLError:
+        except:
             pass
     finally:
         sys.stderr = old_err
