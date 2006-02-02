@@ -795,7 +795,7 @@ else:
 #FormParser = RobustFormParser  # testing hack
 
 def ParseResponse(response, select_default=False,
-                  ignore_errors=False,  # ignored!
+                  ignore_errors=False,
                   form_parser_class=FormParser,
                   request_class=urllib2.Request,
                   entitydefs=None,
@@ -862,7 +862,7 @@ def ParseResponse(response, select_default=False,
 
     """
     return ParseFile(response, response.geturl(), select_default,
-                     False,
+                     ignore_errors,
                      form_parser_class,
                      request_class,
                      entitydefs,
@@ -871,7 +871,7 @@ def ParseResponse(response, select_default=False,
                      )
 
 def ParseFile(file, base_uri, select_default=False,
-              ignore_errors=False,  # ignored!
+              ignore_errors=False,
               form_parser_class=FormParser,
               request_class=urllib2.Request,
               entitydefs=None,
@@ -896,11 +896,23 @@ def ParseFile(file, base_uri, select_default=False,
     fp = form_parser_class(entitydefs, encoding)
     while 1:
         data = file.read(CHUNK)
-        try:
-            fp.feed(data)
-        except ParseError, e:
-            e.base_uri = base_uri
-            raise
+        if ignore_errors:
+
+            # if we are ignoring errors, we want to feed one character
+            # at a time so that upon a raise, nothing is lost.
+            
+            for ch in data:
+                try:
+                    fp.feed(ch)
+                except ParseError, e:
+                    pass
+        else:
+            try:
+                fp.feed(data)
+            except ParseError, e:
+                e.base_uri = base_uri
+                raise
+                
         if len(data) != CHUNK: break
     if fp.base is not None:
         # HTML BASE element takes precedence over document URI

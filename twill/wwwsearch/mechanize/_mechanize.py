@@ -175,6 +175,7 @@ class FormsFactory:
                  form_parser_class=None,
                  request_class=None,
                  backwards_compat=False,
+                 ignore_errors=False,
                  encoding="latin-1",  # deprecated
                  ):
         import ClientForm
@@ -187,6 +188,7 @@ class FormsFactory:
         self.request_class = request_class
         self.backwards_compat = backwards_compat
         self.encoding = encoding
+        self.ignore_errors = ignore_errors
 
     def parse_response(self, response, encoding=None):
         import ClientForm
@@ -199,6 +201,7 @@ class FormsFactory:
             request_class=self.request_class,
             backwards_compat=self.backwards_compat,
             encoding=encoding,
+            ignore_errors=self.ignore_errors
             )
 
     def parse_file(self, file_obj, base_url, encoding=None):
