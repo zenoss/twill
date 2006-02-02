@@ -606,8 +606,11 @@ def title(what):
 ### options
 
 _orig_options = dict(readonly_controls_writeable=False,
-                     do_run_tidy=True,
-                     tidy_should_exist=False)
+                     use_tidy=True,
+                     require_tidy=False,
+                     use_BeautifulSoup=True,
+                     require_BeautifulSoup=False)
+
 _options = {}
 _options.update(_orig_options)           # make a copy
 
@@ -621,8 +624,10 @@ def config(key=None, value=None):
     So far:
 
      * 'readonly_controls_writeable', default 0;
-     * 'do_run_tidy', default 1;
-     ' 'tidy_should_exist', default 0;
+     * 'use_tidy', default 1;
+     * 'require_tidy', default 0;
+     * 'use_BeautifulSoup', default 1;
+     * 'require_BeautifulSoup', default 0;
     """
     if key is None:
         keys = _options.keys()

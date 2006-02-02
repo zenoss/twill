@@ -1,3 +1,11 @@
+2006-02-01  Titus Brown  <t@issola.caltech.edu>
+
+	* Renamed 'do_run_tidy' to 'use_tidy', and 'tidy_should_exist' to
+	  'require_tidy'.
+
+	* Fixed redirect error once and for all by switching to using the
+	  *correct* Request class.
+
 2006-01-23  Titus Brown  <t@issola.caltech.edu>
 
 	* Added extensions/ __init__.py

@@ -35,7 +35,7 @@ class TwillBrowser:
 #        forms_factory = TidyAwareFormsFactory(ignore_errors=True)
         forms_factory = TidyAwareFormsFactory()
 
-#        factory = mechanize._mechanize.RobustFactory()
+        factory = mechanize._mechanize.RobustFactory()
 
         #
         # Create the mechanize browser.

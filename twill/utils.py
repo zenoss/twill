@@ -161,7 +161,7 @@ def run_tidy(html):
     global _tidy_cmd
 
     from commands import _options
-    tidy_should_exist = _options.get('tidy_should_exist')
+    require_tidy = _options.get('require_tidy')
 
     # build the input filename.
     (fd, inp_filename) = tempfile.mkstemp('.tidy')
@@ -210,8 +210,7 @@ def run_tidy(html):
             pass
 
         # complain if no output file: that means we couldn't run tidy...
-        if clean_html is None and tidy_should_exist:
-            print '***', tidy_should_exist
+        if clean_html is None and require_tidy:
             raise Exception("cannot run 'tidy'; \n\t%s\n" % (errors,))
 
     #
@@ -241,10 +240,10 @@ def run_tidy(html):
 class TidyAwareLinksParser(pullparser.TolerantPullParser):
     def __init__(self, fh, *args, **kwargs):
         from twill.commands import _options
-        do_run_tidy = _options.get('do_run_tidy')
+        use_tidy = _options.get('use_tidy')
 
         # use 'tidy' to tidy up the HTML, if desired.
-        if do_run_tidy:
+        if use_tidy:
             html = fh.read()
             (clean_html, errors) = run_tidy(html)
             if clean_html:
@@ -263,10 +262,10 @@ class TidyAwareLinksParser(pullparser.TolerantPullParser):
 class TidyAwareFormsFactory(mechanize._mechanize.FormsFactory):
     def parse_response(self, response, encoding):
         from twill.commands import _options
-        do_run_tidy = _options.get('do_run_tidy')
+        use_tidy = _options.get('use_tidy')
 
         # use 'tidy' to tidy up the HTML, if desired.
-        if do_run_tidy:
+        if use_tidy:
             data = response.read()
             (clean_html, errors) = run_tidy(data)
             if clean_html:
@@ -281,9 +280,9 @@ class TidyAwareFormsFactory(mechanize._mechanize.FormsFactory):
 
     def parse_file(self, file_obj, base_url):
         from twill.commands import _options
-        do_run_tidy = _options.get('do_run_tidy')
+        use_tidy = _options.get('use_tidy')
 
-        if do_run_tidy:
+        if use_tidy:
             data = file_obj.read()
             (clean_html, errors ) = run_tidy(data)
             if clean_html:
