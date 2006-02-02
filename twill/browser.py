@@ -32,7 +32,8 @@ class TwillBrowser:
         #
         
         links_factory = mechanize._mechanize.LinksFactory(link_parser_class=TidyAwareLinksParser)
-        forms_factory = TidyAwareFormsFactory(ignore_errors=True)
+#        forms_factory = TidyAwareFormsFactory(ignore_errors=True)
+        forms_factory = TidyAwareFormsFactory()
 
 #        factory = mechanize._mechanize.RobustFactory()
 
