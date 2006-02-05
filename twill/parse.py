@@ -131,6 +131,20 @@ def execute_file(filename, **kw):
     """
     Execute commands from a file.
     """
+    # read the input lines
+    if filename == "-":
+        inp = sys.stdin
+    else:
+        inp = open(filename)
+
+    kw['source'] = filename
+
+    execute_script(inp, **kw)
+    
+def execute_script(inp, **kw):
+    """
+    Execute commands from a file-like iterator.
+    """
     # initialize new local dictionary & get global + current local
     namespaces.new_local_dict()
     globals_dict, locals_dict = namespaces.get_twill_glocals()
@@ -146,18 +160,14 @@ def execute_file(filename, **kw):
     if init_url:
         commands.go(init_url)
         locals_dict['__url__'] = commands.browser.get_url()
-        
-    # read the input lines
-    if filename == "-":
-        inp = sys.stdin
-    else:
-        inp = open(filename)
-    lines = inp.readlines()
 
+    # sourceinfo stuff
+    sourceinfo = kw.get('source', "<input>")
+    
     try:
 
         n = 0
-        for line in lines:
+        for line in inp:
             n += 1
 
             if not line.strip():            # skip empty lines
@@ -180,10 +190,10 @@ Oops!  Twill assertion error on line %d of '%s' while executing
 
 %s
 
-''' % (n, filename, line.strip(), e))
+''' % (n, sourceinfo, line.strip(), e))
                 raise
             except Exception, e:
-                sys.stderr.write("EXCEPTION raised at line %d of '%s'\n\n\t%s\n" % (n, filename, line.strip(),))
+                sys.stderr.write("EXCEPTION raised at line %d of '%s'\n\n\t%s\n" % (n, sourceinfo, line.strip(),))
                 sys.stderr.write("\nError message: '%s'\n" % (str(e).strip(),))
                 sys.stderr.write("\n")
                 raise

@@ -273,28 +273,17 @@ class WSGI_HTTPConnection(HTTPConnection):
     Intercept all traffic to certain hosts & redirect into a WSGI
     application object.
     """
-    wsgi_apps = {}
-
     def get_app(self, host, port):
         """
         Return the app object for the given (host, port).
-        
-        Only create a given application once; store it after that.  Clear it
-        from the cache if it's been cleared from _wsgi_intercept.
         """
         key = (host, int(port))
 
         app, script_name = None, None
         
-        if self.wsgi_apps.has_key(key):
-            if _wsgi_intercept.has_key(key):
-                (app, script_name) = self.wsgi_apps[key]
-            else:
-                del self.wsgi_apps[key] # it's been removed; clear cache.
-        elif _wsgi_intercept.has_key(key):
+        if _wsgi_intercept.has_key(key):
             (app_fn, script_name) = _wsgi_intercept[key]
             app = app_fn()
-            self.wsgi_apps[key] = (app, script_name)
 
         return app, script_name        
     

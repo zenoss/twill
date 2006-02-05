@@ -1,3 +1,11 @@
+2006-02-04  Titus Brown  <t@issola.caltech.edu>
+
+	* broke execute_file out into execute_file and execute_script.
+
+	* Updated wsgi_intercept to latest (non-caching) version.
+
+	* Removed test-wsgi-intercept code.
+
 2006-02-01  Titus Brown  <t@issola.caltech.edu>
 
 	* Added ignore_errors functioning into wwwsearch code; now, when
