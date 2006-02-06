@@ -106,6 +106,12 @@ showforms()
 submit('0')
 </pre>
 <p>Note that all arguments need to be strings, at least for the moment.</p>
+<p>You can capture command output by passing any write-enabled file handle
+to twill.set_output, e.g.</p>
+<pre class="literal-block">
+twill.set_output(StringIO())
+</pre>
+<p>will send all non-error output into a StringIO() object.</p>
 <p>twill also provides a simple wrapper for <a class="reference" href="http://wwwsearch.sf.net/">mechanize</a> functionality, in
 the <cite>browser.py</cite> module.  This may be useful for twill extensions as
 well as for other toolkits, but the API is still unstable.</p>

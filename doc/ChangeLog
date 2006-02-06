@@ -1,3 +1,10 @@
+2006-02-06  Titus Brown  <t@issola.caltech.edu>
+
+	* Refactored a bit to use Factory() amalgamation.  In particular,
+	  removed title() override in PatchedMechanizeBrowser; built a
+	  Factory subclass in utils; and removed external references to
+	  TidyAware code.
+
 2006-02-05  Titus Brown  <t@issola.caltech.edu>
 
 	* Added 'set_output' command to redirect all output elsewhere.

@@ -42,7 +42,7 @@ twill does not understand JavaScript, I'm sorry to say.
 
 New features:
 
-  * added robust form parsing code;
+  * added robust-ified form parsing code;
 
   * updated to latest mechanize, ClientForm, ClientCookie code;
 
@@ -50,10 +50,20 @@ New features:
 
   * updated to latest wsgi_intercept code;
 
-  * 'set_output' can now be used to redirect twill output;
+  * 'set_output' can now be used to redirect twill output specifically;
 
   * added execute_script function;
 
   * added return values to a number of the simple command-line functions;
 
   * fixed bugs in 'showlinks', 'go';
+
+Backwards incompatibility issues:
+
+  * changed tidy config option names;
+
+  * wsgi_intercept code now wants a function that does its own app object
+    caching.
+
+@CTB todo:
+ - document set_output, execute_script, new/changed config options;

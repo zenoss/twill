@@ -2,8 +2,6 @@
 twill's Python API
 ==================
 
-
-
 Using TwillBrowser
 Making extensions
 
@@ -112,6 +110,13 @@ another Python program, you can do:
    submit('0')
 
 Note that all arguments need to be strings, at least for the moment.
+
+You can capture command output by passing any write-enabled file handle
+to twill.set_output, e.g. ::
+
+   twill.set_output(StringIO())
+
+will send all non-error output into a StringIO() object.
 
 twill also provides a simple wrapper for mechanize_ functionality, in
 the `browser.py` module.  This may be useful for twill extensions as
