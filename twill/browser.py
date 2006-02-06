@@ -17,8 +17,7 @@ from mechanize._mechanize import BrowserStateError, LinkNotFoundError
 
 # twill package imports
 from _browser import PatchedMechanizeBrowser
-from utils import trunc, print_form, journey, TidyAwareLinksParser, \
-     TidyAwareFormsFactory
+from utils import trunc, print_form, journey, ConfigurableParsingFactory
 
 #
 # TwillBrowser
@@ -33,18 +32,13 @@ class TwillBrowser:
         # create special link/forms parsing code to run tidy on HTML first.
         #
         
-        links_factory = mechanize._mechanize.LinksFactory(link_parser_class=TidyAwareLinksParser)
-        forms_factory = TidyAwareFormsFactory(ignore_errors=False)
-
-        factory = mechanize._mechanize.RobustFactory()
+        factory = ConfigurableParsingFactory()
 
         #
         # Create the mechanize browser.
         #
         
-        b = PatchedMechanizeBrowser(links_factory=links_factory,
-                                    forms_factory=forms_factory)
-#        b = PatchedMechanizeBrowser(factory=factory)
+        b = PatchedMechanizeBrowser(factory=factory)
 
         self._browser = b
         

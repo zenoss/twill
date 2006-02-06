@@ -234,10 +234,10 @@ def run_tidy(html):
     return (clean_html, errors)
 
 #
-# TidyAwareLinksParser
+# _TidyAwareLinksParser
 #
 
-class TidyAwareLinksParser(pullparser.TolerantPullParser):
+class _TidyAwareLinksParser(pullparser.TolerantPullParser):
     def __init__(self, fh, *args, **kwargs):
         from twill.commands import _options
         use_tidy = _options.get('use_tidy')
@@ -256,10 +256,10 @@ class TidyAwareLinksParser(pullparser.TolerantPullParser):
 ###
 
 #
-# TidyAwareFormsFactory
+# _TidyAwareFormsFactory
 #
 
-class TidyAwareFormsFactory(mechanize._mechanize.FormsFactory):
+class _TidyAwareFormsFactory(mechanize._mechanize.FormsFactory):
     def parse_response(self, response, encoding):
         from twill.commands import _options
         use_tidy = _options.get('use_tidy')
@@ -290,6 +290,49 @@ class TidyAwareFormsFactory(mechanize._mechanize.FormsFactory):
 
             file_obj = StringIO(data)
         return mechanize._mechanize.FormsFactory.parse_file(file_obj, base_url)
+
+def _tidy_get_title(response, encoding):
+    """
+    A function to get the title from (optionally) tidy-cleaned HTML.
+    """
+    import pullparser
+
+    from twill.commands import _options
+    do_run_tidy = _options.get('do_run_tidy')
+
+    response.seek(0)
+    if do_run_tidy:
+        data = response.read()
+        (clean_html, errors) = run_tidy(data)
+        if clean_html:
+            data = clean_html
+        fp = StringIO(data)
+    else:
+        fp = response
+
+    p = pullparser.TolerantPullParser(fp, encoding=encoding)
+    try:
+        p.get_tag("title")
+    except pullparser.NoMoreTokensError:
+        return None
+    else:
+        title = p.get_text()
+
+        # replace newlines with spaces.
+        title = title.replace("\n", " ") # @CTB fix this tidy bug.
+        title = title.replace("\r", " ")
+        return title
+
+class ConfigurableParsingFactory(mechanize._mechanize.Factory):
+    """
+    A factory that listens to twill config options regarding parsing.
+    """
+    def __init__(self):
+        self._forms_factory = _TidyAwareFormsFactory(ignore_errors=False)
+        self._links_factory = mechanize._mechanize.LinksFactory(link_parser_class=_TidyAwareLinksParser)
+        self._get_title = _tidy_get_title
+
+        # @CTB set_request_class?
 
 ###
 
