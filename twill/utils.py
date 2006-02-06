@@ -84,17 +84,17 @@ def trunc(s, length):
     
     return s
 
-def print_form(n, f):
+def print_form(n, f, OUT):
     """
     Pretty-print the given form, assigned # n.
     """
     if f.name:
-        print 'Form name=%s' % (f.name,)
+        print>>OUT, 'Form name=%s' % (f.name,)
     else:
-        print 'Form #%d' % (n + 1,)
+        print>>OUT, 'Form #%d' % (n + 1,)
 
     if f.controls:
-        print "## __Name__________________ __Type___ __ID________ __Value__________________"
+        print>>OUT, "## __Name__________________ __Type___ __ID________ __Value__________________"
 
     clickies = [c for c in f.controls if c.is_of_kind('clickable')]
     nonclickies = [c for c in f.controls if c not in clickies]
@@ -112,8 +112,8 @@ def print_form(n, f):
                    trunc(value_displayed, 40),
                    )
         for s in strings:
-            print s,
-        print ''
+            print>>OUT, s,
+        print>>OUT, ''
 
     for n, field in enumerate(clickies):
         strings = ("%-2s" % (n+1,),
@@ -123,8 +123,8 @@ def print_form(n, f):
                    trunc(field.value, 40),
                    )
         for s in strings:
-            print s,
-        print ''
+            print>>OUT, s,
+        print>>OUT, ''
 
 def set_form_control_value(control, val):
     """

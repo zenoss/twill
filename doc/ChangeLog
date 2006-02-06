@@ -1,3 +1,9 @@
+2006-02-05  Titus Brown  <t@issola.caltech.edu>
+
+	* Added 'set_output' command to redirect all output elsewhere.
+
+	* Updated pyparsing to 1.4.1.
+
 2006-02-04  Titus Brown  <t@issola.caltech.edu>
 
 	* broke execute_file out into execute_file and execute_script.

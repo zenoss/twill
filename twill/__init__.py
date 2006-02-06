@@ -10,7 +10,7 @@
 # please see the included LICENSE.txt file for more information, or
 # contact Titus directly.
 
-__version__ = "0.8.1"
+__version__ = "0.8.2"
 
 #import warnings
 #warnings.defaultaction = "error"
@@ -21,7 +21,8 @@ __all__ = [ "TwillCommandLoop",
             "execute_file",
             "get_browser",
             "add_wsgi_intercept",
-            "remove_wsgi_intercept" ]
+            "remove_wsgi_intercept",
+            "set_output"]
 
 #
 # add extensions (twill/extensions) and the the wwwsearch & pyparsing
@@ -40,7 +41,7 @@ sys.path.insert(0, wwwsearchlib)
 
 # the two core components of twill:
 from shell import TwillCommandLoop
-from parse import execute_file
+from parse import execute_file, execute_script
 
 # convenience function or two...
 from commands import get_browser
@@ -55,3 +56,11 @@ import namespaces
 namespaces.init_global_dict()
 
 from wsgi_intercept import add_wsgi_intercept, remove_wsgi_intercept
+
+def set_output(fp):
+    """
+    Have standard output from twill go to the given fp instead of
+    stdout.  fp=None will reset to stdout.
+    """
+    import commands, browser
+    commands.OUT = browser.OUT = fp

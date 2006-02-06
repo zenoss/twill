@@ -4,6 +4,8 @@ Implements TwillBrowser, a simple stateful wrapper for mechanize.Browser.
 See _browser.py for mechanize code.
 """
 
+OUT=None
+
 # Python imports
 import urllib2
 import re
@@ -111,7 +113,7 @@ class TwillBrowser:
                 pass
 
         if success:
-            print '==> at', self.get_url()
+            print>>OUT, '==> at', self.get_url()
         else:
             raise BrowserStateError("cannot go to '%s'" % (url,))
 
@@ -121,7 +123,7 @@ class TwillBrowser:
         """
         self._last_result = journey(self._browser.reload)
         self._new_page()
-        print '==> reloaded'
+        print>>OUT, '==> reloaded'
 
     def back(self):
         """
@@ -135,9 +137,9 @@ class TwillBrowser:
             self._last_result = None
 
         if self._last_result is not None:
-            print '==> back to', self.get_url()
+            print>>OUT, '==> back to', self.get_url()
         else:
-            print '==> back at empty page.'
+            print>>OUT, '==> back at empty page.'
             
     def get_code(self):
         """
@@ -208,7 +210,7 @@ class TwillBrowser:
         """
         self._last_result = journey(self._browser.follow_link, link)
         self._new_page()
-        print '==> at', self.get_url()
+        print>>OUT, '==> at', self.get_url()
 
     def set_agent_string(self, agent):
         """
@@ -226,31 +228,31 @@ class TwillBrowser:
         Pretty-print all of the forms.
         """
         for n, f in enumerate(self._browser.forms()):
-            print_form(n, f)
+            print_form(n, f, OUT)
 
     def showlinks(self):
         """
         Pretty-print all of the links.
         """
-        print 'Links:\n'
+        print>>OUT, 'Links:\n'
         for n, link in enumerate(self._browser.links()):
-            print "%d. %s ==> %s" % (n, link.text, link.url,)
-        print ''
+            print>>OUT, "%d. %s ==> %s" % (n, link.text, link.url,)
+        print>>OUT, ''
 
     def showhistory(self):
         """
         Pretty-print the history of links visited.
         """
-        print ''
-        print 'History: (%d pages total) ' % (len(self._browser._history))
+        print>>OUT, ''
+        print>>OUT, 'History: (%d pages total) ' % (len(self._browser._history))
 
         n = 1
         for (req, resp) in self._browser._history:
             if req and resp:            # only print those that back() will go
-                print "\t%d. %s" % (n, resp.geturl())
+                print>>OUT, "\t%d. %s" % (n, resp.geturl())
                 n += 1
             
-        print ''
+        print>>OUT, ''
 
     def get_form(self, formname):
         """
@@ -438,7 +440,7 @@ class TwillBrowser:
         
         if ctl:
             # submit w/button
-            print 'Note: submit is using submit button: name="%s", value="%s"' % \
+            print>>OUT, 'Note: submit is using submit button: name="%s", value="%s"' % \
                   (ctl.name, ctl.value)
             
             if isinstance(ctl, ClientForm.ImageControl):
@@ -490,9 +492,9 @@ class TwillBrowser:
         """
         Pretty-print all of the cookies.
         """
-        print '\nThere are %d cookie(s) in the cookiejar.\n' % (len(self.cj,))
+        print>>OUT, '\nThere are %d cookie(s) in the cookiejar.\n' % (len(self.cj,))
         if len(self.cj):
             for cookie in self.cj:
-                print '\t', cookie
+                print>>OUT, '\t', cookie
 
-            print ''
+            print>>OUT, ''

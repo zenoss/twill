@@ -3,6 +3,8 @@ Implementation of all of the individual 'twill' commands available through
 twill-sh.
 """
 
+OUT=None
+
 # export:
 __all__ = ['reset_browser',
            'extend_with',
@@ -240,7 +242,7 @@ def show():
     Show the HTML for the current page.
     """
     html = browser.get_html()
-    print html
+    print>>OUT, html
     return html
 
 def echo(*strs):
@@ -251,7 +253,7 @@ def echo(*strs):
     """
     strs = map(str, strs)
     s = " ".join(strs)
-    print s
+    print>>OUT, s
 
 def save_html(filename):
     """
@@ -390,11 +392,11 @@ def formvalue(formname, fieldname, value):
     browser.clicked(form, control)
 
     if _options['readonly_controls_writeable']:
-        print 'forcing read-only control to writeable'
+        print>>OUT, 'forcing read-only control to writeable'
         control.readonly = False
         
     if control.readonly:
-        print 'control is read-only; nothing done.'
+        print>>OUT, 'control is read-only; nothing done.'
         return
 
     set_form_control_value(control, value)
@@ -428,7 +430,7 @@ def formfile(formname, fieldname, filename, content_type=None):
     fp = open(filename, 'rb')
     control.add_file(fp, content_type, filename)
 
-    print '\nAdded file "%s" to file upload field "%s"\n' % (filename,
+    print>>OUT, '\nAdded file "%s" to file upload field "%s"\n' % (filename,
                                                              control.name,)
 
 def extend_with(module_name):
@@ -507,7 +509,7 @@ def add_auth(realm, uri, user, passwd):
     creds = browser.creds
     creds.add_password(realm, uri, user, passwd)
 
-    print "Added auth info: realm '%s' / URI '%s' / user '%s'" % (realm,
+    print>>OUT, "Added auth info: realm '%s' / URI '%s' / user '%s'" % (realm,
                                                                   uri,
                                                                   user,)
 
@@ -593,7 +595,7 @@ def title(what):
     regexp = re.compile(what)
     title = browser.get_title()
 
-    print "title is '%s'." % (title,)
+    print>>OUT, "title is '%s'." % (title,)
 
     m = regexp.search(title)
     if not m:
@@ -636,19 +638,19 @@ def config(key=None, value=None):
         keys = _options.keys()
         keys.sort()
 
-        print 'current configuration:'
+        print>>OUT, 'current configuration:'
         for k in keys:
-            print '\t%s : %s' % (k, _options[k])
-        print ''
+            print>>OUT, '\t%s : %s' % (k, _options[k])
+        print>>OUT, ''
     else:
         v = _options.get(key)
         if v is None:
-            print '*** no such configuration key', key
-            print 'valid keys are:', ";".join(_options.keys())
+            print>>OUT, '*** no such configuration key', key
+            print>>OUT, 'valid keys are:', ";".join(_options.keys())
         elif value is None:
-            print ''
-            print 'key %s: value %s' % (key, v)
-            print ''
+            print>>OUT, ''
+            print>>OUT, 'key %s: value %s' % (key, v)
+            print>>OUT, ''
         else:
             try:
                 value = int(value)

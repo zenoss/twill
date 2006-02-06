@@ -143,7 +143,7 @@ def execute_file(filename, **kw):
     
 def execute_script(inp, **kw):
     """
-    Execute commands from a file-like iterator.
+    Execute lines taken from a file-like iterator.
     """
     # initialize new local dictionary & get global + current local
     namespaces.new_local_dict()
