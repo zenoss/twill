@@ -3,6 +3,8 @@ Code parsing and evaluation for the twill mini-language.
 """
 
 import sys
+from cStringIO import StringIO
+
 from errors import TwillAssertionError
 from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
      alphas, alphanums, ParseException, ZeroOrMore, restOfLine, Combine, \
@@ -127,6 +129,16 @@ def parse_command(line, globals_dict, locals_dict):
 
 ###
 
+def execute_string(buf, **kw):
+    """
+    Execute commands from a string buffer.
+    """
+    fp = StringIO(buf)
+    
+    kw['source'] = ['<string buffer>']
+    
+    _execute_script(fp, **kw)
+
 def execute_file(filename, **kw):
     """
     Execute commands from a file.
@@ -139,9 +151,9 @@ def execute_file(filename, **kw):
 
     kw['source'] = filename
 
-    execute_script(inp, **kw)
+    _execute_script(inp, **kw)
     
-def execute_script(inp, **kw):
+def _execute_script(inp, **kw):
     """
     Execute lines taken from a file-like iterator.
     """

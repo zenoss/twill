@@ -42,9 +42,17 @@ twill does not understand JavaScript, I'm sorry to say.
 
 New features:
 
+  * added robust form parsing code;
+
   * updated to latest mechanize, ClientForm, ClientCookie code;
 
-  * updated to latest pyparsing code (1.4p1);
+  * updated to latest pyparsing code (1.4.1);
+
+  * updated to latest wsgi_intercept code;
+
+  * 'set_output' can now be used to redirect twill output;
+
+  * added execute_script function;
 
   * added return values to a number of the simple command-line functions;
 

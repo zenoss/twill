@@ -19,6 +19,7 @@ __version__ = "0.8.2"
 
 __all__ = [ "TwillCommandLoop",
             "execute_file",
+            "execute_string",
             "get_browser",
             "add_wsgi_intercept",
             "remove_wsgi_intercept",
@@ -41,7 +42,7 @@ sys.path.insert(0, wwwsearchlib)
 
 # the two core components of twill:
 from shell import TwillCommandLoop
-from parse import execute_file, execute_script
+from parse import execute_file, execute_string
 
 # convenience function or two...
 from commands import get_browser

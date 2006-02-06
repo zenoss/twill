@@ -6,7 +6,7 @@
 
 2006-02-04  Titus Brown  <t@issola.caltech.edu>
 
-	* broke execute_file out into execute_file and execute_script.
+	* added execute_string.
 
 	* Updated wsgi_intercept to latest (non-caching) version.
 
