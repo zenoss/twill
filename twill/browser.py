@@ -13,7 +13,7 @@ import urlparse
 
 # wwwsearch imports
 import mechanize, ClientCookie, ClientForm
-from mechanize._mechanize import BrowserStateError, LinkNotFoundError
+from mechanize import BrowserStateError, LinkNotFoundError
 
 # twill package imports
 from _browser import PatchedMechanizeBrowser
@@ -103,7 +103,7 @@ class TwillBrowser:
                 self._new_page()
                 success = True
                 break
-            except Exception:
+            except IOError:
                 pass
 
         if success:
