@@ -186,7 +186,6 @@ class TwillBrowser:
             try:
                 l = self._browser.find_link(text_regex=pattern)
             except LinkNotFoundError:
-                
                 #
                 # finally, look for a name match.
                 #
@@ -252,16 +251,18 @@ class TwillBrowser:
         """
         Return the first form that matches 'formname'.
         """
+        forms = self._browser.forms()
+        
         # first try regexps
         regexp = re.compile(formname)
-        for f in self._browser.forms():
+        for f in forms:
             if f.name and regexp.search(f.name):
                 return f
 
         # ok, try number
         try:
             formnum = int(formname)
-            return self._browser.forms()[formnum - 1]
+            return forms[formnum - 1]
         except ValueError:              # int() failed
             pass
         except IndexError:              # formnum was incorrect
@@ -406,8 +407,9 @@ class TwillBrowser:
         
         form = self._browser.form
         if form is None:
-            if len(self._browser.forms()) == 1:
-                form = self._browser.forms()[0]
+            forms = self._browser.forms()
+            if len(forms) == 1:
+                form = forms[0]
             else:
                 raise Exception("more than one form; you must select one (use 'fv') before submitting")
 
