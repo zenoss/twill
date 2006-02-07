@@ -1,8 +1,7 @@
 # wwwsearch imports
 import mechanize
 from mechanize import Browser as MechanizeBrowser
-from mechanize._mechanize import BrowserStateError, LinkNotFoundError
-from mechanize._useragent import UserAgent
+from mechanize import BrowserStateError, LinkNotFoundError
 import ClientCookie, ClientForm
 from ClientCookie._Util import response_seek_wrapper
 
