@@ -234,97 +234,7 @@ def run_tidy(html):
 
     return (clean_html, errors)
 
-#
-# _TidyAwareLinksParser
-#
-
-class _TidyAwareLinksParser(pullparser.TolerantPullParser):
-    def __init__(self, fh, *args, **kwargs):
-        from twill.commands import _options
-        use_tidy = _options.get('use_tidy')
-
-        # use 'tidy' to tidy up the HTML, if desired.
-        if use_tidy:
-            html = fh.read()
-            (clean_html, errors) = run_tidy(html)
-            if clean_html:
-                html = clean_html
-
-            fh = StringIO(html)
-            
-        pullparser.TolerantPullParser.__init__(self, fh, *args, **kwargs)
-
-###
-
-#
-# _TidyAwareFormsFactory
-#
-
-class _TidyAwareFormsFactory(mechanize._mechanize.FormsFactory):
-    def parse_response(self, response, encoding):
-        from twill.commands import _options
-        use_tidy = _options.get('use_tidy')
-
-        # use 'tidy' to tidy up the HTML, if desired.
-        if use_tidy:
-            data = response.read()
-            (clean_html, errors) = run_tidy(data)
-            if clean_html:
-                data = clean_html
-
-            url = response.geturl()
-            fake = FakeResponse(data, url)
-        else:
-            fake = response
-
-        return mechanize._mechanize.FormsFactory.parse_response(self, fake, encoding)
-
-    def parse_file(self, file_obj, base_url):
-        from twill.commands import _options
-        use_tidy = _options.get('use_tidy')
-
-        if use_tidy:
-            data = file_obj.read()
-            (clean_html, errors ) = run_tidy(data)
-            if clean_html:
-                data = clean_html
-
-            file_obj = StringIO(data)
-        return mechanize._mechanize.FormsFactory.parse_file(file_obj, base_url)
-
-def _tidy_get_title(response, encoding):
-    """
-    A function to get the title from (optionally) tidy-cleaned HTML.
-    """
-    import pullparser
-
-    from twill.commands import _options
-    do_run_tidy = _options.get('do_run_tidy')
-
-    response.seek(0)
-    if do_run_tidy:
-        data = response.read()
-        (clean_html, errors) = run_tidy(data)
-        if clean_html:
-            data = clean_html
-        fp = StringIO(data)
-    else:
-        fp = response
-
-    p = pullparser.TolerantPullParser(fp, encoding=encoding)
-    try:
-        p.get_tag("title")
-    except pullparser.NoMoreTokensError:
-        return None
-    else:
-        title = p.get_text()
-
-        # replace newlines with spaces.
-        title = title.replace("\n", " ") # @CTB fix this tidy bug.
-        title = title.replace("\r", " ")
-        return title
-
-class ConfigurableParsingFactory(mechanize._mechanize.Factory):
+class ConfigurableParsingFactory(mechanize.Factory):
     """
     A factory that listens to twill config options regarding parsing.
 
@@ -337,13 +247,15 @@ class ConfigurableParsingFactory(mechanize._mechanize.Factory):
       forms(resp, enc) called in Browser.forms,
       title(resp, enc) called in Browser.title
     """
+    
     def __init__(self):
-        self._forms_factory = _TidyAwareFormsFactory(ignore_errors=False)
+        self._forms_factory = mechanize.FormsFactory() # ignore_errors!!
+        self._links_factory = mechanize.LinksFactory()
+        self._get_title = mechanize.pp_get_title
 
-        self._links_factory = mechanize._mechanize.LinksFactory(link_parser_class=_TidyAwareLinksParser)
-        self._get_title = _tidy_get_title
+        # @CTB set_request_class? what to do?
 
-        # @CTB set_request_class?
+        self.reset()
 
     def reset(self):
         self._html = self._orig_html = self._url = None
