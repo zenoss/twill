@@ -1,5 +1,13 @@
 2006-02-06  Titus Brown  <t@issola.caltech.edu>
 
+	* 0.8.2 RELEASE.
+
+	* Documented config options.
+
+	* Added in parse_errors stuff: config parse options now all work.
+
+	* Wedged in all of the mechanize parse Factory refactoring.
+
 	* Refactored a bit to use Factory() amalgamation.  In particular,
 	  removed title() override in PatchedMechanizeBrowser; built a
 	  Factory subclass in utils; and removed external references to

@@ -113,5 +113,15 @@ def test_BeautifulSoup():
 
 def test_allow_parse_errors():
     """
-    ...
+    test nice parsing.
     """
+    b = commands.get_browser()
+
+    commands.config('use_tidy', '0')
+    commands.config('use_BeautifulSoup', '1')
+    commands.config('allow_parse_errors', '1')
+
+    commands.go(url)
+
+    commands.go('/unfixable_html')
+    b._browser.forms()

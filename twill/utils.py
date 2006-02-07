@@ -241,21 +241,23 @@ class ConfigurableParsingFactory(mechanize.Factory):
     First: clean up passed-in HTML using tidy?
     Second: parse using the regular parser, or BeautifulSoup?
     Third: should we fail on, or ignore, parse errors?
-
-    Notes to self:
-      links(resp, enc) called in Browser.get_links_iter,
-      forms(resp, enc) called in Browser.forms,
-      title(resp, enc) called in Browser.title
     """
     
     def __init__(self):
-        self._forms_factory = mechanize.FormsFactory() # ignore_errors!!
-        self._links_factory = mechanize.LinksFactory()
-        self._get_title = mechanize.pp_get_title
+        ### create the two sets of factories to use.
+        self.basic_ff = mechanize.FormsFactory()
+        self.basic_lf = mechanize.LinksFactory()
+        self.basic_gt = mechanize.pp_get_title
 
-        # @CTB set_request_class? what to do?
-
+        self.bs_ff = mechanize.RobustFormsFactory()
+        self.bs_lf = mechanize.RobustLinksFactory()
+        self.bs_gt = mechanize.bs_get_title
+        
         self.reset()
+
+    def set_request_class(self, request_class):
+        self.basic_ff.request_class = request_class
+        self.bs_ff.request_class = request_class
 
     def reset(self):
         self._html = self._orig_html = self._url = None
@@ -278,25 +280,61 @@ class ConfigurableParsingFactory(mechanize.Factory):
             if new_html:
                 self._html = new_html
 
+    def use_BS(self):
+        from twill.commands import _options
+        flag = _options.get('use_BeautifulSoup')
+
+        # try importing BeautifulSoup.
+        try:
+            import BeautifulSoupy
+        except ImportError:
+            require = _options.get('require_BeautifulSoup')
+            if require:
+                raise Exception("cannot import BeautifulSoup, but it's required!")
+            return False                # don't use if we can't import!
+        return flag
+
     def forms(self):
         if self._forms is None:
             response = FakeResponse(self._html, self._url)
-            self._forms = self._forms_factory.parse_response(response,
-                                                             self._encoding)
+
+            from twill.commands import _options
+            if _options.get('allow_parse_errors'):
+                ignore_errors = True
+            else:
+                ignore_errors = False
+
+            if self.use_BS():
+                parse_fn = self.bs_ff.parse_response
+                self.bs_ff.ignore_errors = ignore_errors
+            else:
+                parse_fn = self.basic_ff.parse_response
+                self.basic_ff.ignore_errors = ignore_errors
+                
+            self._forms = parse_fn(response, self._encoding)
 
         return self._forms
 
     def links(self):
         if self._links is None:
-            self._links = self._links_factory.links(StringIO(self._html),
-                                                    self._url,
-                                                    self._encoding)
+            if self.use_BS():
+                parse_fn = self.bs_lf.links
+            else:
+                parse_fn = self.basic_lf.links
+                
+            self._links = parse_fn(StringIO(self._html), self._url,
+                                   self._encoding)
             self._links = list(self._links)
+            
         return self._links
 
     def title(self):
         if self._title is None:
-            self._title = self._get_title(StringIO(self._html), self._encoding)
+            if self.use_BS():
+                parse_fn = self.bs_gt
+            else:
+                parse_fn = self.basic_gt
+            self._title = parse_fn(StringIO(self._html), self._encoding)
 
         return self._title
 

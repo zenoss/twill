@@ -64,6 +64,3 @@ Backwards incompatibility issues:
 
   * wsgi_intercept code now wants a function that does its own app object
     caching.
-
-@CTB todo:
- - document set_output, execute_script, new/changed config options;
