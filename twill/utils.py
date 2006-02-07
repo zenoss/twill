@@ -1,6 +1,7 @@
 """
 Various ugly utility functions for twill.
 """
+
 import ClientForm, ClientCookie
 import urllib2
 import pullparser
@@ -326,13 +327,66 @@ def _tidy_get_title(response, encoding):
 class ConfigurableParsingFactory(mechanize._mechanize.Factory):
     """
     A factory that listens to twill config options regarding parsing.
+
+    First: clean up passed-in HTML using tidy?
+    Second: parse using the regular parser, or BeautifulSoup?
+    Third: should we fail on, or ignore, parse errors?
+
+    Notes to self:
+      links(resp, enc) called in Browser.get_links_iter,
+      forms(resp, enc) called in Browser.forms,
+      title(resp, enc) called in Browser.title
     """
     def __init__(self):
         self._forms_factory = _TidyAwareFormsFactory(ignore_errors=False)
+
         self._links_factory = mechanize._mechanize.LinksFactory(link_parser_class=_TidyAwareLinksParser)
         self._get_title = _tidy_get_title
 
         # @CTB set_request_class?
+
+    def reset(self):
+        self._html = self._orig_html = self._url = None
+        self._encoding = None
+        
+        self._links = self._forms = self._title = None
+
+    def parse_html(self, response, encoding):
+        self._url = response.geturl()
+        self._orig_html = response.read()
+        response.seek(0)
+        self._encoding = encoding
+
+        self._html = self._orig_html
+
+        from twill.commands import _options
+        use_tidy = _options.get('use_tidy')
+        if use_tidy:
+            (new_html, errors) = run_tidy(self._html)
+            if new_html:
+                self._html = new_html
+
+    def forms(self):
+        if self._forms is None:
+            response = FakeResponse(self._html, self._url)
+            self._forms = self._forms_factory.parse_response(response,
+                                                             self._encoding)
+
+        return self._forms
+
+    def links(self):
+        if self._links is None:
+            self._links = self._links_factory.links(StringIO(self._html),
+                                                    self._url,
+                                                    self._encoding)
+            self._links = list(self._links)
+        return self._links
+
+    def title(self):
+        if self._title is None:
+            self._title = self._get_title(StringIO(self._html), self._encoding)
+
+        return self._title
 
 ###
 

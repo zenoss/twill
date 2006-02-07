@@ -190,7 +190,7 @@ class FormsFactory:
         self.encoding = encoding
         self.ignore_errors = ignore_errors
 
-    def parse_response(self, response, encoding=None):
+    def parse_response(self, response, url, encoding=None):
         import ClientForm
         if encoding is None:
             encoding = self.encoding
@@ -531,9 +531,6 @@ class Browser(UserAgent, OpenerMixin):
         self._history = history
         self.request = self._response = None
         self.form = None
-        self._forms = None
-        self._links = None
-        self._title = None
 
         if request_class is None:
             if not hasattr(urllib2.Request, "add_unredirected_header"):
@@ -561,7 +558,8 @@ class Browser(UserAgent, OpenerMixin):
         if self._history is not None:
             self._history.close()
             self._history = None
-        self._forms = self._title = self._links = None
+            
+        self._factory.reset()
         self.request = self._response = None
 
     def open(self, url, data=None):
@@ -652,31 +650,11 @@ class Browser(UserAgent, OpenerMixin):
         """Return iterable over links (mechanize.Link objects)."""
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
+
         if kwds:
             return self._find_links(False, **kwds)
-        if self._links is None:
-            try:
-                self._links = list(self.get_links_iter())
-            finally:
-                self._response.seek(0)
-        return self._links
-
-    def get_links_iter(self):
-        """Return an iterator that provides links of the document.
-
-        This method is provided in addition to .links() to allow lazy iteration
-        over links, while still keeping .links() safe against somebody
-        .seek()ing on a response "behind your back".  When response objects are
-        fixed to have independent seek positions, this method will be
-        deprecated in favour of .links().
-
-        """
-        if not self.viewing_html():
-            raise BrowserStateError("not viewing HTML")
-        base_url = self._response.geturl()
-        self._response.seek(0)
-        return self._factory.links(
-            self._response, self._encoding(self._response))
+        else:    
+            return self._factory.links()
 
     def forms(self):
         """Return iterable over forms.
@@ -686,15 +664,7 @@ class Browser(UserAgent, OpenerMixin):
         """
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
-        if self._forms is None:
-            response = self._response
-            response.seek(0)
-            try:
-                self._forms = self._factory.forms(
-                    response, self._encoding(self._response))
-            finally:
-                response.seek(0)
-        return self._forms
+        return self._factory.forms()
 
     def viewing_html(self):
         """Return whether the current response contains HTML data."""
@@ -713,10 +683,8 @@ class Browser(UserAgent, OpenerMixin):
         """
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
-        if self._title is None:
-            self._title = self._factory.title(
-                self._response, self._encoding(self._response))
-        return self._title
+
+        return self._factory.title()
 
     def select_form(self, name=None, predicate=None, nr=None):
         """Select an HTML form for input.
@@ -879,6 +847,9 @@ class Browser(UserAgent, OpenerMixin):
         nr: matches the nth link that matches all other criteria (default 0)
 
         """
+        if not self.viewing_html():
+            raise BrowserStateError("not viewing HTML")
+
         return self._find_links(True, **kwds)
 
     def __getattr__(self, name):
@@ -901,25 +872,14 @@ class Browser(UserAgent, OpenerMixin):
                     predicate=None,
                     nr=0
                     ):
-        if not self.viewing_html():
-            raise BrowserStateError("not viewing HTML")
-
         found_links = []
         orig_nr = nr
 
-        # An optimization, so that if we look for a single link we do not have
-        # to necessarily parse the entire file.
-        if self._links is None and single:
-            all_links = self.get_links_iter()
-        else:
-            if self._links is None:
-                try:
-                    self._links = list(self.get_links_iter())
-                finally:
-                    self._response.seek(0)
-            all_links = self._links
+        all_links = self._factory.links()
 
         for link in all_links:
+            print link.text, text_regex
+            if text_regex: print text_regex.search(link.text)
             if url is not None and url != link.url:
                 continue
             if url_regex is not None and not url_regex.search(link.url):
@@ -966,5 +926,7 @@ class Browser(UserAgent, OpenerMixin):
         # this is now lazy, so we just reset the various attributes that
         # result from parsing
         self.form = None
-        self._title = None
-        self._forms = self._links = None
+
+        self._factory.reset()
+        if self.viewing_html():
+            self._factory.parse_html(response, self._encoding(response))
