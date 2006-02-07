@@ -2,7 +2,20 @@ setglobal init __url__
 code 200
 
 #
-# first test to make sure that forms are properly loaded on back() calls.
+# test to make sure links are properly parsed on back() calls
+#
+
+follow spaces
+back
+
+follow spaces
+back
+
+follow spaces
+back
+
+#
+# test to make sure that forms are properly loaded on back() calls.
 #
 
 go /multisubmitform

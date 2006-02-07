@@ -267,6 +267,7 @@ class ConfigurableParsingFactory(mechanize.Factory):
 
     def parse_html(self, response, encoding):
         self._url = response.geturl()
+        response.seek(0)
         self._orig_html = response.read()
         response.seek(0)
         self._encoding = encoding
