@@ -60,7 +60,7 @@ def test():
     except Exception:
         pass
 
-    commands.go('http://www.example.com/')
+    commands.go('http://www.google.com/')
     browser.get_title()
 
     # test the twill script.
