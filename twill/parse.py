@@ -120,7 +120,7 @@ def parse_command(line, globals_dict, locals_dict):
     res = full_command.parseString(line)
     if res:
         if _print_commands:
-            print "twill: executing cmd '%s'" % (line.strip(),)
+            print>>commands.OUT, "twill: executing cmd '%s'" % (line.strip(),)
             
         args = process_args(res.arguments.asList(), globals_dict, locals_dict)
         return (res.command, args)

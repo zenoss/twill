@@ -2,14 +2,14 @@
 Various ugly utility functions for twill.
 """
 
-import ClientForm, ClientCookie
-import urllib2
-import pullparser
 from cStringIO import StringIO
 import os
 import tempfile
-import mechanize
 import base64
+
+import urllib2
+
+import mechanize, ClientForm, ClientCookie
 from ClientCookie._Util import getheaders, time
 from mechanize import BrowserStateError
 
@@ -285,14 +285,6 @@ class ConfigurableParsingFactory(mechanize.Factory):
         from twill.commands import _options
         flag = _options.get('use_BeautifulSoup')
 
-        # try importing BeautifulSoup.
-        try:
-            import BeautifulSoupy
-        except ImportError:
-            require = _options.get('require_BeautifulSoup')
-            if require:
-                raise Exception("cannot import BeautifulSoup, but it's required!")
-            return False                # don't use if we can't import!
         return flag
 
     def forms(self):
