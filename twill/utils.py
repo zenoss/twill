@@ -353,6 +353,7 @@ class FixedHTTPBasicAuthHandler(urllib2.HTTPBasicAuthHandler):
 
 ###
 
+_debug_print_refresh = False
 class FunctioningHTTPRefreshProcessor(ClientCookie.HTTPRefreshProcessor):
     """
     Fix an issue where the 'content' component of the http-equiv=refresh
@@ -363,16 +364,31 @@ class FunctioningHTTPRefreshProcessor(ClientCookie.HTTPRefreshProcessor):
 
         if code == 200 and hdrs.has_key("refresh"):
             refresh = getheaders(hdrs, "refresh")[0]
+            
+            if _debug_print_refresh:
+                from twill.commands import OUT
+                print>>OUT, "equiv-refresh DEBUG: code 200, hdrs has 'refresh'"
+                print>>OUT, "equiv-refresh DEBUG: refresh header is", refresh
+                
             i = refresh.find(";")
             if i != -1:
                 pause, newurl_spec = refresh[:i], refresh[i+1:]
                 pause = int(pause)
+
+                if _debug_print_refresh:
+                    from twill.commands import OUT
+                    print>>OUT, "equiv-refresh DEBUG: pause:", pause
+                    print>>OUT, "equiv-refresh DEBUG: new url:", newurl_spec
                 
                 j = newurl_spec.find("=")
                 if j != -1:
                     newurl = newurl_spec[j+1:]
                 else:
                     newurl = newurl_spec
+
+                if _debug_print_refresh:
+                    from twill.commands import OUT
+                    print>>OUT, "equiv-refresh DEBUG: final url:", newurl
                     
                 if (self.max_time is None) or (pause <= self.max_time):
                     if pause != 0 and 0:  # CTB hack! ==#  and self.honor_time:

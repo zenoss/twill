@@ -55,6 +55,7 @@ import re, getpass, time
 from browser import TwillBrowser
 
 from errors import TwillAssertionError
+import utils
 from utils import set_form_control_value, run_tidy
 from namespaces import get_twill_glocals
         
@@ -525,6 +526,11 @@ def debug(what, level):
     
     if what == "http":
         browser._browser.set_debug_http(int(level))
+    elif what == 'equiv-refresh':
+        if int(level) > 0:
+            utils._debug_print_refresh = True
+        else:
+            utils._debug_print_refresh = False
     elif what == 'commands':
         if int(level) > 0:
             parse.debug_print_commands(True)
@@ -631,7 +637,6 @@ def config(key=None, value=None):
      * 'use_tidy', default 1;
      * 'require_tidy', default 0;
      * 'use_BeautifulSoup', default 1;
-     * 'require_BeautifulSoup', default 0;
      * 'allow_parse_errors', default 1;
     """
     if key is None:

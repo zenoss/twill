@@ -1,7 +1,13 @@
 code 200
 
+debug equiv-refresh 1
+
 # test http-equiv=refresh
 go /test_refresh
+url /login
+code 200
+
+go /test_refresh2
 url /login
 code 200
 

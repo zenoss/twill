@@ -90,7 +90,11 @@ Cookies
 Debugging
 =========
 
-**debug** *<what>* *<level>* -- turn on or off debugging/tracing for various functions.  The first argument is either 'http' to show HTTP headers, or 'twill' to show twill commands.  The second argument is '0' for off, '1' for on.
+**debug** *<what>* *<level>* -- turn on or off debugging/tracing for
+  various functions.  The first argument is either 'http' to show HTTP
+  headers, 'equiv-refresh' to test HTTP EQUIV-REFRESH headers, or
+  'twill' to show twill commands.  The second argument is '0' for off,
+  '1' for on.
 
 Variable handling
 =================

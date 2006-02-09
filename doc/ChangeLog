@@ -1,3 +1,7 @@
+2006-02-09  Titus Brown  <t@issola.caltech.edu>
+
+	* Added 'equiv-refresh' debug option.
+
 2006-02-08  Titus Brown  <t@issola.caltech.edu>
 
 	* 0.8.3 RELEASE

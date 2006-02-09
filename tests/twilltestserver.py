@@ -88,7 +88,8 @@ class TwillTest(Directory):
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
                   'simpleform', 'upload_file', 'http_auth', 'formpostredirect',
                   'exit', 'multisubmitform', "exception", "plaintext",
-                  "testform", "testformaction", "test_refresh",
+                  "testform", "testformaction",
+                  "test_refresh", "test_refresh2",
                   "test_checkbox", "echo",
                   'tidy_fixable_html', 'BS_fixable_html', 'unfixable_html']
 
@@ -135,6 +136,21 @@ class TwillTest(Directory):
     def test_refresh(self):
         return """\
 <meta http-equiv="refresh" content="2; ./login">
+hello, world.
+"""
+    
+    def test_refresh2(self):
+        return """\
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>o2.ie</title>
+<meta http-equiv="refresh" content="0;URL=/login">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body>
+</body>
+</html>
 hello, world.
 """
 
