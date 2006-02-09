@@ -10,7 +10,7 @@
 # please see the included LICENSE.txt file for more information, or
 # contact Titus directly.
 
-__version__ = "0.8.2"
+__version__ = "0.8.3"
 
 #import warnings
 #warnings.defaultaction = "error"
@@ -37,7 +37,7 @@ sys.path.insert(0, thisdir)
 extensions = os.path.join(thisdir, 'extensions/')
 sys.path.insert(0, extensions)
 
-wwwsearchlib = os.path.join(thisdir, 'wwwsearch/')
+wwwsearchlib = os.path.join(thisdir, 'other_packages/')
 sys.path.insert(0, wwwsearchlib)
 
 # the two core components of twill:

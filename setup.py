@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(name = 'twill',
       
-      version = '0.8.3a1',
+      version = '0.8.3',
       download_url = 'http://darcs.idyll.org/~t/projects/twill-0.8.3.tar.gz',
       
       description = 'twill Web browsing language',
@@ -14,10 +14,10 @@ setup(name = 'twill',
       author_email = 'titus@caltech.edu',
       license='LGPL',
 
-      packages = ['twill', 'twill.wwwsearch',
-                  'twill.extensions',
-                  'twill.wwwsearch.ClientCookie',
-                  'twill.wwwsearch.mechanize'],
+      packages = ['twill', 'twill.other_packages',
+                  'twill.other_packages.ClientCookie',
+                  'twill.other_packages.mechanize',
+                  'twill.extensions'],
       scripts = ['twill-sh', 'twill-fork'],
       maintainer = 'C. Titus Brown',
       maintainer_email = 'titus@caltech.edu',

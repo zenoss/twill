@@ -1,3 +1,13 @@
+2006-02-08  Titus Brown  <t@issola.caltech.edu>
+
+	* 0.8.3 RELEASE
+
+	* fixed minor links parsing bug (seek(0) prior to parsing!)
+
+	* renamed wwwsearch/ to other_packages/.
+
+	* added BeautifulSoup.
+
 2006-02-06  Titus Brown  <t@issola.caltech.edu>
 
 	* 0.8.2 RELEASE.

@@ -32,9 +32,9 @@ provide the source to packages that use twill, and you are not
 obligated to publish your own private changes to twill.  You do not need
 to publish your twill scripts or twill extensions, either.
 
-pyparsing_ and mechanize_ are both included with twill, but are under
-their own licenses.  (Both are currently more lenient than the LGPL,
-so you should have no problems.)
+pyparsing_, BeautifulSoup_, and mechanize_ are all included with
+twill, but are under their own licenses.  (Their licenses are currently more
+lenient than the LGPL, so you should have no problems.)
 
 .. _here: http://darcs.idyll.org/~t/projects/twill-0.8.tar.gz
 .. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
@@ -137,3 +137,4 @@ Contributions are welcome & will be duly acknowledged!
 .. _PAMIE: http://pamie.sourceforge.net/
 .. _PAMIE examples page: tutoriala.html
 .. _PyXPCOM: http://kb.mozillazine.org/PyXPCOM
+.. _BeautifulSoup: http://www.crummy.com/software/BeautifulSoup/
