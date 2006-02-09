@@ -14,9 +14,9 @@ twill is open source and written in Python.
 Downloading twill
 -----------------
 
-The latest release of twill is `twill 0.8.3`_, released February 8th,
+The latest release of twill is `twill 0.8.4`_, released ********@CTB******,
 2006; it is available for download at
-http://darcs.idyll.org/~t/projects/twill-0.8.3.tar.gz.  You can also
+http://darcs.idyll.org/~t/projects/twill-0.8.4.tar.gz.  You can also
 use Python's easy_install_ to install or upgrade twill.
 
 twill works with Python 2.3 or later.

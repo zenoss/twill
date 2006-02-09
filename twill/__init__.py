@@ -10,7 +10,7 @@
 # please see the included LICENSE.txt file for more information, or
 # contact Titus directly.
 
-__version__ = "0.8.3"
+__version__ = "0.8.4"
 
 #import warnings
 #warnings.defaultaction = "error"
