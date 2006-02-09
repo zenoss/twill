@@ -1,5 +1,7 @@
-darcs tag --checkpoint -m release-0.8
+% darcs tag --checkpoint -m release-0.8
  -- tag release-0.8, and allow for --partial get.
+
+% darcs dist -d twill-0.8.3
 
 where to change version number:
 
