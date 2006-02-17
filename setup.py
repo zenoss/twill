@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(name = 'twill',
       
-      version = '0.8.4a1',
+      version = '0.8.4a2',
       download_url = 'http://darcs.idyll.org/~t/projects/twill-0.8.4.tar.gz',
       
       description = 'twill Web browsing language',

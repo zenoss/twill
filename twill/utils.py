@@ -60,12 +60,21 @@ def journey(func, *args, **kwargs):
     if result is None:
         return None
 
+    # some result objects (mostly errors) don't have a seek() function.
+    # if, however, there is a seek function -- seek back to 0.
     try:
         result.seek(0)
     except AttributeError:
         pass
+
+    # some URLs, like 'file:' URLs, don't have return codes.  In this
+    # case, assume success (code=200).
+    try:
+        code = result.code
+    except AttributeError:
+        code = 200
     
-    new_result = ResultWrapper(result.code, # HTTP response code
+    new_result = ResultWrapper(code, # HTTP response code
                                result.geturl(), #  URL
                                result.read() # HTML
                                )
@@ -150,7 +159,7 @@ def set_form_control_value(control, val):
 # stuff to run 'tidy'...
 #
 
-_tidy_cmd = "tidy -q -ashtml -o %(output)s -f %(err)s %(input)s >& %(err)s"
+_tidy_cmd = "tidy -q -ashtml -o %(output)s -f %(err)s %(input)s > %(err)s 2> %(err)s"
 
 def run_tidy(html):
     """

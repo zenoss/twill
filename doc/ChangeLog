@@ -1,3 +1,9 @@
+2006-02-16  Titus Brown  <t@issola.caltech.edu>
+
+	* Fixed 'run_tidy' >& error on windows.
+
+	* Fixed "file:" URLs for which result.code doesn't exist.
+
 2006-02-09  Titus Brown  <t@issola.caltech.edu>
 
 	* Added 'equiv-refresh' debug option.
