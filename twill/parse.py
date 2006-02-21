@@ -89,7 +89,7 @@ def process_args(args, globals_dict, locals_dict):
 
 ###
 
-def execute_command(cmd, args, globals_dict, locals_dict):
+def execute_command(cmd, args, globals_dict, locals_dict, cmdinfo):
     """
     Actually execute the command.
 
@@ -101,8 +101,9 @@ def execute_command(cmd, args, globals_dict, locals_dict):
     locals_dict['__args__'] = args
 
     eval_str = "%s(*__args__)" % (cmd,)
-
-    result = eval(eval_str, globals_dict, locals_dict)
+    
+    codeobj = compile(eval_str, cmdinfo, 'eval')
+    result = eval(codeobj, globals_dict, locals_dict)
     
     # set __url__
     locals_dict['__url__'] = commands.browser.get_url()
@@ -189,8 +190,10 @@ def _execute_script(inp, **kw):
             if cmd is None:
                 continue
 
+            cmdinfo = "%s:%d" % (sourceinfo, n,)
+
             try:
-                execute_command(cmd, args, globals_dict, locals_dict)
+                execute_command(cmd, args, globals_dict, locals_dict, cmdinfo)
             except SystemExit:
                 # abort script execution, if a SystemExit is raised.
                 return

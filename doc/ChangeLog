@@ -1,3 +1,10 @@
+2006-02-21  Titus Brown  <t@issola.caltech.edu>
+
+	* TwillAssertionError no longer subclasses AssertionError.
+
+	* execute_command now takes a cmdinfo argument so that line number
+	  of input can be traced in errors.
+
 2006-02-16  Titus Brown  <t@issola.caltech.edu>
 
 	* Fixed 'run_tidy' >& error on windows.

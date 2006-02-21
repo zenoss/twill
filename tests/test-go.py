@@ -64,7 +64,7 @@ def test():
 
     commands.go(url)
     try:
-        twill.parse.execute_command('url', ('not this',), gd, ld)
+        twill.parse.execute_command('url', ('not this',), gd, ld, "anony")
         assert 0, "shouldn't get here"
     except TwillAssertionError:
         pass
@@ -88,7 +88,7 @@ def test():
         pass
 
     try:
-        twill.parse.execute_command('exit', ('0',), gd, ld)
+        twill.parse.execute_command('exit', ('0',), gd, ld, "anony")
         assert 0, "shouldn't get here"
     except SystemExit:
         pass
