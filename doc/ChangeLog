@@ -1,3 +1,7 @@
+2006-02-28  Titus Brown  <t@issola.caltech.edu>
+
+	* runfile now allows multiple filenames properly.
+
 2006-02-21  Titus Brown  <t@issola.caltech.edu>
 
 	* TwillAssertionError no longer subclasses AssertionError.

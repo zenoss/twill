@@ -558,20 +558,15 @@ def run(cmd):
 
     exec(cmd, global_dict, local_dict)
 
-def runfile(files):
+def runfile(*files):
     """
     >> runfile <file1> [ <file2> ... ]
 
     """
-    # @CTB: use pyparsing to separate out the files, so that quoted
-    # filenames with spaces in them can be used, e.g.
-    #     runfile "test 1" "test 2"
-
     import parse
     global_dict, local_dict = get_twill_glocals()
 
-    filenames = files.split(' ')
-    for f in filenames:
+    for f in files:
         parse.execute_file(f, no_reset=True)
 
 def setglobal(name, value):
