@@ -603,6 +603,7 @@ class _AbstractFormParser:
         elif self._textarea is not None:
             map = self._textarea
             key = "value"
+#@CTB            print 'TEXTAREA: value "%s"' % (data,)
         # not if within option or textarea
         elif self._current_label is not None:
             map = self._current_label
