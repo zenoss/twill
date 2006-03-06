@@ -13,9 +13,29 @@ def setup_module():
     pass
 
 def test():
+    # reset
+    twill.commands.reset_browser()
+
     # get the current browser obj.
     browser = twill.get_browser()
     assert browser is twill.commands.browser
+
+    # check the 'None' value of return code
+    assert browser.get_code() is None
+
+    # no forms, right?
+    try:
+        browser.submit()
+    except Exception:
+        pass
+
+    try:
+        import warnings
+        warnings.filterwarnings('ignore')
+        assert browser is twill.get_browser_state() # deprecated
+        warnings.resetwarnings()
+    except DeprecationWarning:
+        pass
 
     old_err, sys.stderr = sys.stderr, StringIO()
     try:

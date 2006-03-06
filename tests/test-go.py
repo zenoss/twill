@@ -13,8 +13,19 @@ def setup_module():
     twill.parse.debug_print_commands(True)
 
 def test():
+    # capture output
+    fp = StringIO()
+    twill.set_output(fp)
+
+    twill.parse.execute_string('code 200', initial_url=url)
+
     # from file
     twilltestlib.execute_twill_script('test-go.twill', initial_url=url)
+
+    twill.set_output(None)
+    assert fp.getvalue()
+
+    ###
 
     # from stdin
     filename = os.path.join(twilltestlib.testdir, 'test-go.twill')
@@ -92,6 +103,7 @@ def test():
         assert 0, "shouldn't get here"
     except SystemExit:
         pass
+
     
 def teardown_module():
     twill.parse.debug_print_commands(_save_print)

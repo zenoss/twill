@@ -1,5 +1,9 @@
 2006-03-05  Titus Brown  <t@issola.caltech.edu>
 
+	* Increased test coverage overall to 85%.
+
+	* Now test the shell code fairly well.
+
 	* Cleaned up some of the stdout issues with nose.
 
 	* fixed buggishness in shell code.

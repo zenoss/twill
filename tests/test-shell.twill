@@ -1,0 +1,8 @@
+version
+help help
+help exit
+help version
+
+extend_with test_extensions
+flag_true
+assert_flag

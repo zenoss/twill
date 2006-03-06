@@ -6,7 +6,7 @@
 #### also, be sure to test $/__ interpolation.
 
 #debug http 1
-#debug twill 1
+#debug commands 1
 
 setglobal init __url__
 
@@ -219,5 +219,7 @@ submit
 
 show
 code 200
+
+go /
 
 runfile test-go.twill

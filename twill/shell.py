@@ -81,12 +81,14 @@ class TwillCommandLoop(object, cmd.Cmd):
     __metaclass__ = _command_loop_metaclass
     
     def __init__(self, **kw):
-        cmd.Cmd.__init__(self)
+        if kw.has_key('stdin'):
+            cmd.Cmd.__init__(self, None, stdin=kw['stdin'])
+        else:
+            cmd.Cmd.__init__(self)
 
         # initialize a new local namespace.
-        
         namespaces.new_local_dict()
-        self.use_raw_input = False
+        self.use_rawinput = False
 
         # import readline history, if available.
         if readline:
@@ -95,6 +97,10 @@ class TwillCommandLoop(object, cmd.Cmd):
             except IOError:
                 pass
 
+        # fail on unknown commands? for test-shell, primarily.
+        self.fail_on_unknown = kw.get('fail_on_unknown', False)
+
+        # handle initial URL argument
         if kw.get('initial_url'):
             commands.go(kw['initial_url'])
             
@@ -133,11 +139,14 @@ class TwillCommandLoop(object, cmd.Cmd):
             return
 
         try:
-            parse.execute_command(cmd, args, global_dict, local_dict, "<shell>")
+            parse.execute_command(cmd, args, global_dict, local_dict,
+                                  "<shell>")
         except SystemExit:
             raise
         except Exception, e:
             print '\nERROR: %s\n' % (str(e),)
+            if self.fail_on_unknown:
+                raise
 
     def emptyline(self):
         "Ignore empty lines."
@@ -155,7 +164,7 @@ class TwillCommandLoop(object, cmd.Cmd):
 
     def do_version(self, *args):
         print "\ntwill version %s.\n" % (__version__,)
-        print "See http://www.idyll.org/~t/www-tools/twill.html for more info."
+        print "See http://www.idyll.org/~t/www-tools/twill/ for more info."
         print ""
 
     def help_version(self):
