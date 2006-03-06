@@ -18,7 +18,11 @@ setup(name = 'twill',
                   'twill.other_packages.ClientCookie',
                   'twill.other_packages.mechanize',
                   'twill.extensions'],
-      scripts = ['twill-sh', 'twill-fork'],
+
+      # allow both 
+      entry_points = dict(console_scripts=['twill-sh = twill.shell:main'],),
+      scripts = ['twill-fork'],
+      
       maintainer = 'C. Titus Brown',
       maintainer_email = 'titus@caltech.edu',
 

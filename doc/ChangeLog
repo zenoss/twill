@@ -1,3 +1,10 @@
+2006-03-06  Titus Brown  <t@issola.caltech.edu>
+
+	* fixed twill.shell.main() so that -i flag makes interact run
+	  even on failure exit.
+
+	* Added setuptools entry_points magic for twill-sh script.
+
 2006-03-05  Titus Brown  <t@issola.caltech.edu>
 
 	* SystemExit problems in the twill shell, fixed.

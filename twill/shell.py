@@ -180,3 +180,105 @@ class TwillCommandLoop(object, cmd.Cmd):
 
     do_quit = do_exit
     help_quit = help_exit
+
+def main():
+    import sys
+    from twill import TwillCommandLoop, execute_file, __version__
+    from optparse import OptionParser
+    from cStringIO import StringIO
+
+    ###
+    # make sure that the current working directory is in the path.  does this
+    # work on Windows??
+
+    if not '.' in sys.path:
+        sys.path.append('.')
+    ###
+
+    #### OPTIONS
+
+    parser = OptionParser()
+
+    parser.add_option('-q', '--quiet', action="store_true", dest="quiet",
+                      help = 'do not show normal output')
+
+    parser.add_option('-i', '--interactive', action="store_true", dest="interact",
+              help = 'drop into an interactive shell after running files (if any)')
+
+    parser.add_option('-f', '--fail', action="store_true", dest="fail",
+                      help = 'fail exit on first file to fail')
+
+    parser.add_option('-v', '--version', action="store_true", dest="show_version",
+                      help = 'show version information and exit')
+
+    parser.add_option('-u', '--url', nargs=1, action="store", dest="url",
+                      help="start at the given URL before each script")
+
+    ####
+
+    # parse arguments.
+    (options, args) = parser.parse_args()
+
+    if options.show_version:
+        print 'twill version %s.' % (__version__,)
+        sys.exit(0)
+
+    if options.quiet:
+        assert not options.interact, "interactive mode is incompatible with -q"
+        assert args, "interactive mode is incompatible with -q"
+
+        old_stdout = sys.stdout
+        sys.stdout = StringIO()
+
+    # If run from the command line, find & run any scripts put on the command
+    # line.  If none, drop into an interactive AutoShell.
+
+    failed = False
+    if len(args):
+        success = []
+        failure = []
+        for filename in args:
+            if filename[-1] == '~':
+                print 'SKIPPING backup file:', filename
+                continue
+
+            print '>> EXECUTING FILE', filename
+
+            try:
+                execute_file(filename, initial_url=options.url)
+                success.append(filename)
+            except Exception, e:
+                if options.fail:
+                    raise
+                else:
+                    print '** UNHANDLED EXCEPTION:', str(e)
+                    failure.append(filename)
+
+        print '--'
+        print '%d of %d files SUCCEEDED.' % (len(success),
+                                             len(success) + len(failure),)
+        if len(failure):
+            print 'Failed:\n\t',
+            print "\n\t".join(failure)
+            failed = True
+
+    if not args or options.interact:
+        welcome_msg = ""
+        if not args:
+            welcome_msg = "\n -= Welcome to twill! =-\n"
+
+        shell = TwillCommandLoop(initial_url=options.url)
+
+        while 1:
+            try:
+                shell.cmdloop(welcome_msg)
+            except KeyboardInterrupt:
+                sys.stdout.write('\n')
+            except SystemExit:
+                raise
+
+            welcome_msg = ""
+
+    if failed:
+        sys.exit(1)
+    sys.exit(0)
