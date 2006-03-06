@@ -210,12 +210,20 @@ def run_tidy(html):
     errors = None
     if success:
         try:
-            clean_html = open(out_filename).read()
+            fp = open(out_filename)
+            try:
+                clean_html = fp.read()
+            finally:
+                fp.close()
         except IOError:
             pass
 
         try:
-            errors = open(err_filename).read().strip()
+            fp = open(err_filename)
+            try:
+                errors = fp.read().strip()
+            finally:
+                fp.close()
         except IOError:
             pass
 
