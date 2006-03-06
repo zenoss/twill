@@ -51,8 +51,6 @@ class Token:
     >>> t = Token("starttag", "a", [("href", "http://www.python.org/")])
     >>> t == ("starttag", "a", [("href", "http://www.python.org/")])
     True
-    >>> t.type, t.data == "starttag", "a"
-    True
     >>> t.attrs == [("href", "http://www.python.org/")]
     True
 
