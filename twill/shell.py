@@ -47,7 +47,7 @@ class _command_loop_metaclass(type):
                         return
 
                 try:
-                    parse.execute_command(cmd, args, global_dict, local_dict)
+                    parse.execute_command(cmd, args, global_dict, local_dict, "<shell>")
                 except Exception, e:
                     print '\nERROR: %s\n' % (str(e),)
                 
@@ -133,7 +133,7 @@ class TwillCommandLoop(object, cmd.Cmd):
             return
 
         try:
-            parse.execute_command(cmd, args, global_dict, local_dict)
+            parse.execute_command(cmd, args, global_dict, local_dict, "<shell>")
         except SystemExit:
             raise
         except Exception, e:
