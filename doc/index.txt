@@ -99,7 +99,8 @@ to mechanize.  Michele Simionato is an early adopter who has helped
 quite a bit.  Thanks, guys...
 
 Bug reports have come in from the following fine people: Chris Miles,
-MATSUNO Tokuhiro, Elvelind Grandin, Mike Rovner, and sureshvv.
+MATSUNO Tokuhiro, Elvelind Grandin, Mike Rovner,  sureshvv,
+and Alexander Shvedunov.
 
 Patches have been submitted by Joeri van Ruth, Paul McGuire, Ed Rahn,
 Nic Ferrier, Robert Leftwich, James Cameron, William Volkman,
@@ -116,7 +117,7 @@ Tommi Virtanen, Simon Buenzli, and sureshvv.  Thanks!
 .. _archive: http://lists.idyll.org/pipermail/twill/
 
 .. _cmd: http://docs.python.org/lib/module-cmd.html
-.. _twill 0.8.3: ANNOUNCE-0.8.3.txt
+.. _twill 0.8.4: ANNOUNCE-0.8.4.txt
 
 .. _LGPL: http://www.gnu.org/copyleft/lesser.html
 .. _easy_install: http://peak.telecommunity.com/DevCenter/EasyInstall

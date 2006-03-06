@@ -47,7 +47,9 @@ __all__ = ['reset_browser',
            'title',
            'exit',
            'config',
-           'tidy_ok'
+           'tidy_ok',
+           'redirect_output',
+           'reset_output'
            ]
 
 import re, getpass, time
@@ -71,6 +73,7 @@ def reset_browser():
     Reset the browser completely.
     """
     global browser
+    browser._browser.close()
     browser = TwillBrowser()
 
     global _options
@@ -605,6 +608,25 @@ def title(what):
     global_dict, local_dict = get_twill_glocals()
     local_dict['__match__'] = m.group()
     return title
+
+def redirect_output(filename):
+    """
+    >> redirect_output <filename>
+
+    Append all twill output to the given file.
+    """
+    import twill
+    fp = open(filename, 'a')
+    twill.set_output(fp)
+
+def reset_output():
+    """
+    >> reset_output
+
+    Reset twill output to go to the screen.
+    """
+    import twill
+    twill.set_output(None)
 
 ### options
 

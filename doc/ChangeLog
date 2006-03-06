@@ -1,5 +1,9 @@
 2006-03-05  Titus Brown  <t@issola.caltech.edu>
 
+	* Added 'redirect_output' and 'reset_output'. (Norman Khine)
+
+	* Fixed memory leak in reset_browser(). (Alexander Shvedunov)
+
 	* Increased test coverage overall to 85%.
 
 	* Now test the shell code fairly well.

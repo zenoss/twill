@@ -55,7 +55,8 @@ class History:
         del self._history[:]
     def close(self):
         for request, response in self._history:
-            response.close()
+            if response is not None:
+                response.close()
         del self._history[:]
     def __len__(self):
         return len(self._history)

@@ -39,6 +39,14 @@ regular expression.
 Display
 =======
 
+**echo** *<string>* -- echo the string to the screen.
+
+**redirect_output** *<filename>* -- append all twill output to the given file.
+
+**reset_output** -- display all output to the screen.
+
+**save_html** *<filename>* -- save the current page's HTML into a file.
+
 **show** -- show the current page's HTML.  When called from Python, this function will also return a string containing the HTML.
 
 **showlinks** -- show all of the links on the current page.  When called from Python, this function returns a list of the link objects.
@@ -46,10 +54,6 @@ Display
 **showforms** -- show all of the forms on the current page.  When called from Python, this function returns a list of the forms.
 
 **showhistory** -- show the browser history.  When called from Python, this function returns the history.
-
-**echo** *<string>* -- echo the string to the screen.
-
-**save_html** *<filename>* -- save the current page's HTML into a file.
 
 Forms
 =====

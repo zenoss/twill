@@ -83,12 +83,12 @@ class TwillCommandLoop(object, cmd.Cmd):
     def __init__(self, **kw):
         if kw.has_key('stdin'):
             cmd.Cmd.__init__(self, None, stdin=kw['stdin'])
+            self.use_rawinput = False
         else:
             cmd.Cmd.__init__(self)
 
         # initialize a new local namespace.
         namespaces.new_local_dict()
-        self.use_rawinput = False
 
         # import readline history, if available.
         if readline:
