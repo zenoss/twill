@@ -1,3 +1,7 @@
+"""
+Test a boatload of miscellaneous functionality.
+"""
+
 import sys
 import twilltestlib
 import twill, twill.browser, twill.commands

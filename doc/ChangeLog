@@ -1,3 +1,11 @@
+2006-03-05  Titus Brown  <t@issola.caltech.edu>
+
+	* Cleaned up some of the stdout issues with nose.
+
+	* fixed buggishness in shell code.
+
+	* Made sure to close fp in tidy code.
+
 2006-02-28  Titus Brown  <t@issola.caltech.edu>
 
 	* runfile now allows multiple filenames properly.
