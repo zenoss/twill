@@ -1,5 +1,7 @@
 2006-03-05  Titus Brown  <t@issola.caltech.edu>
 
+	* SystemExit problems in the twill shell, fixed.
+
 	* Added 'redirect_output' and 'reset_output'. (Norman Khine)
 
 	* Fixed memory leak in reset_browser(). (Alexander Shvedunov)

@@ -48,6 +48,8 @@ class _command_loop_metaclass(type):
 
                 try:
                     parse.execute_command(cmd, args, global_dict, local_dict, "<shell>")
+                except SystemExit:
+                    raise
                 except Exception, e:
                     print '\nERROR: %s\n' % (str(e),)
                 
