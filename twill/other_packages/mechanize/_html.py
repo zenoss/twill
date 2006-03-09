@@ -29,7 +29,7 @@ def form_parser_args(
     form_parser_class=None,
     request_class=None,
     backwards_compat=False,
-    encoding="latin-1",  # deprecated
+    encoding="utf-8",  # deprecated
     ):
     return get_args(locals())
 
@@ -90,7 +90,7 @@ def get_entitydefs():
     except AttributeError:
         entitydefs = {}
         for name, char in htmlentitydefs.entitydefs.items():
-            uc = char.decode("latin-1")
+            uc = char.decode("utf-8")
             if uc.startswith("&#") and uc.endswith(";"):
                 uc = unescape_charref(uc[2:-1], None)
             codepoint = ord(uc)
@@ -190,7 +190,7 @@ class FormsFactory:
                  request_class=None,
                  backwards_compat=False,
                  ignore_errors=False,
-                 encoding="latin-1",  # deprecated
+                 encoding="utf-8",  # deprecated
                  ):
         import ClientForm
         self.select_default = select_default

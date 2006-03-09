@@ -87,7 +87,7 @@ class Browser(UserAgent, OpenerMixin):
 
     """
 
-    def __init__(self, default_encoding="latin-1",
+    def __init__(self, default_encoding="utf-8",
                  factory=None,
                  history=None,
                  request_class=None,

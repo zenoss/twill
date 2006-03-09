@@ -166,7 +166,7 @@ string.
                         l.append(k + '=' + urllib.quote_plus(str(elt)))
     return '&'.join(l)
 
-def unescape(data, entities, encoding="latin-1"):
+def unescape(data, entities, encoding="utf-8"):
     if data is None or "&" not in data:
         return data
 
@@ -403,7 +403,7 @@ class ParseError(Exception): pass
 class _AbstractFormParser:
     """forms attribute contains HTMLForm instances on completion."""
     # thanks to Moshe Zadka for an example of sgmllib/htmllib usage
-    def __init__(self, entitydefs=None, encoding="latin-1"):
+    def __init__(self, entitydefs=None, encoding="utf-8"):
         if entitydefs is None:
             entitydefs = get_entitydefs()
         self._entitydefs = entitydefs
@@ -698,13 +698,13 @@ try:
     import HTMLParser
 except ImportError:
     class XHTMLCompatibleFormParser:
-        def __init__(self, entitydefs=None, encoding="latin-1"):
+        def __init__(self, entitydefs=None, encoding="utf-8"):
             raise ValueError("HTMLParser could not be imported")
 else:
     class XHTMLCompatibleFormParser(_AbstractFormParser, HTMLParser.HTMLParser):
         """Good for XHTML, bad for tolerance of incorrect HTML."""
         # thanks to Michael Howitz for this!
-        def __init__(self, entitydefs=None, encoding="latin-1"):
+        def __init__(self, entitydefs=None, encoding="utf-8"):
             HTMLParser.HTMLParser.__init__(self)
             _AbstractFormParser.__init__(self, entitydefs, encoding)
 
@@ -759,7 +759,7 @@ class _AbstractSgmllibParser(_AbstractFormParser):
 
 class FormParser(_AbstractSgmllibParser, sgmllib.SGMLParser):
     """Good for tolerance of incorrect HTML, bad for XHTML."""
-    def __init__(self, entitydefs=None, encoding="latin-1"):
+    def __init__(self, entitydefs=None, encoding="utf-8"):
         sgmllib.SGMLParser.__init__(self)
         _AbstractFormParser.__init__(self, entitydefs, encoding)
 
@@ -772,7 +772,7 @@ except ImportError:
 else:
     class _AbstractBSFormParser(_AbstractSgmllibParser):
         bs_base_class = None
-        def __init__(self, entitydefs=None, encoding="latin-1"):
+        def __init__(self, entitydefs=None, encoding="utf-8"):
             _AbstractFormParser.__init__(self, entitydefs, encoding)
             self.bs_base_class.__init__(self)
         def handle_data(self, data):
@@ -801,7 +801,7 @@ def ParseResponse(response, select_default=False,
                   request_class=urllib2.Request,
                   entitydefs=None,
                   backwards_compat=True,
-                  encoding="latin-1",
+                  encoding="utf-8",
                   ):
     """Parse HTTP response and return a list of HTMLForm instances.
 
@@ -877,7 +877,7 @@ def ParseFile(file, base_uri, select_default=False,
               request_class=urllib2.Request,
               entitydefs=None,
               backwards_compat=True,
-              encoding="latin-1",
+              encoding="utf-8",
               ):
     """Parse HTML and return a list of HTMLForm instances.
 
