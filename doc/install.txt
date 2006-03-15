@@ -2,6 +2,8 @@
 Installing twill
 ================
 
+.. contents::
+
 The recommended way to install twill is to use easy_install_: ::
 
    easy_install twill

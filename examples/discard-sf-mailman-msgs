@@ -1,6 +1,4 @@
-# load in the mailman_sf extensions module ('extensions/' must be
-# in your PYTHONPATH).
-
+# load in the mailman_sf extensions module
 extend_with mailman_sf
 
 # unfortunately we have to hard-code in the mailing list name for

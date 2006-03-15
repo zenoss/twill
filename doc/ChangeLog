@@ -1,5 +1,9 @@
 2006-03-15  Titus Brown  <t@issola.caltech.edu>
 
+	* Added check_links extension module.
+
+	* Added simple extension module documentation.
+
 	* Added installation instructions.
 
 2006-03-14  Titus Brown  <t@issola.caltech.edu>
