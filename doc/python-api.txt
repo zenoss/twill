@@ -86,6 +86,26 @@ Notes:
     conditionals, e.g. see the ``discard-sf-mailman-msgs`` example
     script.
 
+Passing variables from Python into twill
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Suppose you write an extension function, and you want to return some
+values from that extension function for later use in filling out forms.
+How do you do this?
+
+The simplest way is to simply insert them into the global or local
+dictionary, like so: ::
+
+  from twill.namespaces import get_twill_glocals
+  global_dict, local_dict = get_twill_glocals()
+
+  global_dict['varname'] = value
+
+You can then use the usual variable access methods to substitute for
+varname, e.g. ::
+
+  formvalue 1 field $varname
+
 Using twill in other Python programs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -85,6 +85,25 @@ script.</li>
 </ul>
 </blockquote>
 </div>
+<div class="section" id="passing-variables-from-python-into-twill">
+<h1><a name="passing-variables-from-python-into-twill">Passing variables from Python into twill</a></h1>
+<p>Suppose you write an extension function, and you want to return some
+values from that extension function for later use in filling out forms.
+How do you do this?</p>
+<p>The simplest way is to simply insert them into the global or local
+dictionary, like so:</p>
+<pre class="literal-block">
+from twill.namespaces import get_twill_glocals
+global_dict, local_dict = get_twill_glocals()
+
+global_dict['varname'] = value
+</pre>
+<p>You can then use the usual variable access methods to substitute for
+varname, e.g.</p>
+<pre class="literal-block">
+formvalue 1 field $varname
+</pre>
+</div>
 <div class="section" id="using-twill-in-other-python-programs">
 <h1><a name="using-twill-in-other-python-programs">Using twill in other Python programs</a></h1>
 <p>All of the commands available in twill are implemented as top-level functions

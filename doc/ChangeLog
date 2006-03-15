@@ -1,6 +1,13 @@
+2006-03-14  Titus Brown  <t@issola.caltech.edu>
+
+	* Added list of known problems.
+
+	* Added Web testing programs for Perl & PHP to docs.
+
 2006-03-09  Titus Brown  <t@issola.caltech.edu>
 
-	* Switched mechanize default encodings over to utf-8.
+	* Switched mechanize default encodings over to utf-8 (Terry
+	  Peppers, many others!)
 
 2006-03-06  Titus Brown  <t@issola.caltech.edu>
 

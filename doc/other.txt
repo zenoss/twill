@@ -74,6 +74,15 @@ of `twill in Javascript`_.
 
 (Thanks to Grig Gheorghiu for assembling much of this list!)
 
+Tools in Other Languages
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+As twill is based upon mechanize, so is Perl's `WWW::Mechanize::Shell`_
+based upon `WWW::Mechanize`_.  There's even an `HTTP::Recorder`_.
+WebTst_ also looks interesting.
+
+For PHP, web_tester_ looks useful.
+
 .. _PBP: http://pbp.berlios.de/
 .. _maxq: http://maxq.tigris.org/
 .. _mechanize: http://wwwsearch.sf.net/
@@ -98,3 +107,10 @@ of `twill in Javascript`_.
 .. _tidy page: http://tidy.sourceforge.net/
 .. _easy_install/setuptools: http://peak.telecommunity.com/DevCenter/EasyInstall
 .. _installing easy_install: http://peak.telecommunity.com/DevCenter/EasyInstall#installing-easy-install
+
+.. _WebTst: http://webtst.sourceforge.net/documentation.html
+
+.. _`WWW::Mechanize`: http://search.cpan.org/perldoc?WWW::Mechanize::Shell
+.. _`WWW::Mechanize::Shell`: http://search.cpan.org/perldoc?WWW::Mechanize::Shell
+.. _`HTTP::Recorder`: http://www.perl.com/pub/a/2004/06/04/recorder.html
+.. _web_tester: http://www.lastcraft.com/web_tester_documentation.php

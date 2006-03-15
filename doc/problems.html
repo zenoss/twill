@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.3.7: http://docutils.sourceforge.net/" />
+<title>Known Problems or Error Messages</title>
+<link rel="stylesheet" href="default.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="known-problems-or-error-messages">
+<h1 class="title">Known Problems or Error Messages</h1>
+<p>Problems posted to the twill mailing list (or sent to Titus personally)
+will end up here if they are either outside the scope of twill, or
+intractable within the context of the twill project!</p>
+<p>Last updated Mar 2006.</p>
+<div class="section" id="inspect-module-masking">
+<h1><a name="inspect-module-masking">1. inspect module masking</a></h1>
+<p>The error message</p>
+<pre class="literal-block">
+AttributeError: 'module' object has no attribute 'getmro'
+</pre>
+<p>is caused by masking of the default Python 'inspect' module with another
+module named 'inspect'.  Known to happen in Webware installs.
+(Reported by David Hancock.)</p>
+</div>
+<div class="section" id="empty-textarea-form-elements-are-filled-with-a-newline-by-tidy">
+<h1><a name="empty-textarea-form-elements-are-filled-with-a-newline-by-tidy">2. Empty 'textarea' form elements are filled with a newline by 'tidy'.</a></h1>
+<p>Specifically,</p>
+<pre class="literal-block">
+&lt;textarea&gt;&lt;/textarea&gt;
+</pre>
+<p>is turned into</p>
+<pre class="literal-block">
+&lt;textarea&gt;
+&lt;/textarea&gt;
+</pre>
+<p>by tidy.  Set 'config use_tidy 0' to turn this off.  You can use</p>
+<pre class="literal-block">
+&lt;textarea /&gt;
+</pre>
+<p>to sneak an empty textarea through tidy.</p>
+<p>(Reported by Gabor Farkas.)</p>
+</div>
+<div class="section" id="unicode-support-is-still-young">
+<h1><a name="unicode-support-is-still-young">3. Unicode support is still young.</a></h1>
+<p>It's not yet clear how well mechanize and twill adhere to either the
+official recommendations
+(<a class="reference" href="http://www.w3.org/TR/REC-html40/charset.html">http://www.w3.org/TR/REC-html40/charset.html</a>) or the unofficial
+recommendations (<a class="reference" href="http://www.alanwood.net/unicode/htmlunicode.html">http://www.alanwood.net/unicode/htmlunicode.html</a>) for
+dealing with unicode.  There are definitely some problems in the version
+of mechanize included with twill in 0.8.4; this should be resolved in
+later releases.</p>
+</div>
+</div>
+</body>
+</html>

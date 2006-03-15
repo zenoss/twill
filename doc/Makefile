@@ -1,5 +1,5 @@
 all: index.html commands.html developer.html python-api.html testing.html \
-     other.html browsing.html examples.html
+     other.html browsing.html examples.html problems.html
 
 %.html : %.txt
 	rst2html.py $< $@
