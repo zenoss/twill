@@ -110,6 +110,7 @@ Tommi Virtanen, Simon Buenzli, and sureshvv.  Thanks!
 
 ----
 
+.. _Installing twill: install.html
 .. _Web browsing with twill: browsing.html
 .. _Language reference: commands.html
 .. _Developer information: developer.html
@@ -117,6 +118,7 @@ Tommi Virtanen, Simon Buenzli, and sureshvv.  Thanks!
 .. _Testing Web sites with twill: testing.html
 .. _Other tools and packages: other.html
 .. _Known problems: problems.html
+.. _Extension modules: extensions.html
 .. _archive: http://lists.idyll.org/pipermail/twill/
 
 .. _cmd: http://docs.python.org/lib/module-cmd.html
