@@ -10,7 +10,7 @@ import re
 from twill import commands
 from errors import TwillAssertionError
 
-def check_links(pattern = ''):
+def check_links(pattern = '', visited={}):
     """
     >> check_links [ <pattern> ]
 
@@ -71,18 +71,24 @@ def check_links(pattern = ''):
         try:
             if DEBUG:
                 print>>OUT, "Trying %s" % (link.absolute_url,),
-            browser.follow_link(link)
-            code = browser.get_code()
-            browser.back()
+                
+            if not visited.has_key(link.absolute_url):
+                browser.follow_link(link)
+                code = browser.get_code()
+                browser.back()
+                assert code == 200
 
-            assert code == 200
-            if DEBUG:
-                print>>OUT, '...success!'
+                visited[link.absolute_url] = 1
+                
+                if DEBUG:
+                    print>>OUT, '...success!'
+            else:
+                if DEBUG:
+                    print>>OUT, ' (already visited successfully)'
         except:
             failed.append(link.absolute_url)
             if DEBUG:
                 print>>OUT, '...failure ;('
-            raise
 
     if failed:
         print>>OUT, '\nCould not follow %d links' % (len(failed),)

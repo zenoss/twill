@@ -64,6 +64,33 @@ dealing with multiple matches, etc.  Here's some example code: ::
    echo __matchlist__
    echo __match__
 
+require -- assert that specific conditions hold after each page is loaded
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The 'require' extension module contains four functions that let you
+assert specific conditions.  For example, ::
+
+   extend_with require
+   require success
+
+will assert that after each page load, the HTTP code is 200 ("success").
+'require' does nothing on a 'back' call (which doesn't actually reload
+a page).
+
+Currently there are only two assertions available, 'success' and
+'links_ok'.  'links_ok' automatically runs 'check_links' (see above) after
+each page is loaded.  'links_ok' will not check links twice unless
+you call 'flush_visited' (see below).
+
+The other functions in this module are:
+
+**skip_require** -- don't check the requirements for the next action.
+
+**no_require** -- turn off requirements checking & reset conditions.
+
+**flush_visited** -- flush the list of visited links.
+
+
 mailman_sf -- discard spam messages from your SourceForge mailing lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

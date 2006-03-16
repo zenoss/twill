@@ -72,6 +72,9 @@ class TwillBrowser:
         # do handle HTTP-EQUIV properly.
         self._browser.set_handle_equiv(True)
 
+        # callables to be called after each page load.
+        self._post_load_hooks = []
+        
     def go(self, url):
         """
         Visit given URL.
@@ -519,3 +522,10 @@ class TwillBrowser:
         code = getattr(r, 'code', 200)
 
         self.result = ResultWrapper(code, r.geturl(), r.read())
+
+        #
+        # Now call all of the post load hooks with the function name.
+        #
+        
+        for callable in self._post_load_hooks:
+            callable(func_name, *args, **kwargs)
