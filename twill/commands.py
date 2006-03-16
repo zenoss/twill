@@ -170,10 +170,10 @@ def follow(what):
     Find the first matching link on the page & visit it.
     """
     regexp = re.compile(what)
-    links = browser.find_link(regexp)
+    link = browser.find_link(regexp)
 
-    if links:
-        browser.follow_link(links)
+    if link:
+        browser.follow_link(link)
         return browser.get_url()
 
     raise TwillAssertionError("no links match to '%s'" % (what,))
