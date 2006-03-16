@@ -43,44 +43,6 @@ class ResultWrapper:
     def get_page(self):
         return self.page
 
-def journey(func, *args, **kwargs):
-    """
-    Wrap 'func' so that HTTPErrors and other things are captured when
-    'func' is executed as func(*args, **kwargs).  Convert result into
-    a 'ResultWrapper'.
-    
-    Idea stolen straight from PBP, which used lambda functions waaaaay
-    too much.
-    """
-    try:
-        result = func(*args, **kwargs)
-    except urllib2.HTTPError, e:
-        result = e
-
-    if result is None:
-        return None
-
-    # some result objects (mostly errors) don't have a seek() function.
-    # if, however, there is a seek function -- seek back to 0.
-    try:
-        result.seek(0)
-    except AttributeError:
-        pass
-
-    # some URLs, like 'file:' URLs, don't have return codes.  In this
-    # case, assume success (code=200).
-    try:
-        code = result.code
-    except AttributeError:
-        code = 200
-    
-    new_result = ResultWrapper(code, # HTTP response code
-                               result.geturl(), #  URL
-                               result.read() # HTML
-                               )
-
-    return new_result
-
 def trunc(s, length):
     """
     Truncate a string s to length length, by cutting off the last 

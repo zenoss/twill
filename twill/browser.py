@@ -17,7 +17,7 @@ from mechanize import BrowserStateError, LinkNotFoundError
 
 # twill package imports
 from _browser import PatchedMechanizeBrowser
-from utils import trunc, print_form, journey, ConfigurableParsingFactory
+from utils import trunc, print_form, ConfigurableParsingFactory, ResultWrapper
 
 #
 # TwillBrowser
@@ -26,6 +26,10 @@ from utils import trunc, print_form, journey, ConfigurableParsingFactory
 class TwillBrowser:
     """
     Wrap mechanize behavior in a simple stateful way.
+
+    Public variables:
+
+      * result -- mechanize-style 'result' object.
     """
     def __init__(self):
         #
@@ -42,8 +46,8 @@ class TwillBrowser:
 
         self._browser = b
         
-        self._last_result = None
-        self._last_submit = None
+        self.result = None
+        self.last_submit_button = None
 
         #
         # create & set a cookie jar.
@@ -68,12 +72,6 @@ class TwillBrowser:
         # do handle HTTP-EQUIV properly.
         self._browser.set_handle_equiv(True)
 
-    def _new_page(self):
-        """
-        Reset page-specific stuff -- to be called when visiting a new page.
-        """
-        self._last_submit = None
-        
     def go(self, url):
         """
         Visit given URL.
@@ -99,8 +97,7 @@ class TwillBrowser:
 
         for u in try_urls:
             try:
-                self._last_result = journey(self._browser.open, u)
-                self._new_page()
+                self._journey('open', u)
                 success = True
                 break
             except IOError:
@@ -115,40 +112,33 @@ class TwillBrowser:
         """
         Tell the browser to reload the current page.
         """
-        self._last_result = journey(self._browser.reload)
-        self._new_page()
+        self._journey('reload')
         print>>OUT, '==> reloaded'
 
     def back(self):
         """
         Return to previous page, if possible.
         """
-        back_url = self._browser.back
         try:
-            self._last_result = journey(back_url)
-            self._new_page()
-        except BrowserStateError:
-            self._last_result = None
-
-        if self._last_result is not None:
+            self._journey('back')
             print>>OUT, '==> back to', self.get_url()
-        else:
+        except BrowserStateError:
             print>>OUT, '==> back at empty page.'
-            
+
     def get_code(self):
         """
         Get the HTTP status code received for the current page.
         """
-        if self._last_result:
-            return self._last_result.get_http_code()
+        if self.result:
+            return self.result.get_http_code()
         return None
 
     def get_html(self):
         """
         Get the HTML for the current page.
         """
-        if self._last_result:
-            return self._last_result.get_page()
+        if self.result:
+            return self.result.get_page()
         return None
 
     def get_title(self):
@@ -161,8 +151,8 @@ class TwillBrowser:
         """
         Get the URL of the current page.
         """
-        if self._last_result:
-            return self._last_result.get_url()
+        if self.result:
+            return self.result.get_url()
         return None
 
     def find_link(self, pattern):
@@ -201,8 +191,7 @@ class TwillBrowser:
         """
         Follow the given link.
         """
-        self._last_result = journey(self._browser.follow_link, link)
-        self._new_page()
+        self._journey('follow_link', link)
         print>>OUT, '==> at', self.get_url()
 
     def set_agent_string(self, agent):
@@ -390,11 +379,11 @@ class TwillBrowser:
                 return False
 
             self._browser.select_form(predicate=choose_this_form)
-            self._last_submit = None
+            self.last_submit_button = None
 
         # record the last submit button clicked.
         if isinstance(control, ClientForm.SubmitControl):
-            self._last_submit = control
+            self.last_submit_button = control
 
     def submit(self, fieldname):
         """
@@ -415,8 +404,8 @@ class TwillBrowser:
 
         # no fieldname?  see if we can use the last submit button clicked...
         if not fieldname:
-            if self._last_submit:
-                ctl = self._last_submit
+            if self.last_submit_button:
+                ctl = self.last_submit_button
             else:
                 # get first submit button in form.
                 submits = [ c for c in form.controls \
@@ -463,8 +452,7 @@ class TwillBrowser:
         # now actually GO.
         #
         
-        self._last_result = journey(self._browser.open, request)
-        self._new_page()
+        self._journey('open', request)
 
     def save_cookies(self, filename):
         """
@@ -494,3 +482,38 @@ class TwillBrowser:
                 print>>OUT, '\t', cookie
 
             print>>OUT, ''
+
+    #### private functions.
+
+    def _journey(self, func_name, *args, **kwargs):
+        """
+        'func_name' should be the name of a mechanize method that either
+        returns a 'result' object or raises a urllib2.HTTPError, e.g.
+        one of 'open', 'reload', 'back', or 'follow_link'.
+
+        journey then runs that function with the given arguments and turns
+        the results into a nice friendly standard ResultWrapper object.
+        
+        (Idea stolen straight from PBP.)
+        """
+        # reset
+        self.last_submit_button = None
+        self.result = None
+
+        func = getattr(self._browser, func_name)
+        try:
+            r = func(*args, **kwargs)
+        except urllib2.HTTPError, e:
+            r = e
+
+        # seek back to 0 if a seek() function is present.
+        seek_fn = getattr(r, 'seek', None)
+        if seek_fn:
+            seek_fn(0)
+
+        # some URLs, like 'file:' URLs, don't have return codes.  In this
+        # case, assume success (code=200).
+        code = getattr(r, 'code', 200)
+
+        self.result = ResultWrapper(code, r.geturl(), r.read())
+        return self.result

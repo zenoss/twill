@@ -4,7 +4,7 @@ A small extension function to check all of the links on a page.
 
 __all__ = ['check_links']
 
-DEBUG=False
+DEBUG=True
 
 import re
 from twill import commands

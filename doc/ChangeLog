@@ -1,5 +1,9 @@
 2006-03-15  Titus Brown  <t@issola.caltech.edu>
 
+	* Moved utils.journey() function into TwillBrowser class as
+	  _journey, refactored, simplified & eliminated _new_page()
+	  method.
+
 	* Added check_links extension module.
 
 	* Added simple extension module documentation.
