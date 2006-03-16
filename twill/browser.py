@@ -23,7 +23,7 @@ from utils import trunc, print_form, ConfigurableParsingFactory, ResultWrapper
 # TwillBrowser
 #
 
-class TwillBrowser:
+class TwillBrowser(object):
     """
     Wrap mechanize behavior in a simple stateful way.
 
@@ -65,15 +65,22 @@ class TwillBrowser:
         self._browser.set_handle_robots(None)
 
         # create an HTTP auth handler
-        creds = urllib2.HTTPPasswordMgr()
-        self.creds = creds
-        self._browser.set_credentials(creds)
+        self.creds = urllib2.HTTPPasswordMgr()
 
         # do handle HTTP-EQUIV properly.
         self._browser.set_handle_equiv(True)
 
         # callables to be called after each page load.
         self._post_load_hooks = []
+
+    def _set_creds(self, creds):
+        self._creds = creds
+        self._browser.set_credentials(creds)
+
+    def _get_creds(self):
+        return self._creds
+
+    creds = property(_get_creds, _set_creds)
         
     def go(self, url):
         """

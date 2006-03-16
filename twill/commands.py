@@ -3,6 +3,8 @@ Implementation of all of the individual 'twill' commands available through
 twill-sh.
 """
 
+import urllib2
+
 OUT=None
 
 # export:
@@ -510,8 +512,25 @@ def add_auth(realm, uri, user, passwd):
 
     Add HTTP Basic Authentication information for the given realm/uri.
     """
-    creds = browser.creds
-    creds.add_password(realm, uri, user, passwd)
+    # swap around the type of HTTPPasswordMgr and
+    # HTTPPasswordMgrWithDefaultRealm depending on if with_default_realm 
+    # is on or not.
+    if _options['with_default_realm']:
+        realm = None
+
+        if browser.creds.__class__ == urllib2.HTTPPasswordMgr:
+            passwds = browser.creds.passwd
+            browser.creds = urllib2.HTTPPasswordMgrWithDefaultRealm()
+            browser.creds.passwd = passwds
+            print>>OUT, 'Changed to using HTTPPasswordMgrWithDefaultRealm'
+    else:
+        if browser.creds.__class__ == urllib2.HTTPPasswordMgrWithDefaultRealm:
+            passwds = browser.creds.passwd
+            browser.creds = urllib2.HTTPPasswordMgr()
+            browser.creds.passwd = passwds
+            print>>OUT, 'Changed to using HTTPPasswordMgr'
+
+    browser.creds.add_password(realm, uri, user, passwd)
 
     print>>OUT, "Added auth info: realm '%s' / URI '%s' / user '%s'" % (realm,
                                                                   uri,
@@ -637,6 +656,7 @@ _orig_options = dict(readonly_controls_writeable=False,
                      use_BeautifulSoup=True,
                      require_BeautifulSoup=False,
                      allow_parse_errors=True,
+                     with_default_realm=False,
                      )
 
 _options = {}
