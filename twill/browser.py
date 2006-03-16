@@ -492,7 +492,10 @@ class TwillBrowser:
         one of 'open', 'reload', 'back', or 'follow_link'.
 
         journey then runs that function with the given arguments and turns
-        the results into a nice friendly standard ResultWrapper object.
+        the results into a nice friendly standard ResultWrapper object, which
+        is stored as 'self.result'.
+
+        All exceptions other than urllib2.HTTPError are unhandled.
         
         (Idea stolen straight from PBP.)
         """
@@ -512,8 +515,7 @@ class TwillBrowser:
             seek_fn(0)
 
         # some URLs, like 'file:' URLs, don't have return codes.  In this
-        # case, assume success (code=200).
+        # case, assume success (code=200) if no such attribute.
         code = getattr(r, 'code', 200)
 
         self.result = ResultWrapper(code, r.geturl(), r.read())
-        return self.result
