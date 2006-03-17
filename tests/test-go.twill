@@ -1,6 +1,8 @@
+extend_with require
+require success
+
 echo __url__
 setglobal init __url__
-code 200
 
 show
 title "Hello"
@@ -9,12 +11,10 @@ showhistory
 
 # test going too
 go /login
-code 200
 
 showhistory
 
 go /login
-code 200
 
 showhistory
 
@@ -26,21 +26,17 @@ showhistory
 back
 
 #go ../ @CTB this should work, yes?
-#code 200
 
 ####
 # test '?' behavior
 
 go /echo
-code 200
 
 go /echo?q=a1
-code 200
 find a1
 
 go ?q=a2
 url /echo
-code 200
 find a2
 
-
+no_require
