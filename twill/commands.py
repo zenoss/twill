@@ -385,7 +385,7 @@ def formvalue(formname, fieldname, value):
     nothing is done, unless the config options ('config' command) are
     changed.
 
-    'formvalue' is vailable as 'fv' as well.
+    'formvalue' is available as 'fv' as well.
     """
     form = browser.get_form(formname)
     if not form:
@@ -669,6 +669,7 @@ def config(key=None, value=None):
         if v is None:
             print>>OUT, '*** no such configuration key', key
             print>>OUT, 'valid keys are:', ";".join(_options.keys())
+            raise Exception('no such configuration key: %s' % (key,))
         elif value is None:
             print>>OUT, ''
             print>>OUT, 'key %s: value %s' % (key, v)

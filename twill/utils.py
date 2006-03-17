@@ -98,11 +98,54 @@ def print_form(n, f, OUT):
             print>>OUT, s,
         print>>OUT, ''
 
+def make_boolean(value):
+    """
+    Convert the input value into a boolean like so:
+    
+    >> make_boolean('true')
+    True
+    >> make_boolean('false')
+    False
+    >> make_boolean('1')
+    True
+    >> make_boolean('0')
+    False
+    """
+    value = value.lower().strip()
+
+    # true/false
+    if value in ('true', 'false'):
+        if value == 'true':
+            return True
+        return False
+
+    try:
+        ival = int(value)
+        return bool(ival)
+    except ValueError:
+        pass
+
+    raise Exception("unable to convert '%s' into true/false..." % (value,))
+
 def set_form_control_value(control, val):
     """
-    Helper function to deal with setting form values on lists etc.
+    Helper function to deal with setting form values on checkboxes, lists etc.
     """
-    if isinstance(control, ClientForm.ListControl):
+    if isinstance(control, ClientForm.CheckboxControl):
+        checkbox = control.get(name='True')
+        flag = make_boolean(val)
+
+        if flag:
+            checkbox.selected = 1
+        else:
+            checkbox.selected = 0
+        
+    elif isinstance(control, ClientForm.ListControl):
+        #
+        # for ListControls (checkboxes, multiselect, etc.) we first need
+        # to find the right *value*.
+        #
+
         try:
             v = control.get(name=val)
         except ClientForm.ItemNotFoundError:

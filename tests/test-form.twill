@@ -1,10 +1,11 @@
-config do_run_tidy 0
+extend_with require
+require success
+
+config use_tidy 0
 
 go /multisubmitform
-code 200
 
 go /testform
-code 200
 
 fv 1 selecttest val
 submit
@@ -71,14 +72,51 @@ find "==item AND selecttest=="
 
 ###
 
+#
+# first, test basic premises: checkbox default is false,
+#
+
 go /test_checkbox
-code 200
 submit
-code 200
 find "CHECKBOXTEST: ==False=="
+
+#
+# ...and checkbox can be set to True.
+#
 
 fv 1 checkboxtest True
 submit
-code 200
 find "CHECKBOXTEST: ==True=="
 
+fv 1 checkboxtest 1
+submit
+find "CHECKBOXTEST: ==True=="
+
+fv 1 checkboxtest -1
+submit
+find "CHECKBOXTEST: ==True=="
+
+#
+# ...and checkbox can be set to False.
+#
+
+fv 1 checkboxtest False
+submit
+find "CHECKBOXTEST: ==False=="
+
+fv 1 checkboxtest 0
+submit
+find "CHECKBOXTEST: ==False=="
+
+#
+# make sure we can clear the form, too.
+#
+
+fv 1 checkboxtest True
+formclear 1
+submit
+find "CHECKBOXTEST: ==False=="
+
+###
+
+no_require

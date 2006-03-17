@@ -72,16 +72,15 @@ def test():
         pass
 
     twill.commands.config()
-    twill.commands.config('nada')
     twill.commands.config('readonly_controls_writeable')
-    twill.commands.config('do_run_tidy')
-    twill.commands.config('tidy_should_exist')
+    twill.commands.config('use_tidy')
+    twill.commands.config('require_tidy')
     
     twill.commands.config('readonly_controls_writeable', 1)
-    twill.commands.config('do_run_tidy', 1)
-    twill.commands.config('tidy_should_exist', 0)
+    twill.commands.config('use_tidy', 1)
+    twill.commands.config('require_tidy', 0)
     
-    twill.commands.config('tidy_should_exist', "on")
+    twill.commands.config('require_tidy', "on")
 
     twill.commands.run("print 'hello'")
 

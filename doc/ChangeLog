@@ -1,3 +1,15 @@
+2006-03-17  Titus Brown  <t@issola.caltech.edu>
+
+	* Checkboxes can now be set with True or a non-zero number, and
+	  cleared with a False or '0'.
+
+	* Switched over to using 'require success' instead of code 200
+	  on some scripts.
+
+	* Fixed a number of unknown options ;).
+
+	* 'config' now fails on unknown options.
+
 2006-03-15  Titus Brown  <t@issola.caltech.edu>
 
 	* Moved utils.journey() function into TwillBrowser class as
