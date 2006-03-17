@@ -110,6 +110,10 @@ def make_boolean(value):
     True
     >> make_boolean('0')
     False
+    >> make_boolean('+')
+    True
+    >> make_boolean('-')
+    False
     """
     value = value.lower().strip()
 
@@ -119,11 +123,18 @@ def make_boolean(value):
             return True
         return False
 
+    # 0/nonzero
     try:
         ival = int(value)
         return bool(ival)
     except ValueError:
         pass
+
+    # +/-
+    if value in ('+', '-'):
+        if value == '+':
+            return True
+        return False
 
     raise Exception("unable to convert '%s' into true/false..." % (value,))
 
@@ -143,20 +154,34 @@ def set_form_control_value(control, val):
     elif isinstance(control, ClientForm.ListControl):
         #
         # for ListControls (checkboxes, multiselect, etc.) we first need
-        # to find the right *value*.
+        # to find the right *value*.  Then we need to set it +/-.
         #
 
+        # figure out if we want to *select* it, or if we want to *deselect*
+        # it (flag T/F).  By default (no +/-) ...
+        
+        if val.startswith('-'):
+            val = val[1:]
+            flag = False
+        else:
+            flag = True
+            if val.startswith('+'):
+                val = val[1:]
+
         try:
-            v = control.get(name=val)
+            item = control.get(name=val)
         except ClientForm.ItemNotFoundError:
             try:
-                v = control.get(label=val)
+                item = control.get(label=val)
             except ClientForm.AmbiguityError:
                 raise ClientForm.ItemNotFoundError('multiple matches to value/label "%s" in list control' % (val,))
             except ClientForm.ItemNotFoundError:
                 raise ClientForm.ItemNotFoundError('cannot find value/label "%s" in list control' % (val,))
 
-        v.selected = 1
+        if flag:
+            item.selected = 1
+        else:
+            item.selected = 0
     else:
         control.value = val
 
