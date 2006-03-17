@@ -12,6 +12,7 @@ from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
 
 import twill.commands as commands
 import namespaces
+import re
 
 ### pyparsing stuff
 
@@ -76,14 +77,14 @@ def process_args(args, globals_dict, locals_dict):
             newargs.append(val)
 
         # $variable substitution
-        elif arg.startswith('$'):
+        elif arg.startswith('$') and not arg.startswith('${'):
             try:
                 val = eval(arg[1:], globals_dict, locals_dict)
             except NameError:           # not in dictionary; don't interpret.
                 val = arg
             newargs.append(val)
         else:
-            newargs.append(arg)
+            newargs.append(variable_substitution(arg, globals_dict, locals_dict))
 
     return newargs
 
@@ -225,3 +226,21 @@ def debug_print_commands(flag):
     global _print_commands
     _print_commands = bool(flag)
         
+
+variable_expression = re.compile("\${(.*?)}")
+
+def variable_substitution(raw_str, globals_dict, locals_dict):
+    str=''
+    pos = 0
+    for m in variable_expression.finditer(raw_str):
+        str = str+raw_str[pos:m.start()]
+        try:
+            str = str + eval(m.group(1), globals_dict, locals_dict)
+        except NameError:
+            str = str + m.group()
+        pos = m.end()
+
+    str = str+raw_str[pos:]
+
+    return str
+

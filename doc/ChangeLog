@@ -1,5 +1,9 @@
 2006-03-17  Titus Brown  <t@issola.caltech.edu>
 
+	* Added in Jeff Martin's ${variable} expansion patch.
+
+	* List values can now be selected/deselected with +/-.
+
 	* Checkboxes can now be set with True or a non-zero number, and
 	  cleared with a False or '0'.
 
