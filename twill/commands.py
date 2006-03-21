@@ -524,6 +524,7 @@ def debug(what, level):
     <what> can be:
        * http (any level >= 1), to display the HTTP transactions.
        * commands (any level >= 1), to display the commands being executed.
+       * equiv-refresh (any level >= 1) to display HTTP-EQUIV refresh handling.
     """
     import parse
     

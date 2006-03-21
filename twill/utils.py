@@ -143,7 +143,7 @@ def set_form_control_value(control, val):
     Helper function to deal with setting form values on checkboxes, lists etc.
     """
     if isinstance(control, ClientForm.CheckboxControl):
-        checkbox = control.get(name='True')
+        checkbox = control.get()
         flag = make_boolean(val)
 
         if flag:
