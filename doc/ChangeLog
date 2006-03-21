@@ -1,3 +1,12 @@
+2006-03-21  Titus Brown  <t@issola.caltech.edu>
+
+	* Added in Stephen Thorne's fix for readonly-controls printout.
+
+	* Added in Stephen Thorne's checkbox test & added 'on'/'off' for
+	  checkbox stuff.
+
+	* Added in Stephen Thorne's "with_default_realm" auth patch.
+
 2006-03-17  Titus Brown  <t@issola.caltech.edu>
 
 	* Added in Jeff Martin's ${variable} expansion patch.

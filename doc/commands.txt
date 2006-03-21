@@ -145,7 +145,8 @@ it in ``__password__``.  When called from Python, this function returns the inpu
 
 tells twill that a request from the authentication realm
 "IdyllStuff" under http://www.idyll.org/ should be answered with
-username 'titus', password 'test'.
+username 'titus', password 'test'.  If the 'with_default_realm' option
+is set to True, ignore 'realm'.
 
 **config** [*<key>* [*<value>*]] -- show/set configuration options.
 

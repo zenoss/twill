@@ -136,6 +136,12 @@ def make_boolean(value):
             return True
         return False
 
+    # on/off
+    if value in ('on', 'off'):
+        if value == 'on':
+            return True
+        return False
+
     raise Exception("unable to convert '%s' into true/false..." % (value,))
 
 def set_form_control_value(control, val):

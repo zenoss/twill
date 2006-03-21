@@ -73,6 +73,8 @@ class TwillBrowser(object):
         # callables to be called after each page load.
         self._post_load_hooks = []
 
+    ### get/set HTTP authentication stuff.
+
     def _set_creds(self, creds):
         self._creds = creds
         self._browser.set_credentials(creds)
