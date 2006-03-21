@@ -89,6 +89,11 @@ find "==item AND selecttest=="
 
 ###
 
+go /test_simple_checkbox
+fv 1 checkboxtest 0
+fv 1 checkboxtest 1
+fv 1 checkboxtest on
+
 #
 # first, test basic premises: checkbox default is false,
 #
