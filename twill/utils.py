@@ -61,23 +61,37 @@ def print_form(n, f, OUT):
     Pretty-print the given form, assigned # n.
     """
     if f.name:
-        print>>OUT, 'Form name=%s' % (f.name,)
+        print>>OUT, '\nForm name=%s' % (f.name,)
     else:
-        print>>OUT, 'Form #%d' % (n + 1,)
+        print>>OUT, '\nForm #%d' % (n + 1,)
 
     if f.controls:
-        print>>OUT, "## __Name__________________ __Type___ __ID________ __Value__________________"
+        print>>OUT, "## ## __Name__________________ __Type___ __ID________ __Value__________________"
 
+
+    submit_indices = {}
+    n = 1
+    for c in f.controls:
+        if c.is_of_kind('clickable'):
+            submit_indices[c] = n
+            n += 1
+            
     clickies = [c for c in f.controls if c.is_of_kind('clickable')]
     nonclickies = [c for c in f.controls if c not in clickies]
 
-    for field in nonclickies:
+    for n, field in enumerate(f.controls):
         if hasattr(field, 'items'):
             items = [ i.name for i in field.items ]
             value_displayed = "%s of %s" % (field.value, items)
         else:
             value_displayed = "%s" % (field.value,)
-        strings = ("  ",
+
+        if field.is_of_kind('clickable'):
+            submit_index = "%-2s" % (submit_indices[field],)
+        else:
+            submit_index = "  "
+        strings = ("%-2s" % (n + 1,),
+                   submit_index,
                    "%-24s %-9s" % (trunc(str(field.name), 24),
                                    trunc(field.type, 9)),
                    "%-12s" % (trunc(field.id or "(None)", 12),),
@@ -87,16 +101,7 @@ def print_form(n, f, OUT):
             print>>OUT, s,
         print>>OUT, ''
 
-    for n, field in enumerate(clickies):
-        strings = ("%-2s" % (n+1,),
-                   "%-24s %-9s" % (trunc(field.name, 24),
-                                   trunc(field.type, 9)),
-                   "%-12s" % (trunc(field.id or "(None)", 12),),
-                   trunc(field.value, 40),
-                   )
-        for s in strings:
-            print>>OUT, s,
-        print>>OUT, ''
+    print ''
 
 def make_boolean(value):
     """
@@ -115,6 +120,7 @@ def make_boolean(value):
     >> make_boolean('-')
     False
     """
+    value = str(value)
     value = value.lower().strip()
 
     # true/false
@@ -413,13 +419,15 @@ class FunctioningHTTPRefreshProcessor(ClientCookie.HTTPRefreshProcessor):
     tag may not contain 'url='.  CTB hack.
     """
     def http_response(self, request, response):
+        from twill.commands import OUT, _options
+        do_refresh = _options.get('acknowledge_equiv_refresh')
+        
         code, msg, hdrs = response.code, response.msg, response.info()
 
-        if code == 200 and hdrs.has_key("refresh"):
+        if code == 200 and hdrs.has_key("refresh") and do_refresh:
             refresh = getheaders(hdrs, "refresh")[0]
             
             if _debug_print_refresh:
-                from twill.commands import OUT
                 print>>OUT, "equiv-refresh DEBUG: code 200, hdrs has 'refresh'"
                 print>>OUT, "equiv-refresh DEBUG: refresh header is", refresh
                 
@@ -429,7 +437,6 @@ class FunctioningHTTPRefreshProcessor(ClientCookie.HTTPRefreshProcessor):
                 pause = int(pause)
 
                 if _debug_print_refresh:
-                    from twill.commands import OUT
                     print>>OUT, "equiv-refresh DEBUG: pause:", pause
                     print>>OUT, "equiv-refresh DEBUG: new url:", newurl_spec
                 
@@ -440,8 +447,9 @@ class FunctioningHTTPRefreshProcessor(ClientCookie.HTTPRefreshProcessor):
                     newurl = newurl_spec
 
                 if _debug_print_refresh:
-                    from twill.commands import OUT
                     print>>OUT, "equiv-refresh DEBUG: final url:", newurl
+
+                print>>OUT, "Following HTTP-EQUIV=REFRESH to %s" % (newurl,)
                     
                 if (self.max_time is None) or (pause <= self.max_time):
                     if pause != 0 and 0:  # CTB hack! ==#  and self.honor_time:

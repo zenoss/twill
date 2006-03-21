@@ -530,6 +530,10 @@ class TwillBrowser(object):
         # case, assume success (code=200) if no such attribute.
         code = getattr(r, 'code', 200)
 
+        ## special case refresh loops!?
+        if code == 'refresh':
+            raise Exception("infinite refresh loop discovered; aborting.\nTry turning off acknowledge_equiv_refresh...")
+
         self.result = ResultWrapper(code, r.geturl(), r.read())
 
         #

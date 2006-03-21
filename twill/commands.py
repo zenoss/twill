@@ -657,6 +657,7 @@ _orig_options = dict(readonly_controls_writeable=False,
                      require_BeautifulSoup=False,
                      allow_parse_errors=True,
                      with_default_realm=False,
+                     acknowledge_equiv_refresh=True
                      )
 
 _options = {}
@@ -676,7 +677,11 @@ def config(key=None, value=None):
      * 'require_tidy', default 0;
      * 'use_BeautifulSoup', default 1;
      * 'allow_parse_errors', default 1;
+     * 'with_default_realm', default 0;
+     * 'acknowledge_equiv_refresh', default 1;
     """
+    import utils
+    
     if key is None:
         keys = _options.keys()
         keys.sort()
@@ -696,9 +701,5 @@ def config(key=None, value=None):
             print>>OUT, 'key %s: value %s' % (key, v)
             print>>OUT, ''
         else:
-            try:
-                value = int(value)
-            except ValueError:
-                pass
-
+            value = utils.make_boolean(value)
             _options[key] = value

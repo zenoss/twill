@@ -11,3 +11,15 @@ go /test_refresh2
 url /login
 code 200
 
+# turn it off & try again
+config acknowledge_equiv_refresh off
+go /test_refresh
+url /test_refresh
+show
+code 200
+
+# turn it back on
+config acknowledge_equiv_refresh on
+reload
+url /login
+code 200

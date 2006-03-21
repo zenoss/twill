@@ -1,5 +1,8 @@
 2006-03-21  Titus Brown  <t@issola.caltech.edu>
 
+	* Added 'acknowledge_equiv_refresh' option & added helpful
+	  error message on infinite refresh detection (Leonardo Santagada).
+
 	* Added in Stephen Thorne's fix for readonly-controls printout.
 
 	* Added in Stephen Thorne's checkbox test & added 'on'/'off' for
