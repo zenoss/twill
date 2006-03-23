@@ -40,10 +40,21 @@ twill does not understand JavaScript, I'm sorry to say.
 
 ---
 
-New features:
+Significant changes with 0.8.4:
 
-  * fixed minor bug in links parsing;
+  * improved installation docs and simplified installation;
 
-  * included BeautifulSoup.
+  * added link checking, requirements processing, and arguments parsing
+    extension modules.
 
-(This is basically a quick bug fix release for twill 0.8.2...)
+  * improved extension module handling; added extension module documentation.
+
+  * fixed memory leaks.
+
+  * fixed tidy problem on Windows.
+
+  * line number of scripts printed on traceback.
+
+  * fixed file:// URLs.
+
+  * added option for debugging HTTP-EQUIV REFRESH code.
