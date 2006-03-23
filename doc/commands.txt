@@ -27,14 +27,15 @@ Assertions
 **code** *<code>* -- assert that the last page loaded had this HTTP status,
 e.g. ``code 200`` asserts that the page loaded fine.
 
-**find** *<regexp>* -- assert that the page contains this regular expression. The variable ``__match__`` is set to the matching string.
+**find** *<regexp>* -- assert that the page contains this regular expression. The variable ``__match__`` is set to the first matching subgroup (or the entire matching string, if no subgroups are specified).  When called from Python,
+the matching string is returned.
 
 **notfind** *<regexp>* -- assert that the page *does not* contain this
 regular expression.
 
-**url** *<regexp>* -- assert that the current URL matches the given regexp.  The variable ``__match__`` is set to the matching string.  When called from Python, the current URL is returned.
+**url** *<regexp>* -- assert that the current URL matches the given regexp.  The variable ``__match__`` is set to the first matching subgroup (or the entire matching string, if no subgroups are specified).  When called from Python, the matching string is returned.
 
-**title** *<regexp>* -- assert that the title of this page matches this regular expression.  The variable ``__match__`` is set to the matching string.  When called from Python, the title string is returned.
+**title** *<regexp>* -- assert that the title of this page matches this regular expression.  The variable ``__match__`` is set to the first matching subgroup (or the entire matching string, if no subgroups are specified).  When called from Python, the matching string is returned.
 
 Display
 =======
@@ -108,14 +109,21 @@ Variable handling
 =================
 
 **setglobal** *<name> <value>* -- set variable <name> to value <value> in
-global dictionary
+global dictionary.  The value can be retrieved with '$value'.
 
 **setlocal** *<name> <value>* -- set variable <name> to value <value> in
-local dictionary
+local dictionary.  The value can be retrieved with '$value'.
 
 The local dictionary is file-specific, while the global module is general
 to all the commands.  Local variables will override global variables if
 they exist.
+
+Note that you can do variable interpolation in strings with ${var}, e.g. ::
+
+   setglobal a 1
+   setglobal b 2
+
+   fv thisform thatfield "${a}${b}"
 
 Other commands
 ==============

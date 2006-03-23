@@ -161,9 +161,14 @@ def url(should_be):
     if not m:
         raise TwillAssertionError("url does not match '%s'" % (should_be,))
 
+    if m.groups():
+        match_str = m.group(1)
+    else:
+        match_str = m.group(0)
+
     global_dict, local_dict = get_twill_glocals()
-    local_dict['__match__'] = m.group()
-    return current_url
+    local_dict['__match__'] = match_str
+    return match_str
 
 def follow(what):
     """
@@ -217,8 +222,13 @@ def find(what, flags=''):
     if not m:
         raise TwillAssertionError("no match to '%s'" % (what,))
 
+    if m.groups():
+        match_str = m.group(1)
+    else:
+        match_str = m.group(0)
+
     global_dict, local_dict = get_twill_glocals()
-    local_dict['__match__'] = m.group()
+    local_dict['__match__'] = match_str
 
 def notfind(what, flags=''):
     """
@@ -625,9 +635,14 @@ def title(what):
     if not m:
         raise TwillAssertionError("title does not contain '%s'" % (what,))
 
+    if m.groups():
+        match_str = m.group(1)
+    else:
+        match_str = m.group(0)
+
     global_dict, local_dict = get_twill_glocals()
-    local_dict['__match__'] = m.group()
-    return title
+    local_dict['__match__'] = match_str
+    return match_str
 
 def redirect_output(filename):
     """

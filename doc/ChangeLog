@@ -1,5 +1,7 @@
 2006-03-22  Titus Brown  <t@issola.caltech.edu>
 
+	* Changed __match__ to listen to subgroups. (Leonardo Santagada).
+
 	* Added Stephen Thorne's fix for multiple checkboxes with the same
 	  name/different values.
 

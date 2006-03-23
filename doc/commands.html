@@ -27,11 +27,12 @@ returns the final URL visited, after all redirects.</p>
 <h1><a name="assertions">Assertions</a></h1>
 <p><strong>code</strong> <em>&lt;code&gt;</em> -- assert that the last page loaded had this HTTP status,
 e.g. <tt class="docutils literal"><span class="pre">code</span> <span class="pre">200</span></tt> asserts that the page loaded fine.</p>
-<p><strong>find</strong> <em>&lt;regexp&gt;</em> -- assert that the page contains this regular expression. The variable <tt class="docutils literal"><span class="pre">__match__</span></tt> is set to the matching string.</p>
+<p><strong>find</strong> <em>&lt;regexp&gt;</em> -- assert that the page contains this regular expression. The variable <tt class="docutils literal"><span class="pre">__match__</span></tt> is set to the first matching subgroup (or the entire matching string, if no subgroups are specified).  When called from Python,
+the matching string is returned.</p>
 <p><strong>notfind</strong> <em>&lt;regexp&gt;</em> -- assert that the page <em>does not</em> contain this
 regular expression.</p>
-<p><strong>url</strong> <em>&lt;regexp&gt;</em> -- assert that the current URL matches the given regexp.  The variable <tt class="docutils literal"><span class="pre">__match__</span></tt> is set to the matching string.  When called from Python, the current URL is returned.</p>
-<p><strong>title</strong> <em>&lt;regexp&gt;</em> -- assert that the title of this page matches this regular expression.  The variable <tt class="docutils literal"><span class="pre">__match__</span></tt> is set to the matching string.  When called from Python, the title string is returned.</p>
+<p><strong>url</strong> <em>&lt;regexp&gt;</em> -- assert that the current URL matches the given regexp.  The variable <tt class="docutils literal"><span class="pre">__match__</span></tt> is set to the first matching subgroup (or the entire matching string, if no subgroups are specified).  When called from Python, the matching string is returned.</p>
+<p><strong>title</strong> <em>&lt;regexp&gt;</em> -- assert that the title of this page matches this regular expression.  The variable <tt class="docutils literal"><span class="pre">__match__</span></tt> is set to the first matching subgroup (or the entire matching string, if no subgroups are specified).  When called from Python, the matching string is returned.</p>
 </div>
 <div class="section" id="display">
 <h1><a name="display">Display</a></h1>
@@ -85,12 +86,19 @@ headers, 'equiv-refresh' to test HTTP EQUIV-REFRESH headers, or
 <div class="section" id="variable-handling">
 <h1><a name="variable-handling">Variable handling</a></h1>
 <p><strong>setglobal</strong> <em>&lt;name&gt; &lt;value&gt;</em> -- set variable &lt;name&gt; to value &lt;value&gt; in
-global dictionary</p>
+global dictionary.  The value can be retrieved with '$value'.</p>
 <p><strong>setlocal</strong> <em>&lt;name&gt; &lt;value&gt;</em> -- set variable &lt;name&gt; to value &lt;value&gt; in
-local dictionary</p>
+local dictionary.  The value can be retrieved with '$value'.</p>
 <p>The local dictionary is file-specific, while the global module is general
 to all the commands.  Local variables will override global variables if
 they exist.</p>
+<p>Note that you can do variable interpolation in strings with ${var}, e.g.</p>
+<pre class="literal-block">
+setglobal a 1
+setglobal b 2
+
+fv thisform thatfield &quot;${a}${b}&quot;
+</pre>
 </div>
 <div class="section" id="other-commands">
 <h1><a name="other-commands">Other commands</a></h1>
