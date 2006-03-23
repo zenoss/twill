@@ -1,5 +1,17 @@
 """
 A simple set of extensions to manage post-load requirements for pages.
+
+Commands:
+
+   require       -- turn on post-load requirements; either 'success' or
+                    'links_ok'.
+                    
+   no_require    -- turn off requirements.
+   
+   skip_require  -- for the next page visit, skip requirements processing.
+   
+   flush_visited -- flush the list of already visited pages
+                    (for links checking)
 """
 
 __all__ = ['require', 'skip_require', 'flush_visited', 'no_require']

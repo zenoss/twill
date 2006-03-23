@@ -116,3 +116,14 @@ and 'exit_if_empty'.  Here's some example code: ::
   # if not empty, discard all messages & submit
   discard_all_messages
   submit 0
+
+argparse
+~~~~~~~~
+
+The 'argparse' extension module contains one function, 'get_args'.  'get_args'
+loads all of the command-line arguments into variables, e.g. ::
+
+   % ./twill-sh script1 script2 script3
+   ...
+   >> extend_with argparse
+   >> echo $arg1

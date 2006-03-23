@@ -1,3 +1,11 @@
+2006-03-23  Titus Brown  <t@issola.caltech.edu>
+
+	* Improved extension module docstrings.
+
+	* Added better printout when 'extend_with' is used.
+
+	* Added argparse extension module (Michele Simionato).
+
 2006-03-22  Titus Brown  <t@issola.caltech.edu>
 
 	* Changed __match__ to listen to subgroups. (Leonardo Santagada).

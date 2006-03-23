@@ -10,6 +10,10 @@
 # please see the included LICENSE.txt file for more information, or
 # contact Titus directly.
 
+"""
+twill Web testing language & associated utilities.
+"""
+
 __version__ = "0.8.4"
 
 #import warnings

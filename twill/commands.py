@@ -459,6 +459,26 @@ def extend_with(module_name):
     
     exec "from %s import *" % (module_name,) in global_dict, local_dict
 
+    ### now print out some nice stuff about what the extension module does.
+
+    import sys
+    mod = sys.modules.get(module_name)
+    print>>OUT, "Imported extension module '%s'.\n" % (module_name,)
+    
+    if mod.__doc__:
+        print>>OUT, "Description:\n\n%s\n" % (mod.__doc__.strip(),)
+    else:
+        fnlist = getattr(mod, '__all__', None)
+        if fnlist is None:
+            fnlist = [ fn for fn in dir(mod) if callable(getattr(mod, fn)) ]
+
+        if fnlist:
+            print>>OUT, 'New commands:\n'
+            for name in fnlist:
+                print>>OUT, '\t', name
+
+            print>>OUT, ''
+
 def getinput(prompt):
     """
     >> getinput <prompt>

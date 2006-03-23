@@ -1,5 +1,13 @@
 """
 A small extension function to check all of the links on a page.
+
+Usage:
+
+   check_links [ <pattern> ]
+
+Make sure that all of the HTTP links on the current page can be visited
+successfully.  If 'pattern' is given, check only URLs that match that
+regular expression.
 """
 
 __all__ = ['check_links']
