@@ -56,6 +56,9 @@ click may be recorded for use by <strong>submit</strong>, but the value is not c
 unless the 'config' command has changed the default behavior.
 See 'config' and <a class="reference" href="#id1">details on form handling</a> for more information on
 the 'formvalue' command.</p>
+<p>For list widgets, you can use 'formvalue &lt;formnum&gt; &lt;fieldname&gt; +value' or
+'formvalue &lt;formnum&gt; &lt;fieldname&gt; -value' to select or deselect a particular
+value.</p>
 <p><strong>fv</strong> -- abbreviation for 'formvalue'.</p>
 <p><strong>formaction</strong> <em>&lt;formnum&gt; &lt;action&gt;</em> -- change the form action URL to the given URL.</p>
 <p><strong>fa</strong> -- abbreviation for 'fa'.</p>
@@ -110,7 +113,8 @@ add_auth IdyllStuff http://www.idyll.org/ titus test
 </pre>
 <p>tells twill that a request from the authentication realm
 &quot;IdyllStuff&quot; under <a class="reference" href="http://www.idyll.org/">http://www.idyll.org/</a> should be answered with
-username 'titus', password 'test'.</p>
+username 'titus', password 'test'.  If the 'with_default_realm' option
+is set to True, ignore 'realm'.</p>
 <p><strong>config</strong> [<em>&lt;key&gt;</em> [<em>&lt;value&gt;</em>]] -- show/set configuration options.</p>
 </div>
 <div class="section" id="special-variables">

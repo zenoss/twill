@@ -1,3 +1,8 @@
+2006-03-22  Titus Brown  <t@issola.caltech.edu>
+
+	* Added Stephen Thorne's fix for multiple checkboxes with the same
+	  name/different values.
+
 2006-03-21  Titus Brown  <t@issola.caltech.edu>
 
 	* Added 'acknowledge_equiv_refresh' option & added helpful

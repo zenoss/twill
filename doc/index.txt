@@ -48,6 +48,8 @@ Documentation is available for the following topics:
 
  * `Testing Web sites with twill`_ -- how to use twill to test Web sites.
 
+ * `Extension modules`_ -- extension modules that come with twill.
+
  * `Python API`_ -- for Python programmers interested in using twill from
    Python.
 
@@ -62,7 +64,7 @@ Mailing List
 ------------
 
 There's a moderately active mailing list at twill@lists.idyll.org; there is
-also an archive_.
+also an archive_ for this list.
 
 Contributing
 ------------

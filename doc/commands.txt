@@ -70,6 +70,10 @@ unless the 'config' command has changed the default behavior.
 See 'config' and `details on form handling`_ for more information on
 the 'formvalue' command.
 
+For list widgets, you can use 'formvalue <formnum> <fieldname> +value' or
+'formvalue <formnum> <fieldname> -value' to select or deselect a particular
+value.
+
 **fv** -- abbreviation for 'formvalue'.
 
 **formaction** *<formnum> <action>* -- change the form action URL to the given URL.

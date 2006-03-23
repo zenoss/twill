@@ -160,7 +160,8 @@ def set_form_control_value(control, val):
             checkbox.selected = make_boolean(val)
             return
         except ClientForm.AmbiguityError:
-            # use the behaviour in isinstance(control, ClientForm.ListControl)
+            # if there's more than one checkbox, use the behaviour for
+            # ClientForm.ListControl, below.
             pass
             
     if isinstance(control, ClientForm.ListControl):
@@ -170,7 +171,7 @@ def set_form_control_value(control, val):
         #
 
         # figure out if we want to *select* it, or if we want to *deselect*
-        # it (flag T/F).  By default (no +/-) ...
+        # it (flag T/F).  By default (no +/-) select...
         
         if val.startswith('-'):
             val = val[1:]
@@ -179,6 +180,8 @@ def set_form_control_value(control, val):
             flag = True
             if val.startswith('+'):
                 val = val[1:]
+
+        # now, select the value.
 
         try:
             item = control.get(name=val)
