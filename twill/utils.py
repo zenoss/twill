@@ -155,15 +155,15 @@ def set_form_control_value(control, val):
     Helper function to deal with setting form values on checkboxes, lists etc.
     """
     if isinstance(control, ClientForm.CheckboxControl):
-        checkbox = control.get()
-        flag = make_boolean(val)
-
-        if flag:
-            checkbox.selected = 1
-        else:
-            checkbox.selected = 0
-        
-    elif isinstance(control, ClientForm.ListControl):
+        try:
+            checkbox = control.get()
+            checkbox.selected = make_boolean(val)
+            return
+        except ClientForm.AmbiguityError:
+            # use the behaviour in isinstance(control, ClientForm.ListControl)
+            pass
+            
+    if isinstance(control, ClientForm.ListControl):
         #
         # for ListControls (checkboxes, multiselect, etc.) we first need
         # to find the right *value*.  Then we need to set it +/-.

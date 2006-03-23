@@ -91,6 +91,7 @@ class TwillTest(Directory):
                   "testform", "testformaction",
                   "test_refresh", "test_refresh2",
                   "test_checkbox", "test_simple_checkbox","echo",
+                  "test_checkboxes",
                   'tidy_fixable_html', 'BS_fixable_html', 'unfixable_html']
 
     def __init__(self):
@@ -311,6 +312,28 @@ hello, world.
 <input type="checkbox" name="checkboxtest" value="True">
 <input type="hidden" name="checkboxtest" value="False">
 
+<input type=submit value=post>
+</form>
+""" % (s,)
+
+    def test_checkboxes(self):
+        request = get_request()
+
+        s = ""
+        if request.form and request.form.has_key('checkboxtest'):
+            val = request.form['checkboxtest']
+
+            if not isinstance(val, str):
+                val = ','.join(val)
+
+            s += "CHECKBOXTEST: ==%s==<p>" % val
+
+        return """\
+%s
+<form method=POST>
+<input type="checkbox" name="checkboxtest" value="one">
+<input type="checkbox" name="checkboxtest" value="two">
+<input type="checkbox" name="checkboxtest" value="three">
 <input type=submit value=post>
 </form>
 """ % (s,)
