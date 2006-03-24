@@ -17,7 +17,8 @@ setup(name = 'twill',
       packages = ['twill', 'twill.other_packages',
                   'twill.other_packages.ClientCookie',
                   'twill.other_packages.mechanize',
-                  'twill.extensions'],
+                  'twill.extensions',
+                  'twill.extensions.match_parse'],
 
       # allow both 
       entry_points = dict(console_scripts=['twill-sh = twill.shell:main'],),
