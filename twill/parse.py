@@ -5,7 +5,7 @@ Code parsing and evaluation for the twill mini-language.
 import sys
 from cStringIO import StringIO
 
-from errors import TwillAssertionError
+from errors import TwillAssertionError, TwillNameError
 from pyparsing import OneOrMore, Word, printables, quotedString, Optional, \
      alphas, alphanums, ParseException, ZeroOrMore, restOfLine, Combine, \
      Literal, Group, removeQuotes, CharsNotIn
@@ -56,6 +56,10 @@ full_command = (
     )
 full_command.setName('full_command')
 
+###
+
+command_list = []           # filled in by namespaces.init_global_dict().
+
 ### command/argument handling.
 
 def process_args(args, globals_dict, locals_dict):
@@ -97,13 +101,21 @@ def execute_command(cmd, args, globals_dict, locals_dict, cmdinfo):
     Side effects: __args__ is set to the argument tuple, __cmd__ is set to
     the command.
     """
+    global command_list                 # all supported commands:
     # execute command.
     locals_dict['__cmd__'] = cmd
     locals_dict['__args__'] = args
 
+    if cmd not in command_list:
+        raise TwillNameError("unknown twill command: '%s'" % (cmd,))
+
     eval_str = "%s(*__args__)" % (cmd,)
-    
+
+    # compile the code object so that we can get 'cmdinfo' into the
+    # error tracebacks.
     codeobj = compile(eval_str, cmdinfo, 'eval')
+
+    # eval the codeobj in the appropriate dictionary.
     result = eval(codeobj, globals_dict, locals_dict)
     
     # set __url__

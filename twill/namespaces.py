@@ -8,9 +8,15 @@ def init_global_dict():
     """
     Initialize global dictionary with twill commands.
 
-    This must be done post-import so that all of the commands are loaded.
+    This must be done after all the other modules are loaded, so that all
+    of the commands are already defined.
     """
     exec "from twill.commands import *" in global_dict
+    import twill.commands
+    command_list = twill.commands.__all__
+    
+    import twill.parse
+    twill.parse.command_list.extend(command_list)
 
 # local dictionaries.
 _local_dict_stack = []

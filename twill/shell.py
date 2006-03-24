@@ -5,7 +5,6 @@ This is an implementation of a command-line interpreter based on the
 'Cmd' class in the 'cmd' package of the default Python distribution.
 """
 
-
 import cmd
 from twill import commands, parse, __version__
 import namespaces
@@ -18,7 +17,8 @@ except:
 def make_cmd_fn(cmd):
     """
     Dynamically define a twill shell command function based on an imported
-    function name.
+    function name.  (This is where the twill.commands functions actually
+    get executed.)
     """
     
     def do_cmd(rest_of_line, cmd=cmd):
@@ -34,11 +34,13 @@ def make_cmd_fn(cmd):
                 return
 
         try:
-            parse.execute_command(cmd, args, global_dict, local_dict, "<shell>")
+            parse.execute_command(cmd, args, global_dict, local_dict,
+                                  "<shell>")
         except SystemExit:
             raise
         except Exception, e:
             print '\nERROR: %s\n' % (str(e),)
+            raise
 
     return do_cmd
 
@@ -75,12 +77,18 @@ class Singleton(object):
 # TwillCommandLoop
 #
 
+def add_command(cmd, docstring):
+    x = get_command_shell()
+    if x:
+        x.add_command(cmd, docstring)
+        
 def get_command_shell():
-    return TwillCommandLoop.__it__
+    return getattr(TwillCommandLoop, '__it__', None)
 
 class TwillCommandLoop(Singleton, cmd.Cmd):
     """
-    Command-line interpreter for twill commands.
+    Command-line interpreter for twill commands.  Singleton object: you
+    can't create more than one of these at a time.
 
     Note: most of the do_ and help_ functions are dynamically created
     by the metaclass.
@@ -113,12 +121,12 @@ class TwillCommandLoop(Singleton, cmd.Cmd):
 
         self.names = []
         
+        global_dict, local_dict = namespaces.get_twill_glocals()
+
         ### add all of the commands from twill.
-        for command in commands.__all__:
-            fn = getattr(commands, command)
+        for command in parse.command_list:
+            fn = global_dict.get(command)
             self.add_command(command, fn.__doc__)
-            
-        self.names.extend(commands.__all__)
 
     def add_command(self, command, docstring):
         """
@@ -128,9 +136,10 @@ class TwillCommandLoop(Singleton, cmd.Cmd):
         do_cmd = make_cmd_fn(command)
         setattr(self, do_name, do_cmd)
 
-        help_cmd = make_help_cmd(command, docstring)
-        help_name = 'help_%s' % (command,)
-        setattr(self, help_name, help_cmd)
+        if docstring:
+            help_cmd = make_help_cmd(command, docstring)
+            help_name = 'help_%s' % (command,)
+            setattr(self, help_name, help_cmd)
 
         self.names.append(do_name)
 

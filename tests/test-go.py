@@ -2,7 +2,7 @@ import sys, os
 import twilltestlib
 from twill import commands
 from twill import namespaces
-from twill.errors import TwillAssertionError
+from twill.errors import TwillAssertionError, TwillNameError
 import twill.parse
 from cStringIO import StringIO
 from tests import url
@@ -65,7 +65,7 @@ def test():
         try:
             twill.parse.execute_file('test-go-fail2.twill', initial_url=url)
             assert 0
-        except NameError:
+        except TwillNameError, e:
             pass
     finally:
         sys.stderr = old_err

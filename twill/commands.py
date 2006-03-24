@@ -457,21 +457,34 @@ def extend_with(module_name):
     """
     global_dict, local_dict = get_twill_glocals()
     
-    exec "from %s import *" % (module_name,) in global_dict, local_dict
+    exec "from %s import *" % (module_name,) in global_dict
 
-    ### now print out some nice stuff about what the extension module does.
+    ### now add the commands into the commands available for the shell,
+    ### and print out some nice stuff about what the extension module does.
 
     import sys
     mod = sys.modules.get(module_name)
-    print>>OUT, "Imported extension module '%s'.\n" % (module_name,)
+
+    ###
+
+    import twill.shell, twill.parse
     
+    fnlist = getattr(mod, '__all__', None)
+    if fnlist is None:
+        fnlist = [ fn for fn in dir(mod) if callable(getattr(mod, fn)) ]
+
+    for command in fnlist:
+        fn = getattr(mod, command)
+        twill.shell.add_command(command, fn.__doc__)
+        twill.parse.command_list.append(command)
+
+    ###
+    
+    print>>OUT, "Imported extension module '%s'.\n" % (module_name,)
+        
     if mod.__doc__:
         print>>OUT, "Description:\n\n%s\n" % (mod.__doc__.strip(),)
     else:
-        fnlist = getattr(mod, '__all__', None)
-        if fnlist is None:
-            fnlist = [ fn for fn in dir(mod) if callable(getattr(mod, fn)) ]
-
         if fnlist:
             print>>OUT, 'New commands:\n'
             for name in fnlist:
