@@ -3,10 +3,8 @@ A command-line interpreter for twill.
 
 This is an implementation of a command-line interpreter based on the
 'Cmd' class in the 'cmd' package of the default Python distribution.
-A metaclass is used to automagically suck in commands published by
-the 'twill.commands' module & create do_ and help_ functions for
-them.
 """
+
 
 import cmd
 from twill import commands, parse, __version__
@@ -17,72 +15,77 @@ try:
 except:
     readline = None
 
-class _command_loop_metaclass(type):
+def make_cmd_fn(cmd):
     """
-    A metaclass to automatically create do_ and help_ functions
-    for all of the twill.commands functions.
+    Dynamically define a twill shell command function based on an imported
+    function name.
     """
-    def __init__(cls, cls_name, cls_bases, cls_dict):
-        super(_command_loop_metaclass, cls).__init__(cls_name,
-                                                     cls_bases,
-                                                     cls_dict)
+    
+    def do_cmd(rest_of_line, cmd=cmd):
+        global_dict, local_dict = namespaces.get_twill_glocals()
 
-        #
-        # create 'do_' and 'help_' functions for all of the commands.
-        #
+        args = []
+        if rest_of_line.strip() != "":
+            try:
+                args = parse.arguments.parseString(rest_of_line)[0]
+                args = parse.process_args(args, global_dict,local_dict)
+            except Exception, e:
+                print '\nINPUT ERROR: %s\n' % (str(e),)
+                return
+
+        try:
+            parse.execute_command(cmd, args, global_dict, local_dict, "<shell>")
+        except SystemExit:
+            raise
+        except Exception, e:
+            print '\nERROR: %s\n' % (str(e),)
+
+    return do_cmd
+
+def make_help_cmd(cmd, docstring):
+    """
+    Dynamically define a twill shell help function for the given
+    command/docstring.
+    """
+    def help_cmd(message=docstring, cmd=cmd):
+        print '=' * 15
+        print '\nHelp for command %s:\n' % (cmd,)
+        print message.strip()
+        print ''
+        print '=' * 15
+        print ''
         
-        for command in commands.__all__:
-            fn = getattr(commands, command)
-            
-            def do_cmd(self, rest_of_line, cmd=command):
-                global_dict, local_dict = namespaces.get_twill_glocals()
+    return help_cmd
 
-                args = []
-                if rest_of_line.strip() != "":
-                    try:
-                        args = parse.arguments.parseString(rest_of_line)[0]
-                        args = parse.process_args(args, global_dict,local_dict)
-                    except Exception, e:
-                        print '\nINPUT ERROR: %s\n' % (str(e),)
-                        return
+###
 
-                try:
-                    parse.execute_command(cmd, args, global_dict, local_dict, "<shell>")
-                except SystemExit:
-                    raise
-                except Exception, e:
-                    print '\nERROR: %s\n' % (str(e),)
-                
-            name = 'do_%s' % (command,)
-            setattr(cls, name, do_cmd)
-
-            def help_cmd(self, message=fn.__doc__, cmd=command):
-                print '=' * 15
-                print '\nHelp for command %s:\n' % (cmd,)
-                print message.strip()
-                print ''
-                print '=' * 15
-                print ''
-
-            name = 'help_%s' % (command,)
-            setattr(cls, name, help_cmd)
-
-        ## TODO, command completion coolness.
+class Singleton(object):
+    def __new__(cls, *args, **kwds):
+        it = cls.__dict__.get("__it__")
+        if it is not None:
+            return it
+        cls.__it__ = it = object.__new__(cls)
+        it.init(*args, **kwds)
+        return it
+    
+    def init(self, *args, **kwds):
+        pass
 
 #
 # TwillCommandLoop
 #
 
-class TwillCommandLoop(object, cmd.Cmd):
+def get_command_shell():
+    return TwillCommandLoop.__it__
+
+class TwillCommandLoop(Singleton, cmd.Cmd):
     """
     Command-line interpreter for twill commands.
 
     Note: most of the do_ and help_ functions are dynamically created
     by the metaclass.
     """
-    __metaclass__ = _command_loop_metaclass
-    
-    def __init__(self, **kw):
+    def init(self, **kw):
         if kw.has_key('stdin'):
             cmd.Cmd.__init__(self, None, stdin=kw['stdin'])
             self.use_rawinput = False
@@ -107,6 +110,35 @@ class TwillCommandLoop(object, cmd.Cmd):
             commands.go(kw['initial_url'])
             
         self._set_prompt()
+
+        self.names = []
+        
+        ### add all of the commands from twill.
+        for command in commands.__all__:
+            fn = getattr(commands, command)
+            self.add_command(command, fn.__doc__)
+            
+        self.names.extend(commands.__all__)
+
+    def add_command(self, command, docstring):
+        """
+        Add the given command into the lexicon of all commands.
+        """
+        do_name = 'do_%s' % (command,)
+        do_cmd = make_cmd_fn(command)
+        setattr(self, do_name, do_cmd)
+
+        help_cmd = make_help_cmd(command, docstring)
+        help_name = 'help_%s' % (command,)
+        setattr(self, help_name, help_cmd)
+
+        self.names.append(do_name)
+
+    def get_names(self):
+        """
+        Return the list of commands.
+        """
+        return self.names
 
     def _set_prompt(self):
         "Set the prompt to the current page."

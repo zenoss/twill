@@ -1,5 +1,10 @@
 2006-03-23  Titus Brown  <t@issola.caltech.edu>
 
+	* Major twill/shell.py patch to allow for dynamic addition of 
+	  methods to shell objects.
+
+	* RELEASE 0.8.4.
+
 	* Improved extension module docstrings.
 
 	* Added better printout when 'extend_with' is used.
