@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
-from setuptools import setup
+try:
+    from setuptools import setup
+except ImportError:
+    print '(WARNING: importing distutils, not setuptools!)'
+    from distutils.core import setup
 
 #### twill info.
 

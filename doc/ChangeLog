@@ -1,3 +1,7 @@
+2006-03-25  Titus Brown  <t@issola.caltech.edu>
+
+	* Allowed failure to import setuptools in setup.py.
+
 2006-03-23  Titus Brown  <t@issola.caltech.edu>
 
 	* Major twill/shell.py patch to allow for dynamic addition of 
