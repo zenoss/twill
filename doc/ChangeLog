@@ -1,3 +1,7 @@
+2006-03-26  Titus Brown  <t@issola.caltech.edu>
+
+	* Added dns_check.py extension module.  No docs/tests yet.
+
 2006-03-25  Titus Brown  <t@issola.caltech.edu>
 
 	* Allowed failure to import setuptools in setup.py.
