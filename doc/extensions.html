@@ -18,6 +18,7 @@
 <li><a class="reference" href="#require-assert-that-specific-conditions-hold-after-each-page-is-loaded" id="id3" name="id3">require -- assert that specific conditions hold after each page is loaded</a></li>
 <li><a class="reference" href="#mailman-sf-discard-spam-messages-from-your-sourceforge-mailing-lists" id="id4" name="id4">mailman_sf -- discard spam messages from your SourceForge mailing lists</a></li>
 <li><a class="reference" href="#argparse" id="id5" name="id5">argparse</a></li>
+<li><a class="reference" href="#dns-check" id="id6" name="id6">dns_check</a></li>
 </ul>
 </div>
 <p>Several different extension modules are distributed with twill, under
@@ -135,6 +136,21 @@ loads all of the command-line arguments into variables, e.g.</p>
 &gt;&gt; extend_with argparse
 &gt;&gt; echo $arg1
 </pre>
+</div>
+<div class="section" id="dns-check">
+<h1><a class="toc-backref" href="#id6" name="dns-check">dns_check</a></h1>
+<p>dns_check implements functions to test domain name service (DNS) resolution.
+You'll need <a class="reference" href="http://www.dnspython.org/">dnspython</a> to use it.</p>
+<p>Functions:</p>
+<blockquote>
+<ul class="simple">
+<li>dns_resolves -- assert that a host resolves to a specific IP address.</li>
+<li>dns_a -- assert that a host directly resolves to a specific IP address</li>
+<li>dns_cname -- assert that a host is an alias for another hostname.</li>
+<li>dnx_mx -- assert that a given host is a mail exchanger for the given name.</li>
+<li>dns_ns -- assert that a given hostname is a name server for the given name.</li>
+</ul>
+</blockquote>
 </div>
 </div>
 </body>

@@ -127,3 +127,19 @@ loads all of the command-line arguments into variables, e.g. ::
    ...
    >> extend_with argparse
    >> echo $arg1
+
+dns_check
+~~~~~~~~~
+
+dns_check implements functions to test domain name service (DNS) resolution.
+You'll need dnspython_ to use it.
+
+Functions:
+
+  * dns_resolves -- assert that a host resolves to a specific IP address.
+  * dns_a -- assert that a host directly resolves to a specific IP address
+  * dns_cname -- assert that a host is an alias for another hostname.
+  * dnx_mx -- assert that a given host is a mail exchanger for the given name.
+  * dns_ns -- assert that a given hostname is a name server for the given name.
+
+.. _dnspython: http://www.dnspython.org/

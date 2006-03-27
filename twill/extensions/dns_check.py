@@ -82,7 +82,7 @@ def dns_mx(host, mailserver, server=None):
 
 def dns_ns(host, query_ns, server=None):
     """
-    >>> dns_ns <domain> <nameserver> [<name server to use>]
+    >> dns_ns <domain> <nameserver> [<name server to use>]
 
     Assert that <nameserver> is a mailserver for <domain>.
     """
