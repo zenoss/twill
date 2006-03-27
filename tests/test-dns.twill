@@ -1,0 +1,23 @@
+debug commands 1
+extend_with dns_check
+
+dns_resolves amazon.com 207.171.175.29		# amazon.com ==> any of 3
+dns_resolves amazon.com 207.171.166.102
+dns_resolves amazon.com 72.21.206.5
+
+dns_resolves idyll.org. 131.215.34.116
+dns_resolves idyll.org. joiry.net.		# same IP addr?
+
+dns_mx idyll.org. mail.idyll.org.		# '.'s are handled
+dns_mx idyll.org mail.idyll.org.
+dns_mx idyll.org. mail.idyll.org
+
+dns_a amazon.com 207.171.175.29			# explicit 'A' records.
+dns_a amazon.com 207.171.166.102
+dns_a amazon.com 72.21.206.5
+
+dns_cname www.idyll.org. idyll.org.		# explicit 'CNAME' records.
+
+dns_ns idyll.org nsa.alife.org
+
+

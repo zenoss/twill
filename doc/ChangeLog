@@ -1,5 +1,7 @@
 2006-03-26  Titus Brown  <t@issola.caltech.edu>
 
+	* Updated dns_check with Bob Halley's suggestions.
+
 	* Added docs & (fragile) tests to the dns_check extension module.
 
 	* Added dns_check.py extension module.  No docs/tests yet.

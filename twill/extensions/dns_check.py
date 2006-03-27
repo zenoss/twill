@@ -10,6 +10,7 @@ Functions:
   * dns_ns -- assert that a given hostname is a name server for the given name.
 """
 
+import socket
 from twill.errors import TwillAssertionError
 
 try:
@@ -28,7 +29,7 @@ def dns_a(host, ipaddress, server=None):
         raise Exception("<ipaddress> parameter must be an IP address, not a hostname")
 
     for answer in _query(host, 'A', server):
-        if _compare_hostnames(ipaddress, str(answer)):
+        if ipaddress == answer.address:
             return True
 
     raise TwillAssertionError
@@ -43,8 +44,10 @@ def dns_cname(host, cname, server=None):
     if is_ip_addr(cname):
         raise Exception("<alias_for> parameter must be a hostname, not an IP address")
     
+    cname = dns.name.from_text(cname)
+    
     for answer in _query(host, 'CNAME', server):
-        if _compare_hostnames(cname, str(answer)):
+        if cname == answer.target:
             return True
 
     raise TwillAssertionError
@@ -61,7 +64,7 @@ def dns_resolves(host, ipaddress, server=None):
         ipaddress = _resolve_name(ipaddress, server)
         
     for answer in _query(host, 1, server):
-        if _compare_hostnames(ipaddress, str(answer)):
+        if ipaddress == answer.address:
             return True
 
     raise TwillAssertionError
@@ -72,10 +75,10 @@ def dns_mx(host, mailserver, server=None):
 
     Assert that <mailserver> is a mailserver for <name>.
     """
+    mailserver = dns.name.from_text(mailserver)
+    
     for rdata in _query(host, 'MX', server):
-        (pref, n) = str(rdata).split()
-
-        if _compare_hostnames(n, mailserver):
+        if mailserver == rdata.exchange:
             return True
 
     raise TwillAssertionError
@@ -86,34 +89,26 @@ def dns_ns(host, query_ns, server=None):
 
     Assert that <nameserver> is a mailserver for <domain>.
     """
+    query_ns = dns.name.from_text(query_ns)
+    
     for answer in _query(host, 'NS', server):
-        if _compare_hostnames(query_ns, str(answer)):
+        if query_ns == answer.target:
             return True
+
+    raise TwillAssertionError
 
 ###
 
-def _compare_hostnames(a, b):
+def is_ip_addr(text):
     """
-    Normalize two hostnames for string comparison.  (basically strip off
-    '.'s ;)
+    Check the 'name' to see if it's just an IP address.
     """
-    a = a.strip('.')
-    b = b.strip('.')
-    return (a == b)
-
-def is_ip_addr(name):
-    """
-    Check the 'name' to see if it's just an IP address.  Probably should use
-    a regexp to do this... @CTB
-    """
-    name = name.replace('.', '')
-    for i in range(0, 10):
-        i = str(i)
-        name = name.replace(i, '')
-
-    if name:
+    
+    try:
+        v = dns.ipv4.inet_aton(text)
+        return True
+    except socket.error:
         return False
-    return True
 
 def _resolve_name(name, server):
     """
