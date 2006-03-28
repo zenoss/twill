@@ -119,7 +119,7 @@ def _resolve_name(name, server):
     
     r = dns.resolver.Resolver()
     if server:
-        r.nameservers = [_resolve_name(server)]
+        r.nameservers = [_resolve_name(server, None)]
 
     answers = r.query(name)
 
@@ -136,6 +136,6 @@ def _query(query, query_type, server):
     """
     r = dns.resolver.Resolver()
     if server:
-        r.nameservers = [_resolve_name(server)]
+        r.nameservers = [_resolve_name(server, None)]
 
     return r.query(query, query_type)
