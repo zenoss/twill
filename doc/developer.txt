@@ -98,24 +98,23 @@ for 9.0 (beta).
 
  1. RECORDING.
  2. execute directories/directory trees.
- 3. systematize variable handling a bit better: __ vs $; TemplateString?
  4. expose 'browser' & document re Grig; regexp esp.; make source docs.
  5. twill-fork: make file writing stuff optional; test massive fork fn.
  6. add config directives for socket timeout.
- 7. can we figure out auth domain automatically?
 
 Misc fixes & cleanups:
 
  1. Paul McGuire's pyparsing suggestions.
  2. cookie "1" vs 1, in cookielib.
- 3. command line completion doesn't understand extend_with results yet.
  4. extend_with etc. -- module namespaces, e.g. extmodule.fn?
  5. implement more complex proxy support.  proxies proxies proxies.
  6. 'history' to show command history...
+ 7. record commands to script
+ 8. command line option for stdout -> file
 
 Random ideas:
 
- 1. Build twill interfaces for zope.testbrowser and mechanoid.
+ 1. Build twill interfaces for zope.testbrowser and mechanoid and pycurl.
 
     (This shouldn't be too difficult, since both are based on mechanize...)
 
