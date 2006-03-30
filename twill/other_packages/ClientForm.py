@@ -21,8 +21,8 @@ Copyright 2005 Zope Corporation
 Copyright 1998-2000 Gisle Aas.
 
 This code is free software; you can redistribute it and/or modify it
-under the terms of the BSD License (see the file COPYING included with
-the distribution).
+under the terms of the BSD or ZPL 2.1 licenses (see the file
+COPYING.txt included with the distribution).
 
 """
 
@@ -30,8 +30,9 @@ the distribution).
 # Remove unescape_attr method
 # Remove parser testing hack
 # safeUrl()-ize action
-# Really should to merge CC, CF, pp and mechanize as soon as mechanize
+# Really should merge CC, CF, pp and mechanize as soon as mechanize
 #  goes to beta...
+# Add url attribute to ParseError
 # Switch to unicode throughout (would be 0.3.x)
 #  See Wichert Akkerman's 2004-01-22 message to c.l.py.
 # Add charset parameter to Content-type headers?  How to find value??
@@ -76,6 +77,36 @@ except NameError:
         if expr: return True
         else: return False
 
+try:
+    import logging
+except ImportError:
+    def debug(msg, *args, **kwds):
+        pass
+else:
+    _logger = logging.getLogger("ClientForm")
+    OPTIMIZATION_HACK = True
+
+    def debug(msg, *args, **kwds):
+        if OPTIMIZATION_HACK:
+            return
+
+        try:
+            raise Exception()
+        except:
+            caller_name = (
+                sys.exc_info()[2].tb_frame.f_back.f_back.f_code.co_name)
+        extended_msg = '%%s %s' % msg
+        extended_args = (caller_name,)+args
+        debug = _logger.debug(extended_msg, *extended_args, **kwds)
+
+    def _show_debug_messages():
+        global OPTIMIZATION_HACK
+        OPTIMIZATION_HACK = False
+        _logger.setLevel(logging.DEBUG)
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setLevel(logging.DEBUG)
+        _logger.addHandler(handler)
+
 import sys, urllib, urllib2, types, mimetools, copy, urlparse, \
        htmlentitydefs, re, random
 from urlparse import urljoin
@@ -90,9 +121,11 @@ else:
     def deprecation(message):
         warnings.warn(message, DeprecationWarning, stacklevel=2)
 
-VERSION = "0.2.2"
+VERSION = "0.2.3"
 
 CHUNK = 1024  # size of chunks fed to parser, in bytes
+
+DEFAULT_ENCODING = "utf-8"
 
 _compress_re = re.compile(r"\s+")
 def compress_text(text): return _compress_re.sub(" ", text.strip())
@@ -166,7 +199,7 @@ string.
                         l.append(k + '=' + urllib.quote_plus(str(elt)))
     return '&'.join(l)
 
-def unescape(data, entities, encoding="utf-8"):
+def unescape(data, entities, encoding=DEFAULT_ENCODING):
     if data is None or "&" not in data:
         return data
 
@@ -187,7 +220,7 @@ def unescape(data, entities, encoding="utf-8"):
 
         return repl
 
-    return re.sub(r"&#?\S+?;", replace_entities, data)
+    return re.sub(r"&#?[A-Za-z0-9]+?;", replace_entities, data)
 
 def unescape_charref(data, encoding):
     name, base = data, 10
@@ -403,7 +436,7 @@ class ParseError(Exception): pass
 class _AbstractFormParser:
     """forms attribute contains HTMLForm instances on completion."""
     # thanks to Moshe Zadka for an example of sgmllib/htmllib usage
-    def __init__(self, entitydefs=None, encoding="utf-8"):
+    def __init__(self, entitydefs=None, encoding=DEFAULT_ENCODING):
         if entitydefs is None:
             entitydefs = get_entitydefs()
         self._entitydefs = entitydefs
@@ -420,17 +453,20 @@ class _AbstractFormParser:
         self._textarea = None
 
     def do_base(self, attrs):
+        debug("%s", attrs)
         for key, value in attrs:
             if key == "href":
                 self.base = value
 
     def end_body(self):
+        debug("")
         if self._current_label is not None:
             self.end_label()
         if self._current_form is not None:
             self.end_form()
 
     def start_form(self, attrs):
+        debug("%s", attrs)
         if self._current_form is not None:
             raise ParseError("nested FORMs")
         name = None
@@ -452,6 +488,7 @@ class _AbstractFormParser:
         self._current_form = (name, action, method, enctype), d, controls
 
     def end_form(self):
+        debug("")
         if self._current_label is not None:
             self.end_label()
         if self._current_form is None:
@@ -460,6 +497,7 @@ class _AbstractFormParser:
         self._current_form = None
 
     def start_select(self, attrs):
+        debug("%s", attrs)
         if self._current_form is None:
             raise ParseError("start of SELECT before start of FORM")
         if self._select is not None:
@@ -476,6 +514,7 @@ class _AbstractFormParser:
         self._append_select_control({"__select": d})
 
     def end_select(self):
+        debug("")
         if self._current_form is None:
             raise ParseError("end of SELECT before start of FORM")
         if self._select is None:
@@ -487,6 +526,7 @@ class _AbstractFormParser:
         self._select = None
 
     def start_optgroup(self, attrs):
+        debug("%s", attrs)
         if self._select is None:
             raise ParseError("OPTGROUP outside of SELECT")
         d = {}
@@ -496,11 +536,13 @@ class _AbstractFormParser:
         self._optgroup = d
 
     def end_optgroup(self):
+        debug("")
         if self._optgroup is None:
             raise ParseError("end of OPTGROUP before start")
         self._optgroup = None
 
     def _start_option(self, attrs):
+        debug("%s", attrs)
         if self._select is None:
             raise ParseError("OPTION outside of SELECT")
         if self._option is not None:
@@ -517,6 +559,7 @@ class _AbstractFormParser:
             self._option["disabled"] = None
 
     def _end_option(self):
+        debug("")
         if self._option is None:
             raise ParseError("end of OPTION before start")
 
@@ -533,11 +576,13 @@ class _AbstractFormParser:
         self._option = None
 
     def _append_select_control(self, attrs):
+        debug("%s", attrs)
         controls = self._current_form[2]
         name = self._select.get("name")
         controls.append(("select", name, attrs))
 
     def start_textarea(self, attrs):
+        debug("%s", attrs)
         if self._current_form is None:
             raise ParseError("start of TEXTAREA before start of FORM")
         if self._textarea is not None:
@@ -552,6 +597,7 @@ class _AbstractFormParser:
         self._textarea = d
 
     def end_textarea(self):
+        debug("")
         if self._current_form is None:
             raise ParseError("end of TEXTAREA before start of FORM")
         if self._textarea is None:
@@ -562,6 +608,7 @@ class _AbstractFormParser:
         self._textarea = None
 
     def start_label(self, attrs):
+        debug("%s", attrs)
         if self._current_label:
             self.end_label()
         d = {}
@@ -575,6 +622,7 @@ class _AbstractFormParser:
         self._current_label = d
 
     def end_label(self):
+        debug("")
         label = self._current_label
         if label is None:
             # something is ugly in the HTML, but we're ignoring it
@@ -585,6 +633,7 @@ class _AbstractFormParser:
         del label["__taken"]
 
     def _add_label(self, d):
+        #debug("%s", d)
         if self._current_label is not None:
             if self._current_label["__taken"]:
                 self.end_label()  # be fuzzy
@@ -593,6 +642,7 @@ class _AbstractFormParser:
                 d["__label"] = self._current_label
 
     def handle_data(self, data):
+        debug("%s", data)
         if self._option is not None:
             # self._option is a dictionary of the OPTION element's HTML
             # attributes, but it has two special keys, one of which is the
@@ -603,7 +653,6 @@ class _AbstractFormParser:
         elif self._textarea is not None:
             map = self._textarea
             key = "value"
-#@CTB            print 'TEXTAREA: value "%s"' % (data,)
         # not if within option or textarea
         elif self._current_label is not None:
             map = self._current_label
@@ -617,6 +666,7 @@ class _AbstractFormParser:
             map[key] = map[key] + data
 
     def do_button(self, attrs):
+        debug("%s", attrs)
         if self._current_form is None:
             raise ParseError("start of BUTTON before start of FORM")
         d = {}
@@ -636,6 +686,7 @@ class _AbstractFormParser:
         controls.append((type, name, d))
 
     def do_input(self, attrs):
+        debug("%s", attrs)
         if self._current_form is None:
             raise ParseError("start of INPUT before start of FORM")
         d = {}
@@ -650,6 +701,7 @@ class _AbstractFormParser:
         controls.append((type, name, d))
 
     def do_isindex(self, attrs):
+        debug("%s", attrs)
         if self._current_form is None:
             raise ParseError("start of ISINDEX before start of FORM")
         d = {}
@@ -662,21 +714,20 @@ class _AbstractFormParser:
         controls.append(("isindex", None, d))
 
     def handle_entityref(self, name):
-        table = self._entitydefs
-        fullname = "&%s;" % name
-        if table.has_key(fullname):
-            self.handle_data(table[fullname].encode(self._encoding))
-        else:
-            self.unknown_entityref(name)
-            return
+        #debug("%s", name)
+        self.handle_data(unescape(
+            '&%s;' % name, self._entitydefs, self._encoding))
 
     def handle_charref(self, name):
+        #debug("%s", name)
         self.handle_data(unescape_charref(name, self._encoding))
 
     def unescape_attr(self, name):
+        #debug("%s", name)
         return unescape(name, self._entitydefs, self._encoding)
 
     def unescape_attrs(self, attrs):
+        #debug("%s", attrs)
         escaped_attrs = {}
         for key, val in attrs.items():
             try:
@@ -698,13 +749,13 @@ try:
     import HTMLParser
 except ImportError:
     class XHTMLCompatibleFormParser:
-        def __init__(self, entitydefs=None, encoding="utf-8"):
+        def __init__(self, entitydefs=None, encoding=DEFAULT_ENCODING):
             raise ValueError("HTMLParser could not be imported")
 else:
     class XHTMLCompatibleFormParser(_AbstractFormParser, HTMLParser.HTMLParser):
         """Good for XHTML, bad for tolerance of incorrect HTML."""
         # thanks to Michael Howitz for this!
-        def __init__(self, entitydefs=None, encoding="utf-8"):
+        def __init__(self, entitydefs=None, encoding=DEFAULT_ENCODING):
             HTMLParser.HTMLParser.__init__(self)
             _AbstractFormParser.__init__(self, entitydefs, encoding)
 
@@ -759,7 +810,7 @@ class _AbstractSgmllibParser(_AbstractFormParser):
 
 class FormParser(_AbstractSgmllibParser, sgmllib.SGMLParser):
     """Good for tolerance of incorrect HTML, bad for XHTML."""
-    def __init__(self, entitydefs=None, encoding="utf-8"):
+    def __init__(self, entitydefs=None, encoding=DEFAULT_ENCODING):
         sgmllib.SGMLParser.__init__(self)
         _AbstractFormParser.__init__(self, entitydefs, encoding)
 
@@ -772,7 +823,7 @@ except ImportError:
 else:
     class _AbstractBSFormParser(_AbstractSgmllibParser):
         bs_base_class = None
-        def __init__(self, entitydefs=None, encoding="utf-8"):
+        def __init__(self, entitydefs=None, encoding=DEFAULT_ENCODING):
             _AbstractFormParser.__init__(self, entitydefs, encoding)
             self.bs_base_class.__init__(self)
         def handle_data(self, data):
@@ -796,12 +847,12 @@ else:
 #FormParser = RobustFormParser  # testing hack
 
 def ParseResponse(response, select_default=False,
-                  ignore_errors=False,
+                  ignore_errors=False,  # ignored!
                   form_parser_class=FormParser,
                   request_class=urllib2.Request,
                   entitydefs=None,
                   backwards_compat=True,
-                  encoding="utf-8",
+                  encoding=DEFAULT_ENCODING,
                   ):
     """Parse HTTP response and return a list of HTMLForm instances.
 
@@ -872,12 +923,12 @@ def ParseResponse(response, select_default=False,
                      )
 
 def ParseFile(file, base_uri, select_default=False,
-              ignore_errors=False,
+              ignore_errors=False,  # ignored!
               form_parser_class=FormParser,
               request_class=urllib2.Request,
               entitydefs=None,
               backwards_compat=True,
-              encoding="utf-8",
+              encoding=DEFAULT_ENCODING,
               ):
     """Parse HTML and return a list of HTMLForm instances.
 
@@ -901,7 +952,7 @@ def ParseFile(file, base_uri, select_default=False,
 
             # if we are ignoring errors, we want to feed one character
             # at a time so that upon a raise, nothing is lost.
-            
+             
             for ch in data:
                 try:
                     fp.feed(ch)
@@ -913,7 +964,6 @@ def ParseFile(file, base_uri, select_default=False,
             except ParseError, e:
                 e.base_uri = base_uri
                 raise
-                
         if len(data) != CHUNK: break
     if fp.base is not None:
         # HTML BASE element takes precedence over document URI
@@ -3106,7 +3156,8 @@ class HTMLForm:
         control_index is the index of the control in self.controls
         """
         pairs = []
-        for control_index, control in enumerate(self.controls):
+        for control_index in range(len(self.controls)):
+            control = self.controls[control_index]
             for ii, key, val in control._totally_ordered_pairs():
                 pairs.append((ii, key, val, control_index))
 
