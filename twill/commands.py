@@ -3,9 +3,10 @@ Implementation of all of the individual 'twill' commands available through
 twill-sh.
 """
 
-import urllib2
+import urllib2, sys
 
 OUT=None
+ERR=sys.stderr
 
 # export:
 __all__ = ['reset_browser',
@@ -51,7 +52,9 @@ __all__ = ['reset_browser',
            'config',
            'tidy_ok',
            'redirect_output',
-           'reset_output'
+           'reset_output',
+           'redirect_error',
+           'reset_error',
            ]
 
 import re, getpass, time
@@ -696,6 +699,25 @@ def reset_output():
     import twill
     twill.set_output(None)
 
+def redirect_error(filename):
+    """
+    >> redirect_error <filename>
+
+    Append all twill error output to the given file.
+    """
+    import twill
+    fp = open(filename, 'a')
+    twill.set_errout(fp)
+
+def reset_error():
+    """
+    >> reset_error
+    
+    Reset twill error output to go to the screen.
+    """
+    import twill
+    twill.set_errout(None)
+
 ### options
 
 _orig_options = dict(readonly_controls_writeable=False,
@@ -720,13 +742,13 @@ def config(key=None, value=None):
 
     So far:
 
-     * 'readonly_controls_writeable', default 0;
-     * 'use_tidy', default 1;
-     * 'require_tidy', default 0;
-     * 'use_BeautifulSoup', default 1;
-     * 'allow_parse_errors', default 1;
-     * 'with_default_realm', default 0;
-     * 'acknowledge_equiv_refresh', default 1;
+     * 'acknowledge_equiv_refresh', default 1 -- follow HTTP-EQUIV=REFRESH
+     * 'allow_parse_errors', default 1 -- be very tolerant when parsing html
+     * 'readonly_controls_writeable', default 0 -- make ro controls writeable
+     * 'require_tidy', default 0 -- *require* that tidy be installed
+     * 'use_BeautifulSoup', default 1 -- use the BeautifulSoup parser
+     * 'use_tidy', default 1 -- use tidy, if it's installed
+     * 'with_default_realm', default 0 -- use a default realm for HTTP AUTH
     """
     import utils
     

@@ -187,6 +187,11 @@ def _execute_script(inp, **kw):
         commands.go(init_url)
         locals_dict['__url__'] = commands.browser.get_url()
 
+    # should we catch exceptions on failure?
+    catch_errors = False
+    if kw.get('never_fail'):
+        catch_errors = True
+
     # sourceinfo stuff
     sourceinfo = kw.get('source', "<input>")
     
@@ -211,20 +216,27 @@ def _execute_script(inp, **kw):
                 # abort script execution, if a SystemExit is raised.
                 return
             except TwillAssertionError, e:
-                sys.stderr.write('''\
+                print>>commands.ERR, '''\
 Oops!  Twill assertion error on line %d of '%s' while executing
 
   >> %s
 
 %s
-
-''' % (n, sourceinfo, line.strip(), e))
-                raise
+''' % (n, sourceinfo, line.strip(), e)
+                if not catch_errors:
+                    raise
             except Exception, e:
-                sys.stderr.write("EXCEPTION raised at line %d of '%s'\n\n\t%s\n" % (n, sourceinfo, line.strip(),))
-                sys.stderr.write("\nError message: '%s'\n" % (str(e).strip(),))
-                sys.stderr.write("\n")
-                raise
+                print>>commands.ERR, '''\
+EXCEPTION raised at line %d of '%s'
+
+      %s
+
+Error message: '%s'
+
+''' % (n, sourceinfo, line.strip(),str(e).strip(),)
+
+                if not catch_errors:
+                    raise
 
     finally:
         namespaces.pop_local_dict()

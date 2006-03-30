@@ -248,6 +248,10 @@ def main():
     parser.add_option('-f', '--fail', action="store_true", dest="fail",
                       help = 'fail exit on first file to fail')
 
+    parser.add_option('-n', '--never-fail', action="store_true",
+                      dest="never_fail",
+                      help = 'continue executing scripts past errors')
+
     parser.add_option('-v', '--version', action="store_true", dest="show_version",
                       help = 'show version information and exit')
 
@@ -285,7 +289,9 @@ def main():
             print '>> EXECUTING FILE', filename
 
             try:
-                execute_file(filename, initial_url=options.url)
+                execute_file(filename,
+                             initial_url=options.url,
+                             never_fail=options.never_fail)
                 success.append(filename)
             except Exception, e:
                 if options.fail:

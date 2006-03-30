@@ -42,6 +42,7 @@ def test():
 
     old_err, sys.stderr = sys.stderr, StringIO()
     try:
+        twill.set_errout(sys.stderr)
         #
         # failed assert in a script
         #

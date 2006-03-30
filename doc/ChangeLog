@@ -1,5 +1,10 @@
 2006-03-30  Titus Brown  <t@issola.caltech.edu>
 
+	* Added redirect_error, reset_error to commands.py, and
+	  added function 'twill.set_errout'.
+
+	* Added '-n', '--never-fail' option to 'twill-sh'.
+
 	* Fixed a problem with ClientForm.AmbiguityError being raised in
 	  bad places.
 

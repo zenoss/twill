@@ -27,7 +27,8 @@ __all__ = [ "TwillCommandLoop",
             "get_browser",
             "add_wsgi_intercept",
             "remove_wsgi_intercept",
-            "set_output"]
+            "set_output",
+            "set_errout"]
 
 #
 # add extensions (twill/extensions) and the the wwwsearch & pyparsing
@@ -69,3 +70,14 @@ def set_output(fp):
     """
     import commands, browser
     commands.OUT = browser.OUT = fp
+
+def set_errout(fp):
+    """
+    Have error output from twill go to the given fp instead of stderr.
+    fp=None will reset to stderr.
+    """
+    import commands
+    if fp:
+        commands.ERR = fp
+    else:
+        commands.ERR = sys.stderr
