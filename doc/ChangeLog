@@ -1,5 +1,8 @@
 2006-03-30  Titus Brown  <t@issola.caltech.edu>
 
+	* Fixed a problem with ClientForm.AmbiguityError being raised in
+	  bad places.
+
 	* Updated ClientForm to latest.
 
 2006-03-26  Titus Brown  <t@issola.caltech.edu>
