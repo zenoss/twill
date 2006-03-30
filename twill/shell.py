@@ -40,7 +40,6 @@ def make_cmd_fn(cmd):
             raise
         except Exception, e:
             print '\nERROR: %s\n' % (str(e),)
-            raise
 
     return do_cmd
 
