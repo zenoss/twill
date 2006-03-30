@@ -1866,7 +1866,7 @@ class ListControl(Control):
         self._form = form
         try:
             control = form.find_control(self.name, self.type)
-        except ControlNotFoundError:
+        except (ControlNotFoundError, AmbiguityError):
             Control.add_to_form(self, form)
         else:
             control.merge_control(self)
