@@ -46,7 +46,8 @@ Display
 
 **reset_output** -- display all output to the screen.
 
-**save_html** *<filename>* -- save the current page's HTML into a file.
+**save_html** *[<filename>]* -- save the current page's HTML into a file.  If
+no filename is given, derive the filename from the URL.
 
 **show** -- show the current page's HTML.  When called from Python, this function will also return a string containing the HTML.
 

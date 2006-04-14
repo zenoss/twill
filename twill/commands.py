@@ -274,13 +274,26 @@ def echo(*strs):
     s = " ".join(strs)
     print>>OUT, s
 
-def save_html(filename):
+def save_html(filename=None):
     """
-    >> save_html <filename>
+    >> save_html [<filename>]
     
-    Save the HTML for the current page into <filename>
+    Save the HTML for the current page into <filename>.  If no filename
+    given, construct the filename from the URL.
     """
     html = browser.get_html()
+    if html is None:
+        print>>OUT, "No page to save."
+        return
+
+    if filename is None:
+        url = browser.get_url()
+        url = url.split('?')[0]
+        filename = url.split('/')[-1]
+        if filename is "":
+            filename = 'index.html'
+
+        print>>OUT, "(Using filename '%s')" % (filename,)
 
     f = open(filename, 'w')
     f.write(html)
