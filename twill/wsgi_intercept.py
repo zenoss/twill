@@ -229,6 +229,9 @@ class wsgi_fake_socket:
                 self.output.write('%s: %s\n' % (k, v,))
             self.output.write('\n')
 
+            def write_fn(s):
+                self.write_result.append(s)
+
         # construct the wsgi.input file from everything that's been
         # written to this "socket".
         inp = StringIO(self.inp.getvalue())
@@ -237,11 +240,14 @@ class wsgi_fake_socket:
         environ = make_environ(inp, self.host, self.port, self.script_name)
 
         # run the application.
+        self.write_result = []
         self.result = self.app(environ, start_response)
 
         ###
 
         # read all of the results.
+        for data in self.write_result:
+            self.output.write(data)
         for data in self.result:
             self.output.write(data)
 
