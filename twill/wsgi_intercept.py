@@ -221,7 +221,6 @@ class wsgi_fake_socket:
 
         # dynamically construct the start_response function for no good reason.
         def start_response(status, headers, exc_info=None):
-            
             # construct the HTTP request.
             self.output.write("HTTP/1.0 " + status + "\n")
             
@@ -231,6 +230,7 @@ class wsgi_fake_socket:
 
             def write_fn(s):
                 self.write_result.append(s)
+            return write_fn
 
         # construct the wsgi.input file from everything that's been
         # written to this "socket".
