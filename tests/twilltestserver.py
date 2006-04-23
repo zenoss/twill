@@ -92,7 +92,8 @@ class TwillTest(Directory):
                   "test_refresh", "test_refresh2",
                   "test_checkbox", "test_simple_checkbox","echo",
                   "test_checkboxes",
-                  'tidy_fixable_html', 'BS_fixable_html', 'unfixable_html']
+                  'tidy_fixable_html', 'BS_fixable_html', 'unfixable_html',
+                  'effed_up_forms']
 
     def __init__(self):
         self.restricted = Restricted()
@@ -133,6 +134,16 @@ class TwillTest(Directory):
 </tr>
 </form>
 """
+
+    def effed_up_forms(self):
+        return """\
+<font>
+<INPUT>
+
+<FORM>
+<input type="blah">
+</form>
+"""        
 
     def test_refresh(self):
         return """\

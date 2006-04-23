@@ -6,7 +6,7 @@ Problems posted to the twill mailing list (or sent to Titus personally)
 will end up here if they are either outside the scope of twill, or
 intractable within the context of the twill project!
 
-Last updated Mar 2006.
+Last updated Apr 2006.
 
 1. inspect module masking
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,3 +49,16 @@ recommendations (http://www.alanwood.net/unicode/htmlunicode.html) for
 dealing with unicode.  There are definitely some problems in the version
 of mechanize included with twill in 0.8.4; this should be resolved in
 later releases.
+
+4. Various kinds of broken HTML will break the form parser.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For example, twill (or, rather, ClientForm) sees no forms in this HTML ::
+
+   <font>
+   <INPUT type="this">
+
+   <FORM>
+   <input type="blah">
+   </form>
+

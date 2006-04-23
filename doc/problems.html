@@ -13,7 +13,7 @@
 <p>Problems posted to the twill mailing list (or sent to Titus personally)
 will end up here if they are either outside the scope of twill, or
 intractable within the context of the twill project!</p>
-<p>Last updated Mar 2006.</p>
+<p>Last updated Apr 2006.</p>
 <div class="section" id="inspect-module-masking">
 <h1><a name="inspect-module-masking">1. inspect module masking</a></h1>
 <p>The error message</p>
@@ -51,6 +51,18 @@ recommendations (<a class="reference" href="http://www.alanwood.net/unicode/html
 dealing with unicode.  There are definitely some problems in the version
 of mechanize included with twill in 0.8.4; this should be resolved in
 later releases.</p>
+</div>
+<div class="section" id="various-kinds-of-broken-html-will-break-the-form-parser">
+<h1><a name="various-kinds-of-broken-html-will-break-the-form-parser">4. Various kinds of broken HTML will break the form parser.</a></h1>
+<p>For example, twill (or, rather, ClientForm) sees no forms in this HTML</p>
+<pre class="literal-block">
+&lt;font&gt;
+&lt;INPUT type=&quot;this&quot;&gt;
+
+&lt;FORM&gt;
+&lt;input type=&quot;blah&quot;&gt;
+&lt;/form&gt;
+</pre>
 </div>
 </div>
 </body>

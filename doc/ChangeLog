@@ -1,3 +1,10 @@
+2006-04-23  Titus Brown  <t@issola.caltech.edu>
+
+	* Verified issue with ParseErrors caused by INPUTs in the wrong
+	  place.  Put in test-broken-html.  Cannot fix easily... <sigh>
+
+	* Fixed wsgi_intercept/write_fn issue.
+
 2006-04-13  Titus Brown  <t@issola.caltech.edu>
 
 	* Changed 'save_html' to default to deriving the filename from the

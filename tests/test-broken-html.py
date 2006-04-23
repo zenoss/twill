@@ -125,3 +125,14 @@ def test_allow_parse_errors():
 
     commands.go('/unfixable_html')
     b._browser.forms()
+
+def test_effed_up_forms():
+    """
+    @CTB should succeed, doesn't for now
+    """
+    b = commands.get_browser()
+    commands.config('use_tidy', '0')
+
+    commands.go(url)
+    commands.go('/effed_up_forms')
+    assert not b._browser.forms()       # @CTB shouldn't be 'not'
