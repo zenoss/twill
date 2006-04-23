@@ -1,5 +1,7 @@
 2006-04-23  Titus Brown  <t@issola.caltech.edu>
 
+	* Added another weird form parsing error.
+
 	* Verified issue with ParseErrors caused by INPUTs in the wrong
 	  place.  Put in test-broken-html.  Cannot fix easily... <sigh>
 

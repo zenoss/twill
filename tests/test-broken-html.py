@@ -136,3 +136,24 @@ def test_effed_up_forms():
     commands.go(url)
     commands.go('/effed_up_forms')
     assert not b._browser.forms()       # @CTB shouldn't be 'not'
+
+def test_effed_up_forms2():
+    """
+    should always succeed; didn't back ~0.7.
+    """
+    commands.config('use_tidy', '1')
+    commands.config('use_BeautifulSoup', '1')
+    commands.config('allow_parse_errors', '0')
+
+    commands.go(url)
+    commands.go('/effed_up_forms2')
+
+    b = commands.get_browser()
+    form = b._browser.forms()[0]
+    assert len(form.controls) == 3
+
+    # with a more correct form parser this would work like the above.
+    commands.config('use_tidy', '0')
+    commands.reload()
+    form = b._browser.forms()[0]
+    assert len(form.controls) == 1

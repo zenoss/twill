@@ -93,7 +93,7 @@ class TwillTest(Directory):
                   "test_checkbox", "test_simple_checkbox","echo",
                   "test_checkboxes",
                   'tidy_fixable_html', 'BS_fixable_html', 'unfixable_html',
-                  'effed_up_forms']
+                  'effed_up_forms', 'effed_up_forms2']
 
     def __init__(self):
         self.restricted = Restricted()
@@ -143,6 +143,23 @@ class TwillTest(Directory):
 <FORM>
 <input type="blah">
 </form>
+"""
+
+    def effed_up_forms2(self):
+        return """\
+<div id="loginform">
+   <form method="post" name="loginform" action="ChkLogin">
+   <h3>ARINC Direct Login</h3>
+   <br/>
+   <strong>User ID</strong><br/>
+   <input name="username" id="username" type="text" style="width:80%;"><br/>
+   <strong>Password</strong><br/>
+   <input name="password" type="password" style="width:80%;"><br/>
+   <div id="buttonbar">
+   <input value="Login" name="login" class="button" type="submit">
+   </div>
+   </form>
+</div>
 """        
 
     def test_refresh(self):
