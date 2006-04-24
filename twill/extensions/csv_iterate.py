@@ -26,4 +26,4 @@ def csv_iterate(filename, scriptname):
         for i, col in enumerate(row):
             global_dict["col%d" % (i + 1,)] = col
 
-        execute_file(scriptname)
+        execute_file(scriptname, no_reset=True)
