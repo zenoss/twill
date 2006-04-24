@@ -127,7 +127,7 @@ loads all of the post-scriptfile command-line arguments into variables, e.g. ::
    ...
    >> extend_with argparse
    >> get_args
-   >> echo "args are $arg1 $args $arg3"
+   >> echo "args are ${arg1} ${args} ${arg3}"
    args are val1 val2 val3
 
 dns_check
@@ -149,4 +149,25 @@ Functions:
 csv_iterate
 ~~~~~~~~~~~
 
-...
+csv_iterate provides a single function, 'csv_iterate', that lets you
+run a script once for each row in a file of comma-separated values.
+For example, if you had a file 'test.csv' containing ::
+
+   value1, value2
+   value3, value4
+
+and a script 'test' containing ::
+
+   echo "first value is ${col1}, second is ${col2}"
+
+then ::
+
+   >> csv_iterate test.csv test
+
+would produce ::
+
+   first value is value1, second is value2
+   first value is value3, second is value4
+
+This is designed for building test suites containing many different
+combinations of values for specific forms.
