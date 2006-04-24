@@ -7,8 +7,14 @@ go /multisubmitform
 
 go /testform
 
+# first test selecting by ID...
+fv the_form some_id value
+
+# OK, reset
+formclear 1
+
 fv 1 selecttest val
-submit
+submit submit_button
 find "SELECTTEST: ==val=="
 
 ###

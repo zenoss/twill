@@ -1,11 +1,19 @@
 2006-04-23  Titus Brown  <t@issola.caltech.edu>
 
+	* browser.get_form() now checks for exact match to form ID.
+	  (Uy Do)
+
+	* browser.get_form_field() now checks for exact match to control ID
+	  (Uy Do)
+
 	* Updated ClientCookie to latest svn.
 
-	* Added another weird form parsing error.
+	* Added another weird form parsing error: </br> problems in forms.
+	  (David Hancock)
 
 	* Verified issue with ParseErrors caused by INPUTs in the wrong
 	  place.  Put in test-broken-html.  Cannot fix easily... <sigh>
+	  (Tomi Hautakoski)
 
 	* Fixed wsgi_intercept/write_fn issue.
 

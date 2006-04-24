@@ -253,8 +253,14 @@ class TwillBrowser(object):
         Return the first form that matches 'formname'.
         """
         forms = self._browser.forms()
+
+        # first try ID
+        for f in forms:
+            id = f.attrs.get("id")
+            if id and str(id) == formname:
+                return f
         
-        # first try regexps
+        # next try regexps
         regexp = re.compile(formname)
         for f in forms:
             if f.name and regexp.search(f.name):
@@ -318,6 +324,17 @@ class TwillBrowser(object):
         """
         found = None
         found_multiple = False
+
+        matches = [ c for c in form.controls if str(c.id) == fieldname ]
+
+        # test exact match.
+        if matches:
+            if (len(matches) == 1
+                or (self._all_the_same_checkbox(matches)
+                    or self._all_the_same_submit(matches))):
+                found = matches[0]
+            else:
+                found_multiple = True   # record for error reporting.
         
         matches = [ c for c in form.controls if str(c.name) == fieldname ]
 

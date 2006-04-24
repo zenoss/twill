@@ -302,7 +302,7 @@ hello, world.
 
         return """\
 %s
-<form method=POST>
+<form method=POST id=the_form>
 <select name=selecttest multiple>
 <option> val
 <option value='selvalue1'> value1 </option>
@@ -317,7 +317,9 @@ hello, world.
 <input type=text name=item_b>
 <input type=text name=item_c>
 
-<input type=submit value=post>
+<input type=text id=some_id>
+
+<input type=submit value=post id=submit_button>
 </form>
 """ % (s,)
 
