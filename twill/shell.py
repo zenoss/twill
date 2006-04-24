@@ -221,7 +221,10 @@ class TwillCommandLoop(Singleton, cmd.Cmd):
     do_quit = do_exit
     help_quit = help_exit
 
+twillargs = []
 def main():
+    global twillargs
+    
     import sys
     from twill import TwillCommandLoop, execute_file, __version__
     from optparse import OptionParser
@@ -261,7 +264,19 @@ def main():
     ####
 
     # parse arguments.
-    (options, args) = parser.parse_args()
+    sysargs = sys.argv[1:]
+    if '--' in sysargs:
+        found = False
+        for last in range(len(sysargs) - 1, -1, -1):
+            if sysargs[last] == '--':
+                found = True
+                break
+
+        if found:
+            twillargs = sysargs[last + 1:]
+            sysargs = sysargs[:last]
+
+    (options, args) = parser.parse_args(sysargs)
 
     if options.show_version:
         print 'twill version %s.' % (__version__,)

@@ -1,5 +1,7 @@
 2006-04-23  Titus Brown  <t@issola.caltech.edu>
 
+	* Fixed argparse to listen to arguments after '--' only.
+
 	* Updated 'problems.txt' again with a Windows-specific 'tidy'
 	  problem.  (aledain)
 

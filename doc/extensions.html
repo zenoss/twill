@@ -129,12 +129,13 @@ submit 0
 <div class="section" id="argparse">
 <h1><a class="toc-backref" href="#id5" name="argparse">argparse</a></h1>
 <p>The 'argparse' extension module contains one function, 'get_args'.  'get_args'
-loads all of the command-line arguments into variables, e.g.</p>
+loads all of the post-scriptfile command-line arguments into variables, e.g.</p>
 <pre class="literal-block">
-% ./twill-sh script1 script2 script3
+% ./twill-sh script1 script2 script3 -- arg1 arg2 arg3
 ...
 &gt;&gt; extend_with argparse
-&gt;&gt; echo $arg1
+&gt;&gt; get_args
+&gt;&gt; echo $arg1 $args $arg3
 </pre>
 </div>
 <div class="section" id="dns-check">
