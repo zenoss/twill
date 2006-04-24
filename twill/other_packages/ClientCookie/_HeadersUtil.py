@@ -3,9 +3,9 @@
 Copyright 1997-1998, Gisle Aas
 Copyright 2002-2006, John J. Lee
 
-This code is free software; you can redistribute it and/or modify it under
-the terms of the BSD License (see the file COPYING included with the
-distribution).
+This code is free software; you can redistribute it and/or modify it
+under the terms of the BSD or ZPL 2.1 licenses (see the file
+COPYING.txt included with the distribution).
 
 """
 
@@ -24,7 +24,7 @@ except NameError:
     True = 1
     False = 0
 
-def is_html(ct_headers, url):
+def is_html(ct_headers, url, allow_xhtml=False):
     """
     ct_headers: Sequence of Content-Type headers
     url: Response URL
@@ -33,13 +33,19 @@ def is_html(ct_headers, url):
     if not ct_headers:
         # guess
         ext = os.path.splitext(urlparse.urlparse(url)[2])[1]
-        return ext in ['.htm', '.html', '.xhtml']
+        html_exts = [".htm", ".html"]
+        if allow_xhtml:
+            html_exts += [".xhtml"]
+        return ext in html_exts
     # use first header
     ct = split_header_words(ct_headers)[0][0][0]
-    return ct in [
-        "text/html", "text/xhtml", "text/xml",
-        "application/xml", "application/xhtml+xml",
-        ]
+    html_types = ["text/html"]
+    if allow_xhtml:
+        html_types += [
+            "text/xhtml", "text/xml",
+            "application/xml", "application/xhtml+xml",
+            ]
+    return ct in html_types
 
 def unmatched(match):
     """Return unmatched part of re.Match object."""

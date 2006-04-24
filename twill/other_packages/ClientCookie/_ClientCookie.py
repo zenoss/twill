@@ -26,13 +26,13 @@ Copyright 2002-2006 John J Lee <jjl@pobox.com>
 Copyright 1997-1999 Gisle Aas (original libwww-perl code)
 Copyright 2002-2003 Johnny Lee (original MSIE Perl code)
 
-This code is free software; you can redistribute it and/or modify it under
-the terms of the BSD License (see the file COPYING included with the
-distribution).
+This code is free software; you can redistribute it and/or modify it
+under the terms of the BSD or ZPL 2.1 licenses (see the file
+COPYING.txt included with the distribution).
 
 """
 
-VERSION = "1.1.1"
+VERSION = "1.3.0"
 
 
 # Public health warning: anyone who thought 'cookies are simple, aren't they?',

@@ -5,17 +5,17 @@ the META HTTP-EQUIV tag contents, and following Refresh header redirects.
 
 Copyright 2002-2006 John J Lee <jjl@pobox.com>
 
-This code is free software; you can redistribute it and/or modify it under
-the terms of the BSD License (see the file COPYING included with the
-distribution).
+This code is free software; you can redistribute it and/or modify it
+under the terms of the BSD or ZPL 2.1 licenses (see the file
+COPYING.txt included with the distribution).
 
 """
 
-import copy, time, tempfile
+import copy, time, tempfile, htmlentitydefs, re
 
 import ClientCookie
 from _ClientCookie import CookieJar, request_host
-from _Util import isstringlike, startswith, getheaders
+from _Util import isstringlike, startswith, getheaders, closeable_response
 from _HeadersUtil import is_html
 from _Debug import getLogger
 debug = getLogger("ClientCookie.cookies").debug
@@ -27,6 +27,7 @@ except NameError:
 
 
 CHUNK = 1024  # size of chunks fed to HTML HEAD parser, in bytes
+DEFAULT_ENCODING = 'latin-1'
 
 try:
     from urllib2 import AbstractHTTPHandler
@@ -35,6 +36,8 @@ except ImportError:
 else:
     import urlparse, urllib2, urllib, httplib
     import sgmllib
+    # monkeypatch to fix http://www.python.org/sf/803422 :-(
+    sgmllib.charref = re.compile("&#(x?[0-9a-fA-F]+)[^0-9a-fA-F]")
     from urllib2 import URLError, HTTPError
     import types, string, socket
     from cStringIO import StringIO
@@ -177,28 +180,120 @@ else:
         https_request = http_request
 
 
-   # XXX would self.reset() work, instead of raising this exception?
+    # -------------------------------------------------------------------
+    # Beware, the following encoding code is cut-and-pasted between
+    # ClientCookie, ClientForm, mechanize and pullparser, and they differ
+    # subtly :-(((
+    # This particular variant is identical to that in mechanize.
+
+    def unescape(data, entities, encoding):
+        if data is None or "&" not in data:
+            return data
+
+        def replace_entities(match, entities=entities, encoding=encoding):
+            ent = match.group()
+            if ent[1] == "#":
+                return unescape_charref(ent[2:-1], encoding)
+
+            repl = entities.get(ent[1:-1])
+            if repl is not None:
+                repl = unichr(repl)
+                if type(repl) != type(""):
+                    try:
+                        repl = repl.encode(encoding)
+                    except UnicodeError:
+                        repl = ent
+            else:
+                repl = ent
+            return repl
+
+        return re.sub(r"&#?[A-Za-z0-9]+?;", replace_entities, data)
+
+    def unescape_charref(data, encoding):
+        name, base = data, 10
+        if name.startswith("x"):
+            name, base= name[1:], 16
+        uc = unichr(int(name, base))
+        if encoding is None:
+            return uc
+        else:
+            try:
+                repl = uc.encode(encoding)
+            except UnicodeError:
+                repl = "&#%s;" % data
+            return repl
+
+    def get_entitydefs():
+        from codecs import latin_1_decode
+        try:
+            htmlentitydefs.name2codepoint
+        except AttributeError:
+            entitydefs = {}
+            for name, char in htmlentitydefs.entitydefs.items():
+                uc = latin_1_decode(char)[0]
+                if uc.startswith("&#") and uc.endswith(";"):
+                    uc = unescape_charref(uc[2:-1], None)
+                codepoint = ord(uc)
+                entitydefs[name] = codepoint
+        else:
+            entitydefs = htmlentitydefs.name2codepoint
+        return entitydefs
+
+    # -------------------------------------------------------------------
+
+
+    # XXX would self.reset() work, instead of raising this exception?
     class EndOfHeadError(Exception): pass
     class AbstractHeadParser:
         # only these elements are allowed in or before HEAD of document
         head_elems = ("html", "head",
                       "title", "base",
                       "script", "style", "meta", "link", "object")
+        _entitydefs = get_entitydefs()
+        _encoding = DEFAULT_ENCODING
 
         def __init__(self):
             self.http_equiv = []
+
         def start_meta(self, attrs):
             http_equiv = content = None
             for key, value in attrs:
                 if key == "http-equiv":
-                    http_equiv = value
+                    http_equiv = self.unescape_attr_if_required(value)
                 elif key == "content":
-                    content = value
+                    content = self.unescape_attr_if_required(value)
             if http_equiv is not None:
                 self.http_equiv.append((http_equiv, content))
 
         def end_head(self):
             raise EndOfHeadError()
+
+        def handle_entityref(self, name):
+            #debug("%s", name)
+            self.handle_data(unescape(
+                '&%s;' % name, self._entitydefs, self._encoding))
+
+        def handle_charref(self, name):
+            #debug("%s", name)
+            self.handle_data(unescape_charref(name, self._encoding))
+
+        def unescape_attr(self, name):
+            #debug("%s", name)
+            return unescape(name, self._entitydefs, self._encoding)
+
+        def unescape_attrs(self, attrs):
+            #debug("%s", attrs)
+            escaped_attrs = {}
+            for key, val in attrs.items():
+                escaped_attrs[key] = self.unescape_attr(val)
+            return escaped_attrs
+
+        def unknown_entityref(self, ref):
+            self.handle_data("&%s;" % ref)
+
+        def unknown_charref(self, ref):
+            self.handle_data("&#%s;" % ref)
+
 
     try:
         import HTMLParser
@@ -236,36 +331,13 @@ else:
                 else:
                     method()
 
-            # handle_charref, handle_entityref and default entitydefs are taken
-            # from sgmllib
-            def handle_charref(self, name):
-                try:
-                    n = int(name)
-                except ValueError:
-                    self.unknown_charref(name)
-                    return
-                if not 0 <= n <= 255:
-                    self.unknown_charref(name)
-                    return
-                self.handle_data(chr(n))
+            def unescape(self, name):
+                # Use the entitydefs passed into constructor, not
+                # HTMLParser.HTMLParser's entitydefs.
+                return self.unescape_attr(name)
 
-            # Definition of entities -- derived classes may override
-            entitydefs = \
-                    {'lt': '<', 'gt': '>', 'amp': '&', 'quot': '"', 'apos': '\''}
-
-            def handle_entityref(self, name):
-                table = self.entitydefs
-                if name in table:
-                    self.handle_data(table[name])
-                else:
-                    self.unknown_entityref(name)
-                    return
-
-            def unknown_entityref(self, ref):
-                self.handle_data("&%s;" % ref)
-
-            def unknown_charref(self, ref):
-                self.handle_data("&#%s;" % ref)
+            def unescape_attr_if_required(self, name):
+                return name  # HTMLParser.HTMLParser already did it
 
     class HeadParser(AbstractHeadParser, sgmllib.SGMLParser):
 
@@ -291,6 +363,9 @@ else:
             else:
                 raise EndOfHeadError()
 
+        def unescape_attr_if_required(self, name):
+            return self.unescape_attr(name)
+
     def parse_head(fileobj, parser):
         """Return a list of key, value pairs."""
         while 1:
@@ -310,8 +385,11 @@ else:
 
         handler_order = 300  # before handlers that look at HTTP headers
 
-        def __init__(self, head_parser_class=HeadParser):
+        def __init__(self, head_parser_class=HeadParser,
+                     i_want_broken_xhtml_support=False,
+                     ):
             self.head_parser_class = head_parser_class
+            self._allow_xhtml = i_want_broken_xhtml_support
 
         def http_response(self, request, response):
             if not hasattr(response, "seek"):
@@ -319,7 +397,7 @@ else:
             headers = response.info()
             url = response.geturl()
             ct_hdrs = getheaders(response.info(), "content-type")
-            if is_html(ct_hdrs, url):
+            if is_html(ct_hdrs, url, self._allow_xhtml):
                 try:
                     try:
                         html_headers = parse_head(response, self.head_parser_class())
@@ -502,17 +580,17 @@ else:
                 refresh = getheaders(hdrs, "refresh")[0]
                 ii = string.find(refresh, ";")
                 if ii != -1:
-                    pause, newurl_spec = int(refresh[:ii]), refresh[ii+1:]
+                    pause, newurl_spec = float(refresh[:ii]), refresh[ii+1:]
                     jj = string.find(newurl_spec, "=")
                     if jj != -1:
                         key, newurl = newurl_spec[:jj], newurl_spec[jj+1:]
-                    if key.strip() != "url":
+                    if key.strip().lower() != "url":
                         debug("bad Refresh header: %r" % refresh)
                         return response
                 else:
-                    pause, newurl = int(refresh), response.geturl()
+                    pause, newurl = float(refresh), response.geturl()
                 if (self.max_time is None) or (pause <= self.max_time):
-                    if pause != 0 and self.honor_time:
+                    if pause > 1E-3 and self.honor_time:
                         time.sleep(pause)
                     hdrs["location"] = newurl
                     # hardcoded http is NOT a bug
@@ -629,9 +707,8 @@ else:
             r.recv = r.read
             fp = socket._fileobject(r, 'rb', -1)
 
-            resp = urllib.addinfourl(fp, r.msg, req.get_full_url())
-            resp.code = r.status
-            resp.msg = r.reason
+            resp = closeable_response(fp, r.msg, req.get_full_url(),
+                                      r.status, r.reason)
             return resp
 
 

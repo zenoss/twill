@@ -2,9 +2,9 @@
 
  Copyright 2002-2006 John J Lee <jjl@pobox.com>
 
-This code is free software; you can redistribute it and/or modify it under
-the terms of the BSD License (see the file COPYING included with the
-distribution).
+This code is free software; you can redistribute it and/or modify it
+under the terms of the BSD or ZPL 2.1 licenses (see the file
+COPYING.txt included with the distribution).
 
 """
 
@@ -13,7 +13,7 @@ except NameError:
     True = 1
     False = 0
 
-import re, string, time, copy
+import re, string, time, copy, urllib
 from types import TupleType
 from cStringIO import StringIO
 
@@ -405,9 +405,6 @@ class seek_wrapper:
     # that a single cache may be shared between multiple seek_wrapper objects.
     # Copying using module copy shares the cache in this way.
 
-    # XXX Does this class work sensibly in the face of exceptions raised by
-    # .read() / .readline() / .readlines() / .seek()??
-
     def __init__(self, wrapped):
         self.wrapped = wrapped
         self.__have_readline = hasattr(self.wrapped, "readline")
@@ -538,17 +535,38 @@ class seek_wrapper:
     xreadlines = __iter__
 
     def __repr__(self):
-        return ("<%s at %s whose wrapped object = %s>" %
-                (self.__class__.__name__, `id(self)`, `self.wrapped`))
+        return ("<%s at %s whose wrapped object = %r>" %
+                (self.__class__.__name__, hex(id(self)), self.wrapped))
 
-    def close(self):
-        self.__cache = None
-        self.read = None
-        self.readline = None
-        self.readlines = None
-        self.seek = None
-        if self.wrapped: self.wrapped.close()
-        self.wrapped = None
+
+class response_seek_wrapper(seek_wrapper):
+
+    """
+    Supports copying response objects and setting response body data.
+
+    """
+
+    def __init__(self, wrapped):
+        seek_wrapper.__init__(self, wrapped)
+        self._headers = self.wrapped.info()
+
+    def __copy__(self):
+        cpy = seek_wrapper.__copy__(self)
+        # copy headers from delegate
+        cpy._headers = copy.copy(self.info())
+        return cpy
+
+    def info(self):
+        return self._headers
+
+    def set_data(self, data):
+        self.seek(0)
+        self.read()
+        self.close()
+        cache = self._seek_wrapper__cache = StringIO()
+        cache.write(data)
+        self.seek(0)
+
 
 class eoffile:
     # file-like object that always claims to be at end-of-file...
@@ -558,8 +576,20 @@ class eoffile:
     def next(self): return ""
     def close(self): pass
 
-class response_seek_wrapper(seek_wrapper):
+class eofresponse(eoffile):
+    def __init__(self, url, headers, code, msg):
+        self._url = url
+        self._headers = headers
+        self.code = code
+        self.msg = msg
+    def geturl(self): return self._url
+    def info(self): return self._headers
+
+
+class closeable_response:
     """Avoids unnecessarily clobbering urllib.addinfourl methods on .close().
+
+    Only supports responses returned by ClientCookie.HTTPHandler.
 
     After .close(), the following methods are supported:
 
@@ -574,8 +604,7 @@ class response_seek_wrapper(seek_wrapper):
     .next()
     .close()
 
-    and the following attributes are supported if present (i.e. in Python 2.4
-    or newer):
+    and the following attributes are supported:
 
     .code
     .msg
@@ -585,48 +614,43 @@ class response_seek_wrapper(seek_wrapper):
 
     """
 
-    def __init__(self, wrapped):
-        seek_wrapper.__init__(self, wrapped)
-        self.url = self.wrapped.geturl()
-        try:
-            self.msg = wrapped.msg
-            self.code = wrapped.code
-        except AttributeError:
-            pass  # pre-2.4
-        self._headers = self.wrapped.info()
+    def __init__(self, fp, headers, url, code, msg):
+        self._set_fp(fp)
+        self._headers = headers
+        self._url = url
+        self.code = code
+        self.msg = msg
 
-    def close(self):
-        wrapped = self.wrapped
-        wrapped.close()
+    def _set_fp(self, fp):
+        self.fp = fp
+        self.read = self.fp.read
+        self.readline = self.fp.readline
+        if hasattr(self.fp, "readlines"): self.readlines = self.fp.readlines
+        if hasattr(self.fp, "fileno"):
+            self.fileno = self.fp.fileno
+        else:
+            self.fileno = lambda: None
+        if hasattr(self.fp, "__iter__"):
+            self.__iter__ = self.fp.__iter__
+            if hasattr(self.fp, "next"):
+                self.next = self.fp.next
 
-        new_wrapped = eoffile()
-        new_wrapped.url = self.url
-        try:
-            new_wrapped.url = self.url
-            new_wrapped.code = self.code
-        except AttributeError:
-            pass  # pre-2.4
-        new_wrapped._headers = self._headers
-        self.wrapped = new_wrapped
+    def __repr__(self):
+        return '<%s at %s whose fp = %r>' % (
+            self.__class__.__name__, hex(id(self)), self.fp)
 
     def info(self):
         return self._headers
 
     def geturl(self):
-        return self.url
+        return self._url
 
-    def __copy__(self):
-        cpy = seek_wrapper.__copy__(self)
-        cpy._headers = copy.copy(self._headers)
-        return cpy
-
-    def set_data(self, data):
-        self.seek(0)
-        self.read()
-        self.close()
-        cache = self._seek_wrapper__cache = StringIO()
-        cache.write(data)
-        self.seek(0)
+    def close(self):
+        wrapped = self.fp
+        wrapped.close()
+        new_wrapped = eofresponse(
+            self._url, self._headers, self.code, self.msg)
+        self._set_fp(new_wrapped)
 
     def __getstate__(self):
         # There are three obvious options here:
@@ -641,5 +665,7 @@ class response_seek_wrapper(seek_wrapper):
         # So we do 1.
 
         state = self.__dict__.copy()
-        state["wrapped"] = eoffile()
+        new_wrapped = eofresponse(
+            self._url, self._headers, self.code, self.msg)
+        state["wrapped"] = new_wrapped
         return state

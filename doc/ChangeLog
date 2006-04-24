@@ -1,5 +1,7 @@
 2006-04-23  Titus Brown  <t@issola.caltech.edu>
 
+	* Updated ClientCookie to latest svn.
+
 	* Added another weird form parsing error.
 
 	* Verified issue with ParseErrors caused by INPUTs in the wrong

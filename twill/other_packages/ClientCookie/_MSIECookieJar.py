@@ -3,9 +3,9 @@
 Copyright 2002-2003 Johnny Lee <typo_pl@hotmail.com> (MSIE Perl code)
 Copyright 2002-2006 John J Lee <jjl@pobox.com> (The Python port)
 
-This code is free software; you can redistribute it and/or modify it under
-the terms of the BSD License (see the file COPYING included with the
-distribution).
+This code is free software; you can redistribute it and/or modify it
+under the terms of the BSD or ZPL 2.1 licenses (see the file
+COPYING.txt included with the distribution).
 
 """
 
