@@ -1,5 +1,7 @@
 2006-04-23  Titus Brown  <t@issola.caltech.edu>
 
+	* Refactored '_all_the_same...' code by moving it into utils.py.
+
 	* browser.get_form() now checks for exact match to form ID.
 	  (Uy Do)
 

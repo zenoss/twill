@@ -17,7 +17,9 @@ from mechanize import BrowserStateError, LinkNotFoundError
 
 # twill package imports
 from _browser import PatchedMechanizeBrowser
-from utils import trunc, print_form, ConfigurableParsingFactory, ResultWrapper
+from utils import trunc, print_form, ConfigurableParsingFactory, \
+     ResultWrapper, unique_match
+     
 
 #
 # TwillBrowser
@@ -277,46 +279,6 @@ class TwillBrowser(object):
 
         return None
 
-    def _all_the_same_checkbox(self, matches):
-        """
-        Check whether all these controls are actually the the same
-        checkbox.
-
-        Hidden controls can combine with checkboxes, to allow form
-        processors to ensure a False value is returned even if user
-        does not check the checkbox. Without the hidden control, no
-        value would be returned.
-        """
-        name = None
-        for match in matches:
-            if match.type not in ['checkbox', 'hidden']:
-                return False
-            if name is None:
-                name = match.name
-            else:
-                if match.name != name:
-                    return False
-        return True
-
-    def _all_the_same_submit(self, matches):
-        """
-        Utility function to check to see if a list of controls all really
-        belong to the same control: for use with checkboxes, hidden, and
-        submit buttons.
-        """
-        name = None
-        value = None
-        for match in matches:
-            if match.type not in ['submit', 'hidden']:
-                return False
-            if name is None:
-                name = match.name
-                value = match.value
-            else:
-                if match.name != name or match.value!= value:
-                    return False
-        return True
-
     def get_form_field(self, form, fieldname):
         """
         Return the control that matches 'fieldname'.  Must be
@@ -329,9 +291,7 @@ class TwillBrowser(object):
 
         # test exact match.
         if matches:
-            if (len(matches) == 1
-                or (self._all_the_same_checkbox(matches)
-                    or self._all_the_same_submit(matches))):
+            if unique_match(matches):
                 found = matches[0]
             else:
                 found_multiple = True   # record for error reporting.
@@ -340,9 +300,7 @@ class TwillBrowser(object):
 
         # test exact match.
         if matches:
-            if (len(matches) == 1
-                or (self._all_the_same_checkbox(matches)
-                    or self._all_the_same_submit(matches))):
+            if unique_match(matches):
                 found = matches[0]
             else:
                 found_multiple = True   # record for error reporting.
@@ -367,9 +325,7 @@ class TwillBrowser(object):
                         if regexp.search(str(ctl.name)) ]
 
             if matches:
-                if (len(matches) == 1
-                    or (self._all_the_same_checkbox(matches)
-                        or self._all_the_same_submit(matches))):
+                if unique_match(matches):
                     found = matches[0]
                 else:
                     found_multiple = True # record for error
