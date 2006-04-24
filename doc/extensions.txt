@@ -123,11 +123,12 @@ argparse
 The 'argparse' extension module contains one function, 'get_args'.  'get_args'
 loads all of the post-scriptfile command-line arguments into variables, e.g. ::
 
-   % ./twill-sh script1 script2 script3 -- arg1 arg2 arg3
+   % ./twill-sh script1 script2 script3 -- val1 val2 val3
    ...
    >> extend_with argparse
    >> get_args
-   >> echo $arg1 $args $arg3
+   >> echo "args are $arg1 $args $arg3"
+   args are val1 val2 val3
 
 dns_check
 ~~~~~~~~~
@@ -144,3 +145,8 @@ Functions:
   * dns_ns -- assert that a given hostname is a name server for the given name.
 
 .. _dnspython: http://www.dnspython.org/
+
+csv_iterate
+~~~~~~~~~~~
+
+...

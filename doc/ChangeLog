@@ -1,3 +1,9 @@
+2006-04-24  Titus Brown  <t@issola.caltech.edu>
+
+	* Added csv_iterate module.
+
+	* Fixed argparse to use $arg1...$argN instead of $arg0.
+
 2006-04-23  Titus Brown  <t@issola.caltech.edu>
 
 	* Fixed argparse to listen to arguments after '--' only.

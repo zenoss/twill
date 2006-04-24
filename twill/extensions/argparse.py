@@ -14,6 +14,7 @@ def get_args():
     global_dict, local_dict = namespaces.get_twill_glocals()
 
     for i, arg in enumerate(shell.twillargs):
-        global_dict["arg%d" % (i,)] = arg
+        global_dict["arg%d" % (i + 1,)] = arg
 
-    print>>commands.OUT, "get_args: loaded %d args as $argN." % (i + 1,)
+    print>>commands.OUT, "get_args: loaded %d args as $arg1..$arg%d." % \
+                         (i, i)
