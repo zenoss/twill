@@ -62,3 +62,16 @@ For example, twill (or, rather, ClientForm) sees no forms in this HTML ::
    <input type="blah">
    </form>
 
+
+5. Windows problems and tidy
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you get the error message ::
+
+   The process cannot access the file because it is being used by another process.
+
+on Windows, try turning 'tidy' processing off:
+
+   config use_tidy 0
+
+(and report it to the list if this does or does not solve the problem!)

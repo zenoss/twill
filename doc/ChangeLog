@@ -1,5 +1,8 @@
 2006-04-23  Titus Brown  <t@issola.caltech.edu>
 
+	* Updated 'problems.txt' again with a Windows-specific 'tidy'
+	  problem.  (aledain)
+
 	* Refactored '_all_the_same...' code by moving it into utils.py.
 
 	* browser.get_form() now checks for exact match to form ID.
