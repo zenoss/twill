@@ -150,6 +150,8 @@ def execute_string(buf, **kw):
     fp = StringIO(buf)
     
     kw['source'] = ['<string buffer>']
+    if not kw.has_key('no_reset'):
+       kw['no_reset'] = True
     
     _execute_script(fp, **kw)
 
