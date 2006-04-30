@@ -1,3 +1,11 @@
+"""
+Extension functions to discard all moderated messages in a SourceForge-based
+mailman queue.
+
+(Currently there is no way to do this without manually selecting 'discard'
+for each and every message.)
+"""
+
 import twill, twill.utils
 import re
 
@@ -7,16 +15,30 @@ __all__ = ['discard_all_messages',
            ]
 
 def exit_if_empty():
-    state = twill.get_browser_state()
+    """
+    >> exit_if_empty
+
+    Exit the script currently running, if there are no deferred messages
+    on the current page.
+    """
+    state = twill.get_browser()
     form = state.get_form("1")
     if not form:
-        raise SystemExit()
+        print "No messages; exiting."
+        raise SystemExit
     
 def discard_all_messages():
-    formvalue_by_regexp_setall("1", "^\d+$", "3")
+    """
+    >> discard_all_messages
 
-def formvalue_by_regexp_setall(formname, fieldname, value):
-    state = twill.get_browser_state()
+    Set all buttons to "discard".
+    """
+    _formvalue_by_regexp_setall("1", "^\d+$", "3")
+
+### utility functions
+
+def _formvalue_by_regexp_setall(formname, fieldname, value):
+    state = twill.get_browser()
     
     form = state.get_form(formname)
     if not form:

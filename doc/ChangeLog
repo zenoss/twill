@@ -1,3 +1,13 @@
+2006-04-29  Titus Brown  <t@issola.caltech.edu>
+
+	* 'execute_string' no longer resets context, unlike 'execute_file'.
+
+	* Fixed a few miscellaneous problems with argparse.get_args; added
+	  optional 'require' argument to get_args.
+
+	* added 'interactive' flag to twill.shell; turned off verbose
+	  output for 'extend_with' command if not interactive.
+
 2006-04-24  Titus Brown  <t@issola.caltech.edu>
 
 	* Added csv_iterate module.
