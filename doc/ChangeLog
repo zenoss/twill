@@ -1,5 +1,7 @@
 2006-04-29  Titus Brown  <t@issola.caltech.edu>
 
+	* Added (re-added!?) test-wsgi-intercept.py test.
+
 	* 'execute_string' no longer resets context, unlike 'execute_file'.
 
 	* Fixed a few miscellaneous problems with argparse.get_args; added
