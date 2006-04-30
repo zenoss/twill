@@ -497,16 +497,17 @@ def extend_with(module_name):
     ###
     
     print>>OUT, "Imported extension module '%s'.\n" % (module_name,)
-        
-    if mod.__doc__:
-        print>>OUT, "Description:\n\n%s\n" % (mod.__doc__.strip(),)
-    else:
-        if fnlist:
-            print>>OUT, 'New commands:\n'
-            for name in fnlist:
-                print>>OUT, '\t', name
 
-            print>>OUT, ''
+    if twill.shell.interactive:
+        if mod.__doc__:
+            print>>OUT, "Description:\n\n%s\n" % (mod.__doc__.strip(),)
+        else:
+            if fnlist:
+                print>>OUT, 'New commands:\n'
+                for name in fnlist:
+                    print>>OUT, '\t', name
+
+                print>>OUT, ''
 
 def getinput(prompt):
     """

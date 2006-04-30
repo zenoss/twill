@@ -221,9 +221,12 @@ class TwillCommandLoop(Singleton, cmd.Cmd):
     do_quit = do_exit
     help_quit = help_exit
 
-twillargs = []
+####
+
+twillargs = []                          # contains sys.argv *after* last '--'
+interactive = False                     # 'True' if interacting with user
 def main():
-    global twillargs
+    global twillargs, interactive
     
     import sys
     from twill import TwillCommandLoop, execute_file, __version__
@@ -304,6 +307,7 @@ def main():
             print '>> EXECUTING FILE', filename
 
             try:
+                interactive = False
                 execute_file(filename,
                              initial_url=options.url,
                              never_fail=options.never_fail)
@@ -328,6 +332,7 @@ def main():
         if not args:
             welcome_msg = "\n -= Welcome to twill! =-\n"
 
+        interactive = True
         shell = TwillCommandLoop(initial_url=options.url)
 
         while 1:
