@@ -1,5 +1,7 @@
 2006-05-07  Titus Brown  <t@issola.caltech.edu>
 
+	* Fixed check_links problem with 'https:' URLs, refactored a tad.
+
 	* Fixed wsgi_intercept generator problem, added test.
 
 	* Fixed a reference to an absolute URL in the tests.

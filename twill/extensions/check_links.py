@@ -56,7 +56,9 @@ def check_links(pattern = '', visited={}):
         url = link.absolute_url
         url = url.split('#', 1)[0]      # get rid of subpage pointers
 
-        if not url.startswith('http://'):
+        if not (url.startswith('http://') or url.startswith('https://')):
+            if DEBUG:
+               print>>OUT, "url '%s' is not an HTTP link; ignoring" % (url,)
             continue
 
         if regexp:
@@ -76,14 +78,16 @@ def check_links(pattern = '', visited={}):
 
     failed = []
     for link in collected_urls.values():
+        went = False
         try:
             if DEBUG:
                 print>>OUT, "Trying %s" % (link.absolute_url,),
                 
             if not visited.has_key(link.absolute_url):
                 browser.follow_link(link)
+                went = True
+                
                 code = browser.get_code()
-                browser.back()
                 assert code == 200
 
                 visited[link.absolute_url] = 1
@@ -97,6 +101,11 @@ def check_links(pattern = '', visited={}):
             failed.append(link.absolute_url)
             if DEBUG:
                 print>>OUT, '...failure ;('
+
+        if went:
+            browser.back()
+        
+                
 
     if failed:
         print>>OUT, '\nCould not follow %d links' % (len(failed),)
