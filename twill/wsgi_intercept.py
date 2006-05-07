@@ -8,6 +8,7 @@ Use 'add_wsgi_intercept' and 'remove_wsgi_intercept' to control this behavior.
 
 import sys
 from httplib import HTTPConnection
+import urllib
 from cStringIO import StringIO
 import traceback
 
@@ -117,10 +118,10 @@ def make_environ(inp, host, port, script_name):
         url = url[len(script_name):]
 
     url = url.split('?', 1)
-    path_info = url[0]
+    path_info = urllib.unquote_plus(url[0])
     query_string = ""
     if len(url) == 2:
-        query_string = url[1]
+        query_string = urllib.unquote_plus(url[1])
 
     if debuglevel:
         print "method: %s; script_name: %s; path_info: %s; query_string: %s" % (method, script_name, path_info, query_string)
@@ -199,6 +200,7 @@ class wsgi_fake_socket:
         self.script_name = script_name  # SCRIPT_NAME (app mount point)
 
         self.inp = StringIO()           # stuff written into this "socket"
+        self.write_results = []          # results from the 'write_fn'
         self.results = None             # results from running the app
         self.output = StringIO()        # all output from the app, incl headers
 
@@ -220,6 +222,7 @@ class wsgi_fake_socket:
         """
 
         # dynamically construct the start_response function for no good reason.
+
         def start_response(status, headers, exc_info=None):
             # construct the HTTP request.
             self.output.write("HTTP/1.0 " + status + "\n")
@@ -229,7 +232,7 @@ class wsgi_fake_socket:
             self.output.write('\n')
 
             def write_fn(s):
-                self.write_result.append(s)
+                self.write_results.append(s)
             return write_fn
 
         # construct the wsgi.input file from everything that's been
@@ -240,16 +243,35 @@ class wsgi_fake_socket:
         environ = make_environ(inp, self.host, self.port, self.script_name)
 
         # run the application.
-        self.write_result = []
-        self.result = self.app(environ, start_response)
+        self.result = iter(self.app(environ, start_response))
 
         ###
 
-        # read all of the results.
-        for data in self.write_result:
-            self.output.write(data)
-        for data in self.result:
-            self.output.write(data)
+        # read all of the results.  the trick here is to get the *first*
+        # bit of data from the app via the generator, *then* grab & return
+        # the data passed back from the 'write' function, and then return
+        # the generator data.  this is because the 'write' fn doesn't
+        # necessarily get called until the first result is requested from
+        # the app function.
+        #
+        # see twill tests, 'test_wrapper_intercept' for a test that breaks
+        # if this is done incorrectly.
+
+        try:
+            generator_data = None
+            try:
+                generator_data = self.result.next()
+
+            finally:
+                for data in self.write_results:
+                    self.output.write(data)
+
+            if generator_data:
+                self.output.write(generator_data)
+                for data in self.result:
+                    self.output.write(data)
+        except StopIteration:
+            pass
 
         if debuglevel >= 2:
             print "***", self.output.getvalue(), "***"
