@@ -18,6 +18,14 @@ def build_http_handler():
 
     return MyHTTPHandler
 
+def build_https_handler():
+    try:
+        from ClientCookie import HTTPSHandler
+    except ImportError:
+        HTTPSHandler = None
+        
+    return HTTPSHandler
+
 class PatchedMechanizeBrowser(MechanizeBrowser):
     """
     A patched version of the mechanize browser class.  Currently
@@ -27,6 +35,7 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
     def __init__(self, *args, **kwargs):
         # install WSGI intercept handler.
         self.handler_classes['http'] = build_http_handler()
+        self.handler_classes['https'] = build_https_handler()
 
         # fix basic auth.
         self.handler_classes['_authen'] = FixedHTTPBasicAuthHandler
