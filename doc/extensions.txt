@@ -117,8 +117,8 @@ and 'exit_if_empty'.  Here's some example code: ::
   discard_all_messages
   submit 0
 
-argparse
-~~~~~~~~
+argparse -- pass arguments into twill scripts via sys.argv
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The 'argparse' extension module contains one function, 'get_args'.  'get_args'
 loads all of the post-scriptfile command-line arguments into variables, e.g. ::
@@ -130,8 +130,8 @@ loads all of the post-scriptfile command-line arguments into variables, e.g. ::
    >> echo "args are ${arg1} ${args} ${arg3}"
    args are val1 val2 val3
 
-dns_check
-~~~~~~~~~
+dns_check -- make assertions about domain name service records
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 dns_check implements functions to test domain name service (DNS) resolution.
 You'll need dnspython_ to use it.
@@ -146,8 +146,8 @@ Functions:
 
 .. _dnspython: http://www.dnspython.org/
 
-csv_iterate
-~~~~~~~~~~~
+csv_iterate -- iterate over lists of values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 csv_iterate provides a single function, 'csv_iterate', that lets you
 run a script once for each row in a file of comma-separated values.
@@ -172,8 +172,8 @@ would produce ::
 This is designed for building test suites containing many different
 combinations of values for specific forms.
 
-dirstack
-~~~~~~~~
+dirstack -- manipulate the current working directory (cwd)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 dirstack provides two functions, 'chdir' and 'popd', which change the
 directory and recover the original directory, respectively.  The cwd
