@@ -98,19 +98,20 @@ for 9.0 (beta).
 
  1. RECORDING.
  2. execute directories/directory trees.
- 4. expose 'browser' & document re Grig; regexp esp.; make source docs.
- 5. twill-fork: make file writing stuff optional; test massive fork fn.
- 6. add config directives for socket timeout.
+ 3. expose 'browser' & document re Grig; regexp esp.; make source docs.
+ 4. twill-fork: make file writing stuff optional; test massive fork fn.
+ 5. add config directives for socket timeout.
+ 6. directory stuff: import from specific place, access script location.
 
 Misc fixes & cleanups:
 
  1. Paul McGuire's pyparsing suggestions.
  2. cookie "1" vs 1, in cookielib.
- 4. extend_with etc. -- module namespaces, e.g. extmodule.fn?
- 5. implement more complex proxy support.  proxies proxies proxies.
- 6. 'history' to show command history...
- 7. record commands to script
- 8. command line option for stdout -> file
+ 3. extend_with etc. -- module namespaces, e.g. extmodule.fn?
+ 4. implement more complex proxy support.  proxies proxies proxies.
+ 5. 'history' to show command history...
+ 6. record commands to script
+ 7. command line option for stdout -> file
 
 Random ideas:
 
@@ -118,12 +119,7 @@ Random ideas:
 
     (This shouldn't be too difficult, since both are based on mechanize...)
 
- 2. Write a sizeable Web app and then test it with all of the different tools,
-    above.
-
-    Draw broad conclusions that are unsubstantiated by the work.
-
- 3. Develop twill-like languages for PAMIE_ and PyXPCOM_.  Note that the
+ 2. Develop twill-like languages for PAMIE_ and PyXPCOM_.  Note that the
     hard work, at least for PAMIE, is already done; check out the
     `PAMIE examples page`_.
 

@@ -1,3 +1,7 @@
+2006-05-08  Titus Brown  <t@issola.caltech.edu>
+
+	* Added dirstack extension module
+
 2006-05-07  Titus Brown  <t@issola.caltech.edu>
 
 	* Fixed general https problem ('back' didn't work because the

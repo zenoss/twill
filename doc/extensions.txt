@@ -171,3 +171,20 @@ would produce ::
 
 This is designed for building test suites containing many different
 combinations of values for specific forms.
+
+dirstack
+~~~~~~~~
+
+dirstack provides two functions, 'chdir' and 'popd', which change the
+directory and recover the original directory, respectively.  The cwd
+is kept in the global variable '__dir__'.
+
+For example ::
+
+   >> chdir /tmp
+   >> echo __dir__
+   >> popd
+   >> echo __dir__
+
+will change to the '/tmp' directory, print out '/tmp', and then change
+back to the original directory.

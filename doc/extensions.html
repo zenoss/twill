@@ -20,6 +20,7 @@
 <li><a class="reference" href="#argparse" id="id5" name="id5">argparse</a></li>
 <li><a class="reference" href="#dns-check" id="id6" name="id6">dns_check</a></li>
 <li><a class="reference" href="#csv-iterate" id="id7" name="id7">csv_iterate</a></li>
+<li><a class="reference" href="#dirstack" id="id8" name="id8">dirstack</a></li>
 </ul>
 </div>
 <p>Several different extension modules are distributed with twill, under
@@ -179,6 +180,21 @@ first value is value3, second is value4
 </pre>
 <p>This is designed for building test suites containing many different
 combinations of values for specific forms.</p>
+</div>
+<div class="section" id="dirstack">
+<h1><a class="toc-backref" href="#id8" name="dirstack">dirstack</a></h1>
+<p>dirstack provides two functions, 'chdir' and 'popd', which change the
+directory and recover the original directory, respectively.  The cwd
+is kept in the global variable '__dir__'.</p>
+<p>For example</p>
+<pre class="literal-block">
+&gt;&gt; chdir /tmp
+&gt;&gt; echo __dir__
+&gt;&gt; popd
+&gt;&gt; echo __dir__
+</pre>
+<p>will change to the '/tmp' directory, print out '/tmp', and then change
+back to the original directory.</p>
 </div>
 </div>
 </body>
