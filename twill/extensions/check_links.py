@@ -1,5 +1,5 @@
 """
-A small extension function to check all of the links on a page.
+Extension functions to check all of the links on a page.
 
 Usage:
 
@@ -8,6 +8,11 @@ Usage:
 Make sure that all of the HTTP links on the current page can be visited
 successfully.  If 'pattern' is given, check only URLs that match that
 regular expression.
+
+If option 'check_links.only_collect_bad_links' is on, then all bad
+links are silently collected across all calls to check_links.  The
+function 'report_bad_links' can then be used to report all of the links,
+together with their referring pages.
 """
 
 __all__ = ['check_links', 'report_bad_links']
@@ -131,6 +136,19 @@ def check_links(pattern = '', visited={}):
             raise TwillAssertionError("broken links on page")
 
 def report_bad_links(fail_if_exist='+', flush_bad_links='+'):
+    """
+    >> report_bad_links [<fail-if-exist> [<flush-bad-links>]]
+
+    Report all of the links collected across check_links runs (collected
+    if and only if the config option check_links.only_collect_bad_links
+    is set).
+
+    If <fail-if-exist> is false (true by default) then the command will
+    fail after reporting any bad links.
+
+    If <flush-bad-links> is false (true by default) then the list of
+    bad links will be retained across the function call.
+    """
     global bad_links_dict
     
     from twill import utils
