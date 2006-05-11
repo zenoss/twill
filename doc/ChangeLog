@@ -1,3 +1,9 @@
+2006-05-11  Titus Brown  <t@issola.caltech.edu>
+
+	* Added 'check_links' collecting behavior, 'report_bad_links' function.
+
+	* Added debug logging to csv_iterate.
+
 2006-05-08  Titus Brown  <t@issola.caltech.edu>
 
 	* Added dirstack extension module
