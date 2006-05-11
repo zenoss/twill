@@ -10,13 +10,24 @@ successfully.  If 'pattern' is given, check only URLs that match that
 regular expression.
 """
 
-__all__ = ['check_links']
+__all__ = ['check_links', 'report_bad_links']
 
 DEBUG=True
 
 import re
 from twill import commands
 from errors import TwillAssertionError
+
+### first, set up config options & persistent 'bad links' memory...
+
+if commands._options.get('check_links.only_collection_bad_links') is None:
+    commands._options['check_links.only_collect_bad_links'] = False
+
+bad_links_dict = {}
+
+#
+# main function: 'check_links'
+#
 
 def check_links(pattern = '', visited={}):
     """
@@ -33,6 +44,8 @@ def check_links(pattern = '', visited={}):
     is used to visit the pages, the referrer URL is properly set on the
     visit.
     """
+    from twill import commands
+    
     OUT = commands.OUT
     browser = commands.browser
 
@@ -84,8 +97,8 @@ def check_links(pattern = '', visited={}):
                 print>>OUT, "Trying %s" % (link.absolute_url,),
                 
             if not visited.has_key(link.absolute_url):
-                browser.follow_link(link)
                 went = True
+                browser.follow_link(link)
                 
                 code = browser.get_code()
                 assert code == 200
@@ -104,10 +117,40 @@ def check_links(pattern = '', visited={}):
 
         if went:
             browser.back()
-        
-                
 
     if failed:
-        print>>OUT, '\nCould not follow %d links' % (len(failed),)
-        print>>OUT, '\t%s\n' % '\n\t'.join(failed)
-        raise TwillAssertionError("broken links on page")
+        if commands._options['check_links.only_collect_bad_links']:
+            for l in failed:
+                refering_pages = bad_links_dict.get(l, [])
+                print '***', browser.get_url()
+                refering_pages.append(browser.get_url())
+                bad_links_dict[l] = refering_pages
+        else:
+            print>>OUT, '\nCould not follow %d links' % (len(failed),)
+            print>>OUT, '\t%s\n' % '\n\t'.join(failed)
+            raise TwillAssertionError("broken links on page")
+
+def report_bad_links(fail_if_exist='+', flush_bad_links='+'):
+    global bad_links_dict
+    
+    from twill import utils
+    fail_if_exist = utils.make_boolean(fail_if_exist)
+    flush_bad_links = utils.make_boolean(flush_bad_links)
+
+    from twill import commands
+    OUT = commands.OUT
+
+    if not bad_links_dict:
+        print>>OUT, '\nNo bad links to report.\n'
+    else:
+        print>>OUT, '\nCould not follow %d links' % (len(bad_links_dict),)
+        for page, referers in bad_links_dict.items():
+            err_msg = "\t link '%s' (occurs on: " % (page,)\
+                      + ",".join(referers) + ')' 
+            print>>OUT, err_msg
+
+        if flush_bad_links:
+            bad_links_dict = {}
+
+        if fail_if_exist:
+            raise TwillAssertionError("broken links encountered")
