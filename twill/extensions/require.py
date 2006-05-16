@@ -62,7 +62,7 @@ def _require_post_load_hook(action, *args, **kwargs):
         ####
             
         elif what == 'links_ok':
-            from twill.extensions.check_links import check_links
+            from check_links import check_links
             
             ignore_always = True
             if DEBUG:
