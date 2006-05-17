@@ -496,7 +496,8 @@ def extend_with(module_name):
 
     ###
     
-    print>>OUT, "Imported extension module '%s'.\n" % (module_name,)
+    print>>OUT, "Imported extension module '%s'." % (module_name,)
+    print>>OUT, "(at %s)\n" % (mod.__file__,)
 
     if twill.shell.interactive:
         if mod.__doc__:

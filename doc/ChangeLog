@@ -1,5 +1,13 @@
 2006-05-17  Titus Brown  <t@issola.caltech.edu>
 
+	* Added path mangling issue to 'known problems'.
+
+	* Modified 'extend_with' import command to also print out
+	  location of imported module.
+
+	* Fixed unnecessary path mangling that introduced the package
+	  directory into sys.path; associated check_links idiocy.
+
 	* Fixed test breakage due to amazon.com DNS changes.
 
 2006-05-15  Titus Brown  <t@issola.caltech.edu>

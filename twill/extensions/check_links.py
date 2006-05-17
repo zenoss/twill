@@ -21,7 +21,7 @@ DEBUG=True
 
 import re
 from twill import commands
-from errors import TwillAssertionError
+from twill.errors import TwillAssertionError
 
 ### first, set up config options & persistent 'bad links' memory...
 
