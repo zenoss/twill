@@ -254,6 +254,7 @@ class TwillBrowser(object):
         """
         Return the first form that matches 'formname'.
         """
+        formname = str(formname)
         forms = self._browser.forms()
 
         # first try ID
@@ -284,6 +285,8 @@ class TwillBrowser(object):
         Return the control that matches 'fieldname'.  Must be
         a *unique* regexp/exact string match.
         """
+        fieldname = str(fieldname)
+        
         found = None
         found_multiple = False
 
@@ -370,10 +373,13 @@ class TwillBrowser(object):
         if isinstance(control, ClientForm.SubmitControl):
             self.last_submit_button = control
 
-    def submit(self, fieldname):
+    def submit(self, fieldname=None):
         """
         Submit the currently clicked form using the given field.
         """
+        if fieldname is not None:
+            fieldname = str(fieldname)
+        
         if not self._browser.forms():
             raise Exception("no forms on this page!")
         

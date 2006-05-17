@@ -1,5 +1,9 @@
 2006-05-17  Titus Brown  <t@issola.caltech.edu>
 
+	* Bumped version number.
+
+	* Explicitly str-ified form/field names.  (Sebastien Pierre)
+
 	* Added path mangling issue to 'known problems'.
 
 	* Modified 'extend_with' import command to also print out
@@ -7,6 +11,7 @@
 
 	* Fixed unnecessary path mangling that introduced the package
 	  directory into sys.path; associated check_links idiocy.
+	  (Herve Cauwelier)
 
 	* Fixed test breakage due to amazon.com DNS changes.
 
