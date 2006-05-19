@@ -607,16 +607,27 @@ def debug(what, level):
        * equiv-refresh (any level >= 1) to display HTTP-EQUIV refresh handling.
     """
     import parse
+
+    try:
+        level = int(level)
+    except ValueError:
+        flag = utils.make_boolean(level)
+        if flag:
+            level = 1
+        else:
+            level = 0
+
+    print>>OUT, 'DEBUG: setting %s debugging to level %d' % (what, level)
     
     if what == "http":
-        browser._browser.set_debug_http(int(level))
+        browser._browser.set_debug_http(level)
     elif what == 'equiv-refresh':
-        if int(level) > 0:
+        if level:
             utils._debug_print_refresh = True
         else:
             utils._debug_print_refresh = False
     elif what == 'commands':
-        if int(level) > 0:
+        if level:
             parse.debug_print_commands(True)
         else:
             parse.debug_print_commands(False)

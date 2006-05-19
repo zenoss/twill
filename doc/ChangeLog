@@ -1,3 +1,7 @@
+2006-05-19  Titus Brown  <t@issola.caltech.edu>
+
+	* 'debug' now takes boolean (+/-) arguments, too.
+
 2006-05-17  Titus Brown  <t@issola.caltech.edu>
 
 	* Bumped version number.

@@ -63,6 +63,10 @@ def test():
         pass
 
     twill.commands.debug('http', '1')
+    twill.commands.debug('http', '0')
+    twill.commands.debug('http', '+')
+    twill.commands.debug('http', '-')
+    
     twill.commands.debug('commands', '0')
     twill.commands.debug('commands', '1')
     try:
