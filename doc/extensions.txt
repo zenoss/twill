@@ -188,3 +188,30 @@ For example ::
 
 will change to the '/tmp' directory, print out '/tmp', and then change
 back to the original directory.
+
+formfill -- convenience functions for filling out forms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+formfill provides three functions, 'fv_match', 'fv_multi', and
+'fv_multi_sub'.
+
+'fv_match' allows you to set many form fields all at once, based
+on regexp matching to the form field name, e.g. ::
+
+   fv_match <form> test-(\d+) 'hello world!'
+
+will set all fields with the name 'test-#' (# is any number) to 'hello world!'
+
+'fv_multi' allows you to set many form fields at once, using a
+more compact notation: ::
+
+   fv_multi <form> field1=value1 field2=value2 ...
+
+'fv_multi' uses the same field-matching convention that 'formvalue' uses:
+it simply iterates over all arguments, splits at the first '=', and
+runs 'formvalue' directly.
+
+'fv_multi_sub' does the same thing as 'fv_multi' and then executes
+'submit'.
+
+(Thanks to Ben Bangert for the idea!)

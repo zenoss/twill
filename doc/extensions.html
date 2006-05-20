@@ -21,6 +21,7 @@
 <li><a class="reference" href="#dns-check-make-assertions-about-domain-name-service-records" id="id6" name="id6">dns_check -- make assertions about domain name service records</a></li>
 <li><a class="reference" href="#csv-iterate-iterate-over-lists-of-values" id="id7" name="id7">csv_iterate -- iterate over lists of values</a></li>
 <li><a class="reference" href="#dirstack-manipulate-the-current-working-directory-cwd" id="id8" name="id8">dirstack -- manipulate the current working directory (cwd)</a></li>
+<li><a class="reference" href="#formfill-convenience-functions-for-filling-out-forms" id="id9" name="id9">formfill -- convenience functions for filling out forms</a></li>
 </ul>
 </div>
 <p>Several different extension modules are distributed with twill, under
@@ -195,6 +196,28 @@ is kept in the global variable '__dir__'.</p>
 </pre>
 <p>will change to the '/tmp' directory, print out '/tmp', and then change
 back to the original directory.</p>
+</div>
+<div class="section" id="formfill-convenience-functions-for-filling-out-forms">
+<h1><a class="toc-backref" href="#id9" name="formfill-convenience-functions-for-filling-out-forms">formfill -- convenience functions for filling out forms</a></h1>
+<p>formfill provides three functions, 'fv_match', 'fv_multi', and
+'fv_multi_sub'.</p>
+<p>'fv_match' allows you to set many form fields all at once, based
+on regexp matching to the form field name, e.g.</p>
+<pre class="literal-block">
+fv_match &lt;form&gt; test-(\d+) 'hello world!'
+</pre>
+<p>will set all fields with the name 'test-#' (# is any number) to 'hello world!'</p>
+<p>'fv_multi' allows you to set many form fields at once, using a
+more compact notation:</p>
+<pre class="literal-block">
+fv_multi &lt;form&gt; field1=value1 field2=value2 ...
+</pre>
+<p>'fv_multi' uses the same field-matching convention that 'formvalue' uses:
+it simply iterates over all arguments, splits at the first '=', and
+runs 'formvalue' directly.</p>
+<p>'fv_multi_sub' does the same thing as 'fv_multi' and then executes
+'submit'.</p>
+<p>(Thanks to Ben Bangert for the idea!)</p>
 </div>
 </div>
 </body>
