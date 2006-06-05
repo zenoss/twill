@@ -1,6 +1,10 @@
+2006-06-04  Titus Brown  <t@issola.caltech.edu>
+
+	* RELEASE 0.8.5.
+
 2006-05-19  Titus Brown  <t@issola.caltech.edu>
 
-	* Added 'formfill' extension module, tests, & docs.
+	* Added 'formfill' extension module, tests, & docs. (Ben Bangert)
 
 	* 'debug' now takes boolean (+/-) arguments, too.
 

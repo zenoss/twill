@@ -14,7 +14,7 @@ twill is open source and written in Python.
 Downloading twill
 -----------------
 
-The latest release of twill is `twill 0.8.5`_, released *@CTB@*,
+The latest release of twill is `twill 0.8.5`_, released Monday, June 5th,
 2006; it is available for download at
 http://darcs.idyll.org/~t/projects/twill-0.8.5.tar.gz.  You can also
 use Python's easy_install_ to install or upgrade twill.
@@ -33,7 +33,7 @@ Documentation
 -------------
 
 The documentation for the latest release is always at
-http://www.idyll.org/~t/www-tools/twill/.
+http://twill.idyll.org/.
 
 The in-development version of the docs can be found at
 http://darcs.idyll.org/~t/projects/twill/doc/.
@@ -79,7 +79,7 @@ so that we can see the full traceback.
 Authors and License
 -------------------
 
-The main author of twill is C. Titus Brown, titus@caltech.edu.  A
+The main author of twill is C. Titus Brown, titus@idyll.org.  A
 number of people have contributed bug reports and code since the first
 release; they are acknowledged below.
 
@@ -104,12 +104,16 @@ quite a bit.  Thanks, guys...
 
 Bug reports have come in from the following fine people: Chris Miles,
 MATSUNO Tokuhiro, Elvelind Grandin, Mike Rovner, sureshvv, Terry Peppers,
-Kieran Holland, Alexander Shvedunov, Norman Khine, and Leonardo Santagada.
+Kieran Holland, Alexander Shvedunov, Norman Khine, Leonardo Santagada,
+Sebastien Pierre, Herve Cauwelier, aledain, Uy Do, David Hancock,
+Tomi Hautakoski, T
 
 Patches have been submitted by Joeri van Ruth, Paul McGuire, Ed Rahn,
 Nic Ferrier, Robert Leftwich, James Cameron, William Volkman,
-Tommi Virtanen, Simon Buenzli, sureshvv, Jeff Martin, and Stephen
-Thorne.
+Tommi Virtanen, Simon Buenzli, sureshvv, Jeff Martin, Stephen
+Thorne, and Bob Halley.
+
+Features were proposed by Ben Bangert, and Tristan De Buysscher.
 
 Thanks, all!
 

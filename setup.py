@@ -10,7 +10,7 @@ except ImportError:
 
 setup(name = 'twill',
       
-      version = '0.8.5a10',
+      version = '0.8.5',
       download_url = 'http://darcs.idyll.org/~t/projects/twill-0.8.5.tar.gz',
       
       description = 'twill Web browsing language',
@@ -31,7 +31,7 @@ setup(name = 'twill',
       maintainer = 'C. Titus Brown',
       maintainer_email = 'titus@caltech.edu',
 
-      url = 'http://www.idyll.org/~t/www-tools/twill.html',
+      url = 'http://twill.idyll.org/',
       long_description = """\
 A scripting system for automating Web browsing.  Useful for testing
 Web pages or grabbing data from password-protected sites automatically.
