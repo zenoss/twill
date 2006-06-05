@@ -38,6 +38,9 @@ http://twill.idyll.org/.
 The in-development version of the docs can be found at
 http://darcs.idyll.org/~t/projects/twill/doc/.
 
+The development Web site, with a Trac tracker and wiki, is at
+http://twill.idyll.org/trac/.
+
 Documentation is available for the following topics:
 
  * `Examples`_ -- some short examples.
