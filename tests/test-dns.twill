@@ -17,4 +17,4 @@ dns_a amazon.com 72.21.206.5
 dns_cname www.idyll.org. idyll.org.		# explicit 'CNAME' records.
 dns_cname www.idyll.org. idyll.org. teckla.idyll.org
 
-dns_ns idyll.org nsa.alife.org
+dns_ns idyll.org nsa.idyll.org

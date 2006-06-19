@@ -472,7 +472,7 @@ def extend_with(module_name):
     Import contents of given module.
     """
     global_dict, local_dict = get_twill_glocals()
-    
+
     exec "from %s import *" % (module_name,) in global_dict
 
     ### now add the commands into the commands available for the shell,

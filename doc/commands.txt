@@ -168,6 +168,8 @@ Special variables
 
 **__input__** -- result of last **getinput**.
 
+**__match__** -- matched text from last **find**, **title**, or **url**.
+
 **__password__** -- result of last **getpassword**.
 
 **__url__** -- current URL.

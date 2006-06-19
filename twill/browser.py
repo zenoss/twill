@@ -212,7 +212,6 @@ class TwillBrowser(object):
         """
         Set the agent string to the given value.
         """
-        # currently doesn't work.
         for i in xrange(len(self._browser.addheaders)):
             if self._browser.addheaders[i][0] == "User-agent":
                 del self._browser.addheaders[i]
