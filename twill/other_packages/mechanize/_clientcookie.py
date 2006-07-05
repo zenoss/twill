@@ -32,13 +32,7 @@ COPYING.txt included with the distribution).
 
 """
 
-VERSION = "1.3.0"
-
-
-# Public health warning: anyone who thought 'cookies are simple, aren't they?',
-# run away now :-(
-
-import sys, re, urlparse, string, copy, time, struct, urllib, types
+import sys, re, urlparse, string, copy, time, struct, urllib, types, logging
 try:
     import threading
     _threading = threading; del threading
@@ -51,46 +45,18 @@ MISSING_FILENAME_TEXT = ("a filename was not supplied (nor was the CookieJar "
                          "instance initialised with one)")
 DEFAULT_HTTP_PORT = str(httplib.HTTP_PORT)
 
-try: True
-except NameError:
-    True = 1
-    False = 0
+from _headersutil import split_header_words, parse_ns_headers
+from _util import startswith, endswith, isstringlike, getheaders
 
-try:
-    from types import UnicodeType
-except ImportError:
-    UNICODE = False
-else:
-    UNICODE = True
+debug = logging.getLogger("mechanize.cookies").debug
 
-try: StopIteration
-except NameError:
-    class StopIteration(Exception): pass
-
-import ClientCookie
-from _HeadersUtil import split_header_words, parse_ns_headers
-from _Util import startswith, endswith, isstringlike, getheaders
-from _Debug import warn, getLogger
-debug = getLogger("ClientCookie.cookies").debug
-
-try: bool
-except NameError:
-    def bool(expr):
-        if expr: return True
-        else: return False
-
-try: issubclass(Exception, (Exception,))
-except TypeError:
-    real_issubclass = issubclass
-    from _Util import compat_issubclass
-    issubclass = compat_issubclass
-    del compat_issubclass
 
 def reraise_unmasked_exceptions(unmasked=()):
     # There are a few catch-all except: statements in this module, for
     # catching input that's bad in unexpected ways.
     # This function re-raises some exceptions we don't want to trap.
-    if not ClientCookie.USE_BARE_EXCEPT:
+    import mechanize, warnings
+    if not mechanize.USE_BARE_EXCEPT:
         raise
     unmasked = unmasked + (KeyboardInterrupt, SystemExit, MemoryError)
     etype = sys.exc_info()[0]
@@ -101,7 +67,7 @@ def reraise_unmasked_exceptions(unmasked=()):
     f = StringIO.StringIO()
     traceback.print_exc(None, f)
     msg = f.getvalue()
-    warn("ClientCookie bug!\n%s" % msg)
+    warnings.warn("mechanize bug!\n%s" % msg, stacklevel=2)
 
 
 IPV4_RE = re.compile(r"\.\d+$")
@@ -254,7 +220,7 @@ def escape_path(path):
     # And here, kind of: draft-fielding-uri-rfc2396bis-03
     # (And in draft IRI specification: draft-duerst-iri-05)
     # (And here, for new URI schemes: RFC 2718)
-    if UNICODE and isinstance(path, types.UnicodeType):
+    if isinstance(path, types.UnicodeType):
         path = path.encode("utf-8")
     path = urllib.quote(path, HTTP_PATH_SAFE)
     path = ESCAPED_CHAR_RE.sub(uppercase_escaped_char, path)
@@ -470,7 +436,7 @@ class CookiePolicy:
         Currently, pre-expired cookies never get this far -- the CookieJar
         class deletes such cookies itself.
 
-        cookie: ClientCookie.Cookie object
+        cookie: mechanize.Cookie object
         request: object implementing the interface defined by
          CookieJar.extract_cookies.__doc__
 
@@ -480,7 +446,7 @@ class CookiePolicy:
     def return_ok(self, cookie, request):
         """Return true if (and only if) cookie should be returned to server.
 
-        cookie: ClientCookie.Cookie object
+        cookie: mechanize.Cookie object
         request: object implementing the interface defined by
          CookieJar.add_cookie_header.__doc__
 
@@ -530,10 +496,10 @@ class DefaultCookiePolicy(CookiePolicy):
     call its methods in your overriden implementations before adding your own
     additional checks.
 
-    import ClientCookie
-    class MyCookiePolicy(ClientCookie.DefaultCookiePolicy):
+    import mechanize
+    class MyCookiePolicy(mechanize.DefaultCookiePolicy):
         def set_ok(self, cookie, request):
-            if not ClientCookie.DefaultCookiePolicy.set_ok(
+            if not mechanize.DefaultCookiePolicy.set_ok(
                 self, cookie, request):
                 return False
             if i_dont_want_to_store_this_cookie():
@@ -769,7 +735,10 @@ class DefaultCookiePolicy(CookiePolicy):
                 sld = domain[1:i]
                 if (string.lower(sld) in [
                     "co", "ac",
-                    "com", "edu", "org", "net", "gov", "mil", "int"] and
+                    "com", "edu", "org", "net", "gov", "mil", "int",
+                    "aero", "biz", "cat", "coop", "info", "jobs", "mobi",
+                    "museum", "name", "pro", "travel",
+                    ] and
                     len(tld) == 2):
                     # domain like .co.uk
                     return False
@@ -1006,7 +975,7 @@ class Absent: pass
 class CookieJar:
     """Collection of HTTP cookies.
 
-    You may not need to know about this class: try ClientCookie.urlopen().
+    You may not need to know about this class: try mechanize.urlopen().
 
     The major methods are extract_cookies and add_cookie_header; these are all
     you are likely to need.
@@ -1449,7 +1418,7 @@ class CookieJar:
     def set_cookie_if_ok(self, cookie, request):
         """Set a cookie if policy says it's OK to do so.
 
-        cookie: ClientCookie.Cookie instance
+        cookie: mechanize.Cookie instance
         request: see extract_cookies.__doc__ for the required interface
 
         """
@@ -1461,7 +1430,7 @@ class CookieJar:
     def set_cookie(self, cookie):
         """Set a cookie, without checking whether or not it should be set.
 
-        cookie: ClientCookie.Cookie instance
+        cookie: mechanize.Cookie instance
         """
         c = self._cookies
         if not c.has_key(cookie.domain): c[cookie.domain] = {}
@@ -1479,7 +1448,7 @@ class CookieJar:
         method's approval).
 
         The response object (usually be the result of a call to
-        ClientCookie.urlopen, or similar) should support an info method, which
+        mechanize.urlopen, or similar) should support an info method, which
         returns a mimetools.Message object (in fact, the 'mimetools.Message
         object' may be any object that provides a getallmatchingheaders
         method).

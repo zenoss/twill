@@ -8,14 +8,9 @@ COPYING.txt included with the distribution).
 
 """
 
-try: True
-except NameError:
-    True = 1
-    False = 0
-
 import urllib2, string
 
-from _ClientCookie import request_host
+from _clientcookie import request_host
 
 
 class Request(urllib2.Request):

@@ -41,11 +41,6 @@ COPYING.txt included with the distribution).
 #  Does file upload work when name is missing?  Sourceforge tracker form
 #   doesn't like it.  Check standards, and test with Apache.  Test
 #   binary upload with Apache.
-# Controls can have name=None (e.g. forms constructed partly with
-#  JavaScript), but find_control can't be told to find a control
-#  with that name, because None there means 'unspecified'.  Can still
-#  get at by nr, but would be nice to be able to specify something
-#  equivalent to name=None, too.
 # mailto submission & enctype text/plain
 # I'm not going to fix this unless somebody tells me what real servers
 #  that want this encoding actually expect: If enctype is
@@ -125,7 +120,9 @@ VERSION = "0.2.3"
 
 CHUNK = 1024  # size of chunks fed to parser, in bytes
 
-DEFAULT_ENCODING = "utf-8"
+DEFAULT_ENCODING = "latin-1"
+
+class Missing: pass
 
 _compress_re = re.compile(r"\s+")
 def compress_text(text): return _compress_re.sub(" ", text.strip())
@@ -913,14 +910,15 @@ def ParseResponse(response, select_default=False,
     own risk: there is no well-defined interface.
 
     """
-    return ParseFile(response, response.geturl(), select_default,
-                     ignore_errors,
+    forms = ParseFile(response, response.geturl(), select_default,
+                     False,
                      form_parser_class,
                      request_class,
                      entitydefs,
                      backwards_compat,
                      encoding,
                      )
+    return forms
 
 def ParseFile(file, base_uri, select_default=False,
               ignore_errors=False,  # ignored!
@@ -948,22 +946,11 @@ def ParseFile(file, base_uri, select_default=False,
     fp = form_parser_class(entitydefs, encoding)
     while 1:
         data = file.read(CHUNK)
-        if ignore_errors:
-
-            # if we are ignoring errors, we want to feed one character
-            # at a time so that upon a raise, nothing is lost.
-             
-            for ch in data:
-                try:
-                    fp.feed(ch)
-                except ParseError, e:
-                    pass
-        else:
-            try:
-                fp.feed(data)
-            except ParseError, e:
-                e.base_uri = base_uri
-                raise
+        try:
+            fp.feed(data)
+        except ParseError, e:
+            e.base_uri = base_uri
+            raise
         if len(data) != CHUNK: break
     if fp.base is not None:
         # HTML BASE element takes precedence over document URI
@@ -1002,6 +989,7 @@ def ParseFile(file, base_uri, select_default=False,
         forms.append(form)
     for form in forms:
         form.fixup()
+
     return forms
 
 
@@ -1864,12 +1852,16 @@ class ListControl(Control):
         assert self._form is None or form == self._form, (
             "can't add control to more than one form")
         self._form = form
-        try:
-            control = form.find_control(self.name, self.type)
-        except (ControlNotFoundError, AmbiguityError):
+        if self.name is None:
+            # always count nameless elements as separate controls
             Control.add_to_form(self, form)
         else:
-            control.merge_control(self)
+            try:
+                control = form.find_control(self.name, self.type)
+            except (ControlNotFoundError, AmbiguityError):
+                Control.add_to_form(self, form)
+            else:
+                control.merge_control(self)
 
     def merge_control(self, control):
         assert bool(control.multiple) == bool(self.multiple)
@@ -3061,7 +3053,8 @@ class HTMLForm:
                                   is_listcontrol, nr)
 
     def _find_control(self, name, type, kind, id, label, predicate, nr):
-        if (name is not None) and not isstringlike(name):
+        if ((name is not None) and (name is not Missing) and
+            not isstringlike(name)):
             raise TypeError("control name must be string-like")
         if (type is not None) and not isstringlike(type):
             raise TypeError("control type must be string-like")
@@ -3083,7 +3076,8 @@ class HTMLForm:
             nr = 0
 
         for control in self.controls:
-            if name is not None and name != control.name:
+            if ((name is not None and name != control.name) and
+                (name is not Missing or control.name is not None)):
                 continue
             if type is not None and type != control.type:
                 continue
@@ -3113,7 +3107,7 @@ class HTMLForm:
             return found
 
         description = []
-        if name is not None: description.append("name '%s'" % name)
+        if name is not None: description.append("name %s" % repr(name))
         if type is not None: description.append("type '%s'" % type)
         if kind is not None: description.append("kind '%s'" % kind)
         if id is not None: description.append("id '%s'" % id)

@@ -9,25 +9,12 @@ COPYING.txt included with the distribution).
 
 """
 
-import re, string, time
+import re, string, time, logging
 
-from _ClientCookie import reraise_unmasked_exceptions, FileCookieJar, Cookie, \
+from _clientcookie import reraise_unmasked_exceptions, FileCookieJar, Cookie, \
      MISSING_FILENAME_TEXT, LoadError
-from _Util import startswith, endswith
-from _Debug import getLogger
-debug = getLogger("ClientCookie").debug
-
-try: True
-except NameError:
-    True = 1
-    False = 0
-
-try: issubclass(Exception(), (Exception,))
-except TypeError:
-    real_issubclass = issubclass
-    from _Util import compat_issubclass
-    issubclass = compat_issubclass
-    del compat_issubclass
+from _util import startswith, endswith
+debug = logging.getLogger("ClientCookie").debug
 
 
 class MozillaCookieJar(FileCookieJar):

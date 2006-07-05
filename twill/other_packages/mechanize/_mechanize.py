@@ -3,34 +3,25 @@
 Copyright 2003-2006 John J. Lee <jjl@pobox.com>
 Copyright 2003 Andy Lester (original Perl code)
 
-This code is free software; you can redistribute it and/or modify it under
-the terms of the BSD License (see the file COPYING included with the
-distribution).
+This code is free software; you can redistribute it and/or modify it
+under the terms of the BSD or ZPL 2.1 licenses (see the file COPYING.txt
+included with the distribution).
 
 """
 
-# XXXX
-# test referer bugs (frags and don't add in redirect unless orig req had Referer)
-
-# XXX
-# The stuff on web page's todo list.
-# Moof's emails about response object, .back(), etc.
-
-from __future__ import generators
-
-import urllib2, socket, urlparse, urllib, re, sys, copy
-
-import ClientCookie
-from ClientCookie._Util import response_seek_wrapper
-from ClientCookie._HeadersUtil import split_header_words, is_html
+import urllib2, urlparse, sys, copy, re
 
 from _useragent import UserAgent
-from _html import _find_links, DefaultFactory
+from _html import DefaultFactory
+from _util import response_seek_wrapper, closeable_response
+import _request
 
-__version__ = (0, 0, 12, "a", None)  # 0.0.12a
+__version__ = (0, 1, 2, "b", None)  # 0.1.2b
 
 class BrowserStateError(Exception): pass
+class LinkNotFoundError(Exception): pass
 class FormNotFoundError(Exception): pass
+
 
 class History:
     """
@@ -40,6 +31,10 @@ class History:
     """
     def __init__(self):
         self._history = []  # LIFO
+    def __len__(self):
+        return len(self._history)
+    def __getitem__(self, i):
+        return self._history[i]
     def add(self, request, response):
         self._history.append((request, response))
     def back(self, n, _response):
@@ -55,21 +50,47 @@ class History:
         del self._history[:]
     def close(self):
         for request, response in self._history:
-            if response is not None:
+            if response:
                 response.close()
         del self._history[:]
-    def __len__(self):
-        return len(self._history)
-    def __getitem__(self, i):
-        return self._history[i]
+
+# Horrible, but needed, at least until fork urllib2.  Even then, may want
+# to preseve urllib2 compatibility.
+def upgrade_response(response):
+    # a urllib2 handler constructed the response, i.e. the response is an
+    # urllib.addinfourl, instead of a _Util.closeable_response as returned
+    # by e.g. mechanize.HTTPHandler
+    try:
+        code = response.code
+    except AttributeError:
+        code = None
+    try:
+        msg = response.msg
+    except AttributeError:
+        msg = None
+
+    # may have already-.read() data from .seek() cache
+    data = None
+    get_data = getattr(response, "get_data", None)
+    if get_data:
+        data = get_data()
+
+    response = closeable_response(
+        response.fp, response.info(), response.geturl(), code, msg)
+    response = response_seek_wrapper(response)
+    if data:
+        response.set_data(data)
+    return response
+class ResponseUpgradeProcessor(urllib2.BaseHandler):
+    # upgrade responses to be .close()able without becoming unusable
+    handler_order = 0  # before anything else
+    def any_response(self, request, response):
+        if not hasattr(response, 'closeable_response'):
+            response = upgrade_response(response)
+        return response
 
 
-if sys.version_info[:2] >= (2, 4):
-    from ClientCookie._Opener import OpenerMixin
-else:
-    class OpenerMixin: pass
-
-class Browser(UserAgent, OpenerMixin):
+class Browser(UserAgent):
     """Browser-like class with support for history, forms and links.
 
     BrowserStateError is raised whenever the browser is in the wrong state to
@@ -79,35 +100,40 @@ class Browser(UserAgent, OpenerMixin):
 
     Public attributes:
 
-    request: last request (ClientCookie.Request or urllib2.Request)
+    request: current request (mechanize.Request or urllib2.Request)
     form: currently selected form (see .select_form())
-    default_encoding: character encoding used if no encoding is found in the
-     response (you should turn on HTTP-EQUIV handling if you want the best
-     chance of getting this right without resorting to this default)
 
     """
 
-    def __init__(self, default_encoding="utf-8",
+    handler_classes = UserAgent.handler_classes.copy()
+    handler_classes["_response_upgrade"] = ResponseUpgradeProcessor
+    default_others = copy.copy(UserAgent.default_others)
+    default_others.append("_response_upgrade")
+
+    def __init__(self,
                  factory=None,
                  history=None,
                  request_class=None,
-                 forms_factory=None,  # deprecated
-                 links_factory=None,  # deprecated
-                 get_title=None,  # deprecated
                  ):
         """
 
         Only named arguments should be passed to this constructor.
 
-        default_encoding: See class docs.
-        request_class: Request class to use.  Defaults to ClientCookie.Request
+        factory: object implementing the mechanize.Factory interface.
+        history: object implementing the mechanize.History interface.  Note this
+         interface is still experimental and may change in future.
+        request_class: Request class to use.  Defaults to mechanize.Request
          by default for Pythons older than 2.4, urllib2.Request otherwise.
-        factory: mechanize.Factory
+
+        The Factory and History objects passed in are 'owned' by the Browser,
+        so they should not be shared across Browsers.  In particular,
+        factory.set_response() should not be called except by the owning
+        Browser itself.
 
         Note that the supplied factory's request_class is overridden by this
         constructor, to ensure only one Request class is used.
+
         """
-        self.default_encoding = default_encoding
         if history is None:
             history = History()
         self._history = history
@@ -116,9 +142,9 @@ class Browser(UserAgent, OpenerMixin):
 
         if request_class is None:
             if not hasattr(urllib2.Request, "add_unredirected_header"):
-                request_class = ClientCookie.Request
+                request_class = _request.Request
             else:
-                request_class = urllib2.Request  # Python 2.4
+                request_class = urllib2.Request  # Python >= 2.4
 
         if factory is None:
             factory = DefaultFactory()
@@ -135,8 +161,6 @@ class Browser(UserAgent, OpenerMixin):
         if self._history is not None:
             self._history.close()
             self._history = None
-            
-        self._factory.reset()
         self.request = self._response = None
 
     def open(self, url, data=None):
@@ -167,15 +191,14 @@ class Browser(UserAgent, OpenerMixin):
 
         success = True
         try:
-            self._response = UserAgent.open(self, self.request, data)
+            response = UserAgent.open(self, self.request, data)
         except urllib2.HTTPError, error:
             success = False
-            self._response = error
+            response = error
 ##         except (IOError, socket.error, OSError), error:
 ##             # Yes, urllib2 really does raise all these :-((
-##             # See test_urllib2.py in stdlib and in ClientCookie for examples
-##             # of socket.gaierror and OSError, plus note that FTPHandler raises
-##             # IOError.
+##             # See test_urllib2.py for examples of socket.gaierror and OSError,
+##             # plus note that FTPHandler raises IOError.
 ##             # XXX I don't seem to have an example of exactly socket.error being
 ##             #  raised, only socket.gaierror...
 ##             # I don't want to start fixing these here, though, since this is a
@@ -183,16 +206,50 @@ class Browser(UserAgent, OpenerMixin):
 ##             # Python core, a fix would need some backwards-compat. hack to be
 ##             # acceptable.
 ##             raise
-        if not hasattr(self._response, "seek"):
-            self._response = response_seek_wrapper(self._response)
-        self._parse_html(self._response)
+        self.set_response(response)
         if not success:
             raise error
         return copy.copy(self._response)
 
+    def __str__(self):
+        text = []
+        text.append("<%s " % self.__class__.__name__)
+        if self._response:
+            text.append("visiting %s" % self._response.geturl())
+        else:
+            text.append("(not visiting a URL)")
+        if self.form:
+            text.append("\n selected form:\n %s\n" % str(self.form))
+        text.append(">")
+        return "".join(text)
+
     def response(self):
-        """Return last response (as return value of urllib2.urlopen())."""
+        """Return a copy of the current response.
+
+        The returned object has the same interface as the object returned by
+        .open() (or urllib2.urlopen()).
+
+        """
         return copy.copy(self._response)
+
+    def set_response(self, response):
+        """Replace current response with (a copy of) response."""
+        # sanity check, necessary but far from sufficient
+        if not (hasattr(response, "info") and hasattr(response, "geturl") and
+                hasattr(response, "read")):
+            raise ValueError("not a response object")
+
+        self.form = None
+
+        if not hasattr(response, "seek"):
+            response = response_seek_wrapper(response)
+        if not hasattr(response, "closeable_response"):
+            response = upgrade_response(response)
+        else:
+            response = copy.copy(response)
+
+        self._response = response
+        self._factory.set_response(self._response)
 
     def geturl(self):
         """Get URL of current document."""
@@ -216,9 +273,9 @@ class Browser(UserAgent, OpenerMixin):
         """
         if self._response is not None:
             self._response.close()
-        self.request, self._response = self._history.back(n, self._response)
-        self._parse_html(self._response)
-        return self._response
+        self.request, response = self._history.back(n, self._response)
+        self.set_response(response)
+        return response
 
     def clear_history(self):
         self._history.clear()
@@ -227,12 +284,11 @@ class Browser(UserAgent, OpenerMixin):
         """Return iterable over links (mechanize.Link objects)."""
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
-
-        all_links = self._factory.links()
+        links = self._factory.links()
         if kwds:
-            return _find_links(all_links, False, **kwds)
-        else:    
-            return all_links
+            return self._filter_links(links, **kwds)
+        else:
+            return links
 
     def forms(self):
         """Return iterable over forms.
@@ -242,15 +298,20 @@ class Browser(UserAgent, OpenerMixin):
         """
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
-        return self._factory.forms()
+        f = self._factory.forms()
+        return f
 
     def viewing_html(self):
         """Return whether the current response contains HTML data."""
         if self._response is None:
             raise BrowserStateError("not viewing any document")
-        ct_hdrs = self._response.info().getheaders("content-type")
-        url = self._response.geturl()
-        return is_html(ct_hdrs, url)
+        return self._factory.is_html
+
+    def encoding(self):
+        """"""
+        if self._response is None:
+            raise BrowserStateError("not viewing any document")
+        return self._factory.encoding
 
     def title(self):
         """Return title, or None if there is no title element in the document.
@@ -261,8 +322,7 @@ class Browser(UserAgent, OpenerMixin):
         """
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
-
-        return self._factory.title()
+        return self._factory.title
 
     def select_form(self, name=None, predicate=None, nr=None):
         """Select an HTML form for input.
@@ -413,7 +473,8 @@ class Browser(UserAgent, OpenerMixin):
          with opening tags "textified" as per the pullparser docs) must compare
          equal to this argument, if supplied
         text_regex: link text between tag (as defined above) must match the
-         regular expression object passed as this argument, if supplied
+         regular expression object or regular expression string passed as this
+         argument, if supplied
         name, name_regex: as for text and text_regex, but matched against the
          name HTML attribute of the link tag
         url, url_regex: as for text and text_regex, but matched against the
@@ -425,10 +486,10 @@ class Browser(UserAgent, OpenerMixin):
         nr: matches the nth link that matches all other criteria (default 0)
 
         """
-        if not self.viewing_html():
-            raise BrowserStateError("not viewing HTML")
-
-        return _find_links(self._factory.links(), True, **kwds)
+        try:
+            return self._filter_links(self._factory.links(), **kwds).next()
+        except StopIteration:
+            raise LinkNotFoundError()
 
     def __getattr__(self, name):
         # pass through ClientForm / DOMForm methods and attributes
@@ -442,20 +503,43 @@ class Browser(UserAgent, OpenerMixin):
 #---------------------------------------------------
 # Private methods.
 
+    def _filter_links(self, links,
+                    text=None, text_regex=None,
+                    name=None, name_regex=None,
+                    url=None, url_regex=None,
+                    tag=None,
+                    predicate=None,
+                    nr=0
+                    ):
+        if not self.viewing_html():
+            raise BrowserStateError("not viewing HTML")
 
-    def _encoding(self, response):
-        # HTTPEquivProcessor may be in use, so both HTTP and HTTP-EQUIV
-        # headers may be in the response.  HTTP-EQUIV headers come last,
-        # so try in order from first to last.
-        for ct in response.info().getheaders("content-type"):
-            for k, v in split_header_words([ct])[0]:
-                if k == "charset":
-                    return v
-        return self.default_encoding
+        found_links = []
+        orig_nr = nr
 
-    def _parse_html(self, response):
-        self.form = None
-
-        self._factory.reset()
-        if self.viewing_html():
-            self._factory.parse_html(response, self._encoding(response))
+        for link in links:
+            if url is not None and url != link.url:
+                continue
+            if url_regex is not None and not re.search(url_regex, link.url):
+                continue
+            if (text is not None and
+                (link.text is None or text != link.text)):
+                continue
+            if (text_regex is not None and
+                (link.text is None or not re.search(text_regex, link.text))):
+                continue
+            if name is not None and name != dict(link.attrs).get("name"):
+                continue
+            if name_regex is not None:
+                link_name = dict(link.attrs).get("name")
+                if link_name is None or not re.search(name_regex, link_name):
+                    continue
+            if tag is not None and tag != link.tag:
+                continue
+            if predicate is not None and not predicate(link):
+                continue
+            if nr:
+                nr -= 1
+                continue
+            yield link
+            nr = orig_nr

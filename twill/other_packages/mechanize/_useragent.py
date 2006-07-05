@@ -6,42 +6,21 @@ This is a subclass of urllib2.OpenerDirector.
 Copyright 2003-2006 John J. Lee <jjl@pobox.com>
 
 This code is free software; you can redistribute it and/or modify it under
-the terms of the BSD License (see the file COPYING included with the
-distribution).
+the terms of the BSD or ZPL 2.1 licenses (see the file COPYING.txt
+included with the distribution).
 
 """
 
-import sys
-import urllib2, httplib
-import ClientCookie
-if sys.version_info[:2] >= (2, 4):
-    import cookielib
-    from urllib2 import OpenerDirector, BaseHandler, \
-         HTTPHandler, HTTPErrorProcessor
-    try:
-        from urllib2 import HTTPSHandler
-    except ImportError:
-        pass
-    class SaneHTTPCookieProcessor(ClientCookie.HTTPCookieProcessor):
-        # Workaround for RFC 2109 bug http://python.org/sf/1157027 (at least if
-        # you don't pass your own CookieJar in: if that's the case, you should
-        # pass rfc2965=True to the DefaultCookiePolicy constructor yourself, or
-        # set the corresponding attribute).
-        def __init__(self, cookiejar=None):
-            if cookiejar is None:
-                cookiejar = cookielib.CookieJar(
-                    cookielib.DefaultCookiePolicy(rfc2965=True))
-            self.cookiejar = cookiejar
-    HTTPCookieProcessor = SaneHTTPCookieProcessor
-else:
-    from ClientCookie import OpenerDirector, BaseHandler, \
-         HTTPHandler, HTTPErrorProcessor, HTTPCookieProcessor
-    try:
-        from ClientCookie import HTTPSHandler
-    except ImportError:
-        pass
+import sys, warnings, urllib2
 
-class HTTPRefererProcessor(BaseHandler):
+from _opener import OpenerDirector
+
+import _urllib2
+import _auth
+import _gzip
+
+
+class HTTPRefererProcessor(_urllib2.BaseHandler):
     def http_request(self, request):
         # See RFC 2616 14.36.  The only times we know the source of the
         # request URI has a URI associated with it are redirect, and
@@ -76,66 +55,81 @@ class UserAgent(OpenerDirector):
 
     handler_classes = {
         # scheme handlers
-        "http": HTTPHandler,
-        "ftp": urllib2.FTPHandler,  # CacheFTPHandler is buggy in 2.3
-        "file": urllib2.FileHandler,
-        "gopher": urllib2.GopherHandler,
-        # XXX etc.
+        "http": _urllib2.HTTPHandler,
+        # CacheFTPHandler is buggy, at least in 2.3, so we don't use it
+        "ftp": _urllib2.FTPHandler,
+        "file": _urllib2.FileHandler,
+        "gopher": _urllib2.GopherHandler,
 
         # other handlers
-        "_unknown": urllib2.UnknownHandler,
+        "_unknown": _urllib2.UnknownHandler,
         # HTTP{S,}Handler depend on HTTPErrorProcessor too
-        "_http_error": HTTPErrorProcessor,
-        "_http_request_upgrade": ClientCookie.HTTPRequestUpgradeProcessor,
-        "_http_default_error": urllib2.HTTPDefaultErrorHandler,
+        "_http_error": _urllib2.HTTPErrorProcessor,
+        "_http_request_upgrade": _urllib2.HTTPRequestUpgradeProcessor,
+        "_http_default_error": _urllib2.HTTPDefaultErrorHandler,
 
         # feature handlers
-        "_authen": urllib2.HTTPBasicAuthHandler,
-        # XXX rest of authentication stuff
-        "_redirect": ClientCookie.HTTPRedirectHandler,
-        "_cookies": HTTPCookieProcessor,
-        "_refresh": ClientCookie.HTTPRefreshProcessor,
+        "_basicauth": _urllib2.HTTPBasicAuthHandler,
+        "_digestauth": _urllib2.HTTPDigestAuthHandler,
+        "_redirect": _urllib2.HTTPRedirectHandler,
+        "_cookies": _urllib2.HTTPCookieProcessor,
+        "_refresh": _urllib2.HTTPRefreshProcessor,
         "_referer": HTTPRefererProcessor,  # from this module, note
-        "_equiv": ClientCookie.HTTPEquivProcessor,
-        "_seek": ClientCookie.SeekableProcessor,
-        "_proxy": urllib2.ProxyHandler,
-        # XXX there's more to proxies, too
+        "_equiv": _urllib2.HTTPEquivProcessor,
+        "_seek": _urllib2.SeekableProcessor,
+        "_proxy": _urllib2.ProxyHandler,
+        "_proxy_basicauth": _urllib2.ProxyBasicAuthHandler,
+        "_proxy_digestauth": _urllib2.ProxyDigestAuthHandler,
+        "_robots": _urllib2.HTTPRobotRulesProcessor,
+        "_gzip": _gzip.HTTPGzipProcessor,  # experimental!
 
         # debug handlers
-        "_debug_redirect": ClientCookie.HTTPRedirectDebugProcessor,
-        "_debug_response_body": ClientCookie.HTTPResponseDebugProcessor,
+        "_debug_redirect": _urllib2.HTTPRedirectDebugProcessor,
+        "_debug_response_body": _urllib2.HTTPResponseDebugProcessor,
         }
 
     default_schemes = ["http", "ftp", "file", "gopher"]
     default_others = ["_unknown", "_http_error", "_http_request_upgrade",
-                      "_http_default_error"]
-    default_features = ["_authen", "_redirect", "_cookies", "_refresh",
-                        "_referer", "_equiv", "_seek", "_proxy"]
-    if hasattr(httplib, 'HTTPS'):
-        handler_classes["https"] = HTTPSHandler
+                      "_http_default_error",
+                      ]
+    default_features = ["_redirect", "_cookies", "_referer",
+                        "_refresh", "_equiv",
+                        "_basicauth", "_digestauth",
+                        "_proxy", "_proxy_basicauth", "_proxy_digestauth",
+                        "_seek", "_robots",
+                        ]
+    if hasattr(_urllib2, 'HTTPSHandler'):
+        handler_classes["https"] = _urllib2.HTTPSHandler
         default_schemes.append("https")
-    if hasattr(ClientCookie, "HTTPRobotRulesProcessor"):
-        handler_classes["_robots"] = ClientCookie.HTTPRobotRulesProcessor
-        default_features.append("_robots")
 
     def __init__(self):
         OpenerDirector.__init__(self)
 
-        self._ua_handlers = {}
+        ua_handlers = self._ua_handlers = {}
         for scheme in (self.default_schemes+
                        self.default_others+
                        self.default_features):
             klass = self.handler_classes[scheme]
-            self._ua_handlers[scheme] = klass()
-        for handler in self._ua_handlers.itervalues():
+            ua_handlers[scheme] = klass()
+        for handler in ua_handlers.itervalues():
             self.add_handler(handler)
 
+        # Yuck.
         # Ensure correct default constructor args were passed to
-        # HTTPRefererProcessor and HTTPEquivProcessor.  Yuck.
-        if '_refresh' in self._ua_handlers:
+        # HTTPRefererProcessor and HTTPEquivProcessor.
+        if "_refresh" in ua_handlers:
             self.set_handle_refresh(True)
-        if '_equiv' in self._ua_handlers:
+        if "_equiv" in ua_handlers:
             self.set_handle_equiv(True)
+        # Ensure default password managers are installed.
+        pm = ppm = None
+        if "_basicauth" in ua_handlers or "_digestauth" in ua_handlers:
+            pm = _urllib2.HTTPPasswordMgrWithDefaultRealm()
+        if ("_proxy_basicauth" in ua_handlers or
+            "_proxy_digestauth" in ua_handlers):
+            ppm = _auth.HTTPProxyPasswordMgr()
+        self.set_password_manager(pm)
+        self.set_proxy_password_manager(ppm)
 
         # special case, requires extra support from mechanize.Browser
         self._handle_referer = True
@@ -154,17 +148,20 @@ class UserAgent(OpenerDirector):
 ##         self._ftp_conn_cache = conn_cache
 
     def set_handled_schemes(self, schemes):
-        """Set sequence of protocol scheme strings.
+        """Set sequence of URL scheme (protocol) strings.
+
+        For example: ua.set_handled_schemes(["http", "ftp"])
 
         If this fails (with ValueError) because you've passed an unknown
-        scheme, the set of handled schemes WILL be updated, but schemes in the
-        list that come after the unknown scheme won't be handled.
+        scheme, the set of handled schemes will not be changed.
 
         """
         want = {}
         for scheme in schemes:
             if scheme.startswith("_"):
-                raise ValueError("invalid scheme '%s'" % scheme)
+                raise ValueError("not a scheme '%s'" % scheme)
+            if scheme not in self.handler_classes:
+                raise ValueError("unknown scheme '%s'")
             want[scheme] = None
 
         # get rid of scheme handlers we don't want
@@ -176,8 +173,6 @@ class UserAgent(OpenerDirector):
                 del want[scheme]  # already got it
         # add the scheme handlers that are missing
         for scheme in want.keys():
-            if scheme not in self.handler_classes:
-                raise ValueError("unknown scheme '%s'")
             self._set_handler(scheme, True)
 
     def _add_referer_header(self, request, origin_request=True):
@@ -185,12 +180,38 @@ class UserAgent(OpenerDirector):
             "this class can't do HTTP Referer: use mechanize.Browser instead")
 
     def set_cookiejar(self, cookiejar):
-        """Set a ClientCookie.CookieJar, or None."""
+        """Set a mechanize.CookieJar, or None."""
         self._set_handler("_cookies", obj=cookiejar)
-    def set_credentials(self, credentials):
-        """Set a urllib2.HTTPPasswordMgr, or None."""
-        # XXX use Greg Stein's httpx instead?
-        self._set_handler("_authen", obj=credentials)
+
+    # XXX could use Greg Stein's httpx for some of this instead?
+    # or httplib2??
+    def set_proxies(self, proxies):
+        """Set a dictionary mapping URL scheme to proxy specification, or None.
+
+        e.g. {"http": "joe:password@myproxy.example.com:3128",
+              "ftp": "proxy.example.com"}
+
+        """
+        self._set_handler("_proxy", obj=proxies)
+
+    def add_password(self, url, user, password, realm=None):
+        self._password_manager.add_password(realm, url, user, password)
+    def add_proxy_password(self, user, password, hostport=None, realm=None):
+        self._proxy_password_manager.add_password(
+            realm, hostport, user, password)
+
+    # the following are rarely useful -- use add_password / add_proxy_password
+    # instead
+    def set_password_manager(self, password_manager):
+        """Set a mechanize.HTTPPasswordMgrWithDefaultRealm, or None."""
+        self._password_manager = password_manager
+        self._set_handler("_basicauth", obj=password_manager)
+        self._set_handler("_digestauth", obj=password_manager)
+    def set_proxy_password_manager(self, password_manager):
+        """Set a mechanize.HTTPProxyPasswordMgr, or None."""
+        self._proxy_password_manager = password_manager
+        self._set_handler("_proxy_basicauth", obj=password_manager)
+        self._set_handler("_proxy_digestauth", obj=password_manager)
 
     # these methods all take a boolean parameter
     def set_handle_robots(self, handle):
@@ -224,36 +245,37 @@ class UserAgent(OpenerDirector):
         """
         self._set_handler("_referer", handle)
         self._handle_referer = bool(handle)
-    def set_seekable_responses(self, handle):
-        """Make response objects .seek()able."""
-        self._set_handler("_seek", handle)
+    def set_handle_gzip(self, handle):
+        """Handle gzip transfer encoding.
+
+        """
+        if handle:
+            warnings.warn(
+                "gzip transfer encoding is experimental!", stacklevel=2)
+        self._set_handler("_gzip", handle)
     def set_debug_redirects(self, handle):
-        """Log information about HTTP redirects.
+        """Log information about HTTP redirects (including refreshes).
 
-        This includes refreshes, which show up as faked 302 redirections at the
-        moment.
-
-        Logs is performed using module logging.  The logger name is
-        "ClientCookie.http_redirects".  To actually print some debug output,
+        Logging is performed using module logging.  The logger name is
+        "mechanize.http_redirects".  To actually print some debug output,
         eg:
 
-        logger = logging.getLogger("ClientCookie.http_redirects")
-        logger.addHandler(logging.StreamHandler())
+        import sys, logging
+        logger = logging.getLogger("mechanize.http_redirects")
+        logger.addHandler(logging.StreamHandler(sys.stdout))
         logger.setLevel(logging.INFO)
 
         Other logger names relevant to this module:
 
-        "ClientCookie.http_responses"
-        "ClientCookie.cookies" (or "cookielib" if running Python 2.4)
+        "mechanize.http_responses"
+        "mechanize.cookies" (or "cookielib" if running Python 2.4)
 
         To turn on everything:
 
-        for logger in [
-            logging.getLogger("ClientCookie"),
-            logging.getLogger("cookielib"),
-            ]:
-            logger.addHandler(logging.StreamHandler())
-            logger.setLevel(logging.INFO)
+        import sys, logging
+        logger = logging.getLogger("mechanize")
+        logger.addHandler(logging.StreamHandler(sys.stdout))
+        logger.setLevel(logging.INFO)
 
         """
         self._set_handler("_debug_redirect", handle)
@@ -289,29 +311,13 @@ class UserAgent(OpenerDirector):
     def _replace_handler(self, name, newhandler=None):
         # first, if handler was previously added, remove it
         if name is not None:
-            try:
-                handler = self._ua_handlers[name]
-            except:
-                pass
-            else:
-                for table in (
-                    [self.handle_open,
-                     self.process_request, self.process_response]+
-                    self.handle_error.values()):
-                    for handlers in table.values():
-                        remove(handlers, handler)
-                    remove(self.handlers, handler)
+            handler = self._ua_handlers.get(name)
+            if handler:
+                try:
+                    self.handlers.remove(handler)
+                except ValueError:
+                    pass
         # then add the replacement, if any
         if newhandler is not None:
             self.add_handler(newhandler)
             self._ua_handlers[name] = newhandler
-
-def remove(sequence, obj):
-    # for use when can't use .remove() because of obj.__cmp__ :-(
-    # (ClientCookie only requires Python 2.0, which doesn't have __lt__)
-    i = 0
-    while i < len(sequence):
-        if sequence[i] is obj:
-            del sequence[i]
-        else:
-            i += 1

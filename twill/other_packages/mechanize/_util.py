@@ -8,19 +8,9 @@ COPYING.txt included with the distribution).
 
 """
 
-try: True
-except NameError:
-    True = 1
-    False = 0
-
-import re, string, time, copy, urllib
+import re, string, time, copy, urllib, mimetools
 from types import TupleType
 from cStringIO import StringIO
-
-try:
-    from exceptions import StopIteration
-except ImportError:
-    from ClientCookie._ClientCookie import StopIteration
 
 def startswith(string, initial):
     if len(initial) > len(string): return False
@@ -29,24 +19,6 @@ def startswith(string, initial):
 def endswith(string, final):
     if len(final) > len(string): return False
     return string[-len(final):] == final
-
-def compat_issubclass(obj, tuple_or_class):
-    # for 2.1 and below
-    if type(tuple_or_class) == TupleType:
-        for klass in tuple_or_class:
-            if issubclass(obj, klass):
-                return True
-        return False
-    return issubclass(obj, tuple_or_class)
-
-def compat_isinstance(obj, tuple_or_class):
-    # for 2.1 and below
-    if type(tuple_or_class) == TupleType:
-        for klass in tuple_or_class:
-            if isinstance(obj, klass):
-                return True
-        return False
-    return isinstance(obj, tuple_or_class)
 
 def isstringlike(x):
     try: x+""
@@ -61,6 +33,14 @@ def isspace(string):
     for c in string:
         if not SPACE_DICT.has_key(c): return False
     return True
+
+## def caller():
+##     try:
+##         raise SyntaxError
+##     except:
+##         import sys
+##     return sys.exc_traceback.tb_frame.f_back.f_back.f_code.co_name
+
 
 # this is here rather than in _HeadersUtil as it's just for
 # compatibility with old Python versions, rather than entirely new code
@@ -89,39 +69,7 @@ def getheaders(msg, name):
         result.append(current)
     return result
 
-try:
-    from calendar import timegm
-    timegm((2045, 1, 1, 22, 23, 32))  # overflows in 2.1
-except:
-    # Number of days per month (except for February in leap years)
-    mdays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-
-    # Return 1 for leap years, 0 for non-leap years
-    def isleap(year):
-	return year % 4 == 0 and (year % 100 <> 0 or year % 400 == 0)
-
-    # Return number of leap years in range [y1, y2)
-    # Assume y1 <= y2 and no funny (non-leap century) years
-    def leapdays(y1, y2):
-	return (y2+3)/4 - (y1+3)/4
-
-    EPOCH = 1970
-    def timegm(tuple):
-        """Unrelated but handy function to calculate Unix timestamp from GMT."""
-        year, month, day, hour, minute, second = tuple[:6]
-        assert year >= EPOCH
-        assert 1 <= month <= 12
-        days = 365*(year-EPOCH) + leapdays(EPOCH, year)
-        for i in range(1, month):
-            days = days + mdays[i]
-        if month > 2 and isleap(year):
-            days = days + 1
-        days = days + day - 1
-        hours = days*24 + hour
-        minutes = hours*60 + minute
-        seconds = minutes*60L + second
-        return seconds
-
+from calendar import timegm
 
 # Date/time conversion routines for formats used by the HTTP protocol.
 
@@ -220,12 +168,12 @@ def _str2time(day, mon, yr, hr, min, sec, tz):
     sec = int(sec)
 
     if yr < 1000:
-	# find "obvious" year
-	cur_yr = time.localtime(time.time())[0]
-	m = cur_yr % 100
-	tmp = yr
-	yr = yr + cur_yr - m
-	m = m - tmp
+        # find "obvious" year
+        cur_yr = time.localtime(time.time())[0]
+        m = cur_yr % 100
+        tmp = yr
+        yr = yr + cur_yr - m
+        m = m - tmp
         if abs(m) > 50:
             if m > 0: yr = yr + 100
             else: yr = yr - 100
@@ -257,7 +205,7 @@ loose_http_re = re.compile(
         (?:\s+|[-\/])
     (\d+)              # year
     (?:
-	  (?:\s+|:)    # separator before clock
+          (?:\s+|:)    # separator before clock
        (\d\d?):(\d\d)  # hour:min
        (?::(\d\d))?    # optional seconds
     )?                 # optional clock
@@ -471,6 +419,14 @@ class seek_wrapper:
         cpy.__cache = self.__cache
         return cpy
 
+    def get_data(self):
+        pos = self.__pos
+        try:
+            self.seek(0)
+            return self.read(-1)
+        finally:
+            self.__pos = pos
+
     def read(self, size=-1):
         pos = self.__pos
         end = len(self.__cache.getvalue())
@@ -589,7 +545,7 @@ class eofresponse(eoffile):
 class closeable_response:
     """Avoids unnecessarily clobbering urllib.addinfourl methods on .close().
 
-    Only supports responses returned by ClientCookie.HTTPHandler.
+    Only supports responses returned by mechanize.HTTPHandler.
 
     After .close(), the following methods are supported:
 
@@ -613,6 +569,8 @@ class closeable_response:
     it: http://python.org/sf/1144636).
 
     """
+    # presence of this attr indicates is useable after .close()
+    closeable_response = None
 
     def __init__(self, fp, headers, url, code, msg):
         self._set_fp(fp)
@@ -658,6 +616,10 @@ class closeable_response:
         # 2. read to end
         # 3. close socket, pickle state including read position, then open
         #    again on unpickle and use Range header
+        # XXXX um, 4. refuse to pickle unless .close()d.  This is better,
+        #  actually ("errors should never pass silently").  Pickling doesn't
+        #  work anyway ATM, because of http://python.org/sf/1144636 so fix
+        #  this later
 
         # 2 breaks pickle protocol, because one expects the original object
         # to be left unscathed by pickling.  3 is too complicated and
@@ -669,3 +631,20 @@ class closeable_response:
             self._url, self._headers, self.code, self.msg)
         state["wrapped"] = new_wrapped
         return state
+
+def make_response(data, headers, url, code, msg):
+    """Convenient factory for objects implementing response interface.
+
+    data: string containing response body data
+    headers: sequence of (name, value) pairs
+    url: URL of response
+    code: integer response code (e.g. 200)
+    msg: string response code message (e.g. "OK")
+
+    """
+    hdr_text = []
+    for name_value in headers:
+        hdr_text.append("%s: %s" % name_value)
+    mime_headers = mimetools.Message(StringIO("\n".join(hdr_text)))
+    r = closeable_response(StringIO(data), mime_headers, url, code, msg)
+    return response_seek_wrapper(r)

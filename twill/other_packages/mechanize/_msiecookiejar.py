@@ -11,20 +11,15 @@ COPYING.txt included with the distribution).
 
 # XXX names and comments are not great here
 
-import os, re, string, time, struct
+import os, re, string, time, struct, logging
 if os.name == "nt":
     import _winreg
 
-from _ClientCookie import FileCookieJar, CookieJar, Cookie, \
+from _clientcookie import FileCookieJar, CookieJar, Cookie, \
      MISSING_FILENAME_TEXT, LoadError
-from _Util import startswith
-from _Debug import getLogger
-debug = getLogger("ClientCookie").debug
+from _util import startswith
 
-try: True
-except NameError:
-    True = 1
-    False = 0
+debug = logging.getLogger("mechanize").debug
 
 
 def regload(path, leaf):
@@ -44,7 +39,7 @@ def epoch_time_offset_from_win32_filetime(filetime):
     MSIE stores create and expire times as Win32 FILETIME, which is 64
     bits of 100 nanosecond intervals since Jan 01 1601.
 
-    ClientCookie expects time in 32-bit value expressed in seconds since the
+    mechanize expects time in 32-bit value expressed in seconds since the
     epoch (Jan 01 1970).
 
     """
@@ -321,7 +316,7 @@ class MSIECookieJar(MSIEBase, FileCookieJar):
     cj = MSIECookieJar(delayload=1)
     # find cookies index file in registry and load cookies from it
     cj.load_from_registry()
-    opener = ClientCookie.build_opener(ClientCookie.HTTPCookieProcessor(cj))
+    opener = mechanize.build_opener(mechanize.HTTPCookieProcessor(cj))
     response = opener.open("http://example.com/")
 
     Iterating over a delayloaded MSIECookieJar instance will not cause any
