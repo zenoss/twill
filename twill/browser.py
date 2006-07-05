@@ -18,7 +18,7 @@ from mechanize import BrowserStateError, LinkNotFoundError
 # twill package imports
 from _browser import PatchedMechanizeBrowser
 from utils import trunc, print_form, ConfigurableParsingFactory, \
-     ResultWrapper, unique_match
+     ResultWrapper, unique_match, HistoryStack
      
 
 #
@@ -44,7 +44,8 @@ class TwillBrowser(object):
         # Create the mechanize browser.
         #
         
-        b = PatchedMechanizeBrowser(factory=factory)
+        #b = PatchedMechanizeBrowser(factory=factory)
+        b = PatchedMechanizeBrowser(history=HistoryStack())
 
         self._browser = b
         
@@ -77,14 +78,14 @@ class TwillBrowser(object):
 
     ### get/set HTTP authentication stuff.
 
-    def _set_creds(self, creds):
-        self._creds = creds
-        self._browser.set_credentials(creds)
+#    def _set_creds(self, creds):
+#        self._creds = creds
+#        self._browser.set_credentials(creds)
 
-    def _get_creds(self):
-        return self._creds
+#    def _get_creds(self):
+#        return self._creds
 
-    creds = property(_get_creds, _set_creds)
+#    creds = property(_get_creds, _set_creds)
         
     def go(self, url):
         """
@@ -115,6 +116,7 @@ class TwillBrowser(object):
                 success = True
                 break
             except IOError:
+                raise
                 pass
 
         if success:
@@ -255,6 +257,8 @@ class TwillBrowser(object):
         """
         formname = str(formname)
         forms = self._browser.forms()
+        forms = [ i for i in forms ]
+        print 'forms now', forms
 
         # first try ID
         for f in forms:
@@ -386,7 +390,7 @@ class TwillBrowser(object):
         
         form = self._browser.form
         if form is None:
-            forms = self._browser.forms()
+            forms = [ i for i in self._browser.forms() ]
             if len(forms) == 1:
                 form = forms[0]
             else:

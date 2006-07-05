@@ -164,7 +164,7 @@ class TwillTest(Directory):
 
     def test_refresh(self):
         return """\
-<meta http-equiv="refresh" content="2; ./login">
+<meta http-equiv="refresh" content="2; url=./login">
 hello, world.
 """
     

@@ -25,14 +25,14 @@ def test_raw():
     
     commands.go('/tidy_fixable_html')
 
-    assert len(b._browser.forms()) == 0, \
-           "there should be no correct forms on this page"
+    forms = [ i for i in b._browser.forms() ]
+    assert len(forms) == 0, "there should be no correct forms on this page"
 
     ###
 
     commands.go('/BS_fixable_html')
-    assert len(b._browser.forms()) == 1, \
-           "there should be one mangled form on this page"
+    forms = [ i for i in b._browser.forms() ]
+    assert len(forms) == 1, "there should be one mangled form on this page"
 
     ###
 
@@ -59,13 +59,15 @@ def test_tidy():
     
     commands.go('/tidy_fixable_html')
 
-    assert len(b._browser.forms()) == 1, \
+    forms = [ i for i in b._browser.forms() ]
+    assert len(forms) == 1, \
            "there should be one correctable form on this page"
 
     ###
 
     commands.go('/BS_fixable_html')
-    assert len(b._browser.forms()) == 1, \
+    forms = [ i for i in b._browser.forms() ]
+    assert len(forms) == 1, \
            "there should be one mangled form on this page"
 
     ###
@@ -93,13 +95,15 @@ def test_BeautifulSoup():
     
     commands.go('/tidy_fixable_html')
 
-    assert len(b._browser.forms()) == 0, \
+    forms = [ i for i in b._browser.forms() ]
+    assert len(forms) == 0, \
            "there should be no correct forms on this page"
 
     ###
 
     commands.go('/BS_fixable_html')
-    assert len(b._browser.forms()) == 1, \
+    forms = [ i for i in b._browser.forms() ]
+    assert len(forms) == 1, \
            "there should be one mangled form on this page"
 
     ###
@@ -149,11 +153,13 @@ def test_effed_up_forms2():
     commands.go('/effed_up_forms2')
 
     b = commands.get_browser()
-    form = b._browser.forms()[0]
+    forms = [ i for i in b._browser.forms() ]
+    form = forms[0]
     assert len(form.controls) == 3
 
     # with a more correct form parser this would work like the above.
     commands.config('use_tidy', '0')
     commands.reload()
-    form = b._browser.forms()[0]
+    forms = [ i for i in b._browser.forms() ]
+    form = forms[0]
     assert len(form.controls) == 1

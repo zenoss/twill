@@ -9,8 +9,9 @@ import base64
 
 import urllib2
 
-import mechanize, ClientForm, ClientCookie
-from ClientCookie._Util import getheaders, time
+import mechanize, ClientForm
+from mechanize._util import getheaders, time
+from mechanize._urllib2 import HTTPRefreshProcessor
 from mechanize import BrowserStateError
 
 class FakeResponse:
@@ -354,11 +355,13 @@ class ConfigurableParsingFactory(mechanize.Factory):
         ### create the two sets of factories to use.
         self.basic_ff = mechanize.FormsFactory()
         self.basic_lf = mechanize.LinksFactory()
-        self.basic_gt = mechanize.pp_get_title
+#        self.basic_gt = mechanize.pp_get_title
 
         self.bs_ff = mechanize.RobustFormsFactory()
         self.bs_lf = mechanize.RobustLinksFactory()
-        self.bs_gt = mechanize.bs_get_title
+#        self.bs_gt = mechanize.bs_get_title
+
+        self._is_html_p = mechanize._html.make_is_html(True)
         
         self.reset()
 
@@ -461,7 +464,7 @@ class FixedHTTPBasicAuthHandler(urllib2.HTTPBasicAuthHandler):
 ###
 
 _debug_print_refresh = False
-class FunctioningHTTPRefreshProcessor(ClientCookie.HTTPRefreshProcessor):
+class FunctioningHTTPRefreshProcessor(HTTPRefreshProcessor):
     """
     Fix an issue where the 'content' component of the http-equiv=refresh
     tag may not contain 'url='.  CTB hack.
@@ -511,3 +514,12 @@ class FunctioningHTTPRefreshProcessor(ClientCookie.HTTPRefreshProcessor):
         return response
 
     https_response = http_response
+
+####
+
+class HistoryStack(mechanize._mechanize.History):
+    def __len__(self):
+        return len(self._history)
+    def __getitem__(self, i):
+        return self._history[i]
+    

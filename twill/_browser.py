@@ -33,14 +33,14 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
     urllib2 Basic Authentication.
     """
     def __init__(self, *args, **kwargs):
-        # install WSGI intercept handler.
-        self.handler_classes['http'] = build_http_handler()
-        self.handler_classes['https'] = build_https_handler()
+#        # install WSGI intercept handler.
+#        self.handler_classes['http'] = build_http_handler()
+#        self.handler_classes['https'] = build_https_handler()
 
         # fix basic auth.
-        self.handler_classes['_authen'] = FixedHTTPBasicAuthHandler
+#        self.handler_classes['_authen'] = FixedHTTPBasicAuthHandler
 
         # make refresh work even for somewhat mangled refresh directives.
-        self.handler_classes['_refresh'] = FunctioningHTTPRefreshProcessor
+#        self.handler_classes['_refresh'] = FunctioningHTTPRefreshProcessor
 
         MechanizeBrowser.__init__(self, *args, **kwargs)
