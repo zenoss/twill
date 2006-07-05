@@ -31,10 +31,6 @@ class History:
     """
     def __init__(self):
         self._history = []  # LIFO
-    def __len__(self):
-        return len(self._history)
-    def __getitem__(self, i):
-        return self._history[i]
     def add(self, request, response):
         self._history.append((request, response))
     def back(self, n, _response):
