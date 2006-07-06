@@ -11,7 +11,7 @@ import urllib2
 
 import mechanize, ClientForm
 from mechanize._util import getheaders, time
-from mechanize._urllib2 import HTTPRefreshProcessor
+from mechanize._http import HTTPRefreshProcessor
 from mechanize import BrowserStateError
 
 class FakeResponse:

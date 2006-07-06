@@ -78,14 +78,14 @@ class TwillBrowser(object):
 
     ### get/set HTTP authentication stuff.
 
-#    def _set_creds(self, creds):
-#        self._creds = creds
-#        self._browser.set_credentials(creds)
+    def _set_creds(self, creds):
+        self._creds = creds
+        self._browser.set_password_manager(creds)
 
-#    def _get_creds(self):
-#        return self._creds
+    def _get_creds(self):
+        return self._creds
 
-#    creds = property(_get_creds, _set_creds)
+    creds = property(_get_creds, _set_creds)
         
     def go(self, url):
         """

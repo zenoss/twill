@@ -6,5 +6,6 @@ echo add_auth Protected __url__ test password
 add_auth Protected __url__ test password
 
 go /http_auth/
+code 200
 show
 find "you made it!"

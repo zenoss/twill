@@ -10,7 +10,7 @@ from utils import run_tidy, StringIO, \
      FixedHTTPBasicAuthHandler, FunctioningHTTPRefreshProcessor
 
 def build_http_handler():
-    from ClientCookie import HTTPHandler
+    from mechanize._urllib2_support import HTTPHandler
 
     class MyHTTPHandler(HTTPHandler):
         def http_open(self, req):
@@ -20,7 +20,7 @@ def build_http_handler():
 
 def build_https_handler():
     try:
-        from ClientCookie import HTTPSHandler
+        from mechanize._urllib2_support import HTTPSHandler
     except ImportError:
         HTTPSHandler = None
         
@@ -34,13 +34,13 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
     """
     def __init__(self, *args, **kwargs):
 #        # install WSGI intercept handler.
-#        self.handler_classes['http'] = build_http_handler()
-#        self.handler_classes['https'] = build_https_handler()
+        self.handler_classes['http'] = build_http_handler()
+        self.handler_classes['https'] = build_https_handler()
 
         # fix basic auth.
-#        self.handler_classes['_authen'] = FixedHTTPBasicAuthHandler
+        self.handler_classes['_basicauth'] = FixedHTTPBasicAuthHandler
 
         # make refresh work even for somewhat mangled refresh directives.
-#        self.handler_classes['_refresh'] = FunctioningHTTPRefreshProcessor
+        self.handler_classes['_refresh'] = FunctioningHTTPRefreshProcessor
 
         MechanizeBrowser.__init__(self, *args, **kwargs)
