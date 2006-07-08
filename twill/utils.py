@@ -523,3 +523,26 @@ class HistoryStack(mechanize._mechanize.History):
     def __getitem__(self, i):
         return self._history[i]
     
+####
+
+def _is_valid_filename(f):
+    return not (f.endswith('~') or f.endswith('.bak') or f.endswith('.old'))
+
+def gather_filenames(arglist):
+    """
+    Collect script files from within directories.
+    """
+    l = []
+
+    for filename in arglist:
+        if os.path.isdir(filename):
+            for (dirpath, dirnames, filenames) in os.walk(filename):
+                filenames.sort()
+                for f in filenames:
+                    if _is_valid_filename(f):
+                        f = os.path.join(dirpath, f)
+                        l.append(f)
+        else:
+            l.append(filename)
+
+    return l

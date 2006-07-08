@@ -230,6 +230,7 @@ def main():
     
     import sys
     from twill import TwillCommandLoop, execute_file, __version__
+    from twill.utils import gather_filenames
     from optparse import OptionParser
     from cStringIO import StringIO
 
@@ -299,11 +300,10 @@ def main():
     if len(args):
         success = []
         failure = []
-        for filename in args:
-            if filename[-1] == '~':
-                print 'SKIPPING backup file:', filename
-                continue
 
+        filenames = gather_filenames(args)
+
+        for filename in filenames:
             print '>> EXECUTING FILE', filename
 
             try:
