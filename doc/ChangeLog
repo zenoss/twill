@@ -1,3 +1,9 @@
+2006-07-07  Titus Brown  <t@issola.caltech.edu>
+
+	* added newline '\n' processing in arguments.  still need to test.
+
+	* added utils.gather_files to gather script files from subdirectories.
+
 2006-06-19  Titus Brown  <t@issola.caltech.edu>
 
 	* Fixed name server change in test-dns.twill.

@@ -90,6 +90,8 @@ def process_args(args, globals_dict, locals_dict):
         else:
             newargs.append(variable_substitution(arg, globals_dict, locals_dict))
 
+    newargs = [ i.replace('\\n', '\n') for i in newargs ]
+
     return newargs
 
 ###
