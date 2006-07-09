@@ -3,24 +3,26 @@
 from urllib2 import \
      URLError, \
      HTTPError, \
-     GopherError, \
+     GopherError
+# ...and from mechanize
+from _opener import OpenerDirector, \
+     build_opener, install_opener, urlopen, \
+     OpenerFactory, urlretrieve
+from _auth import \
      HTTPPasswordMgr, \
      HTTPPasswordMgrWithDefaultRealm, \
      AbstractBasicAuthHandler, \
-     AbstractDigestAuthHandler
-# ...and from mechanize
-from _opener import OpenerDirector
-from _auth import \
+     AbstractDigestAuthHandler, \
      HTTPProxyPasswordMgr, \
      ProxyHandler, \
      ProxyBasicAuthHandler, \
      ProxyDigestAuthHandler, \
      HTTPBasicAuthHandler, \
-     HTTPDigestAuthHandler
-from _urllib2_support import \
-     Request, \
-     build_opener, install_opener, urlopen, \
-     OpenerFactory, urlretrieve, \
+     HTTPDigestAuthHandler, \
+     HTTPSClientCertMgr
+from _request import \
+     Request
+from _http import \
      RobotExclusionError
 
 # handlers...
@@ -34,20 +36,27 @@ from urllib2 import \
      FileHandler, \
      GopherHandler
 # ...and from mechanize
-from _urllib2_support import \
+from _http import \
      HTTPHandler, \
      HTTPRedirectHandler, \
-     HTTPRequestUpgradeProcessor, \
      HTTPEquivProcessor, \
-     SeekableProcessor, \
      HTTPCookieProcessor, \
      HTTPRefererProcessor, \
      HTTPRefreshProcessor, \
      HTTPErrorProcessor, \
-     HTTPResponseDebugProcessor, \
-     HTTPRedirectDebugProcessor, \
      HTTPRobotRulesProcessor
+from _upgrade import \
+     HTTPRequestUpgradeProcessor, \
+     ResponseUpgradeProcessor
+from _debug import \
+     HTTPResponseDebugProcessor, \
+     HTTPRedirectDebugProcessor
+from _seek import \
+     SeekableProcessor
+# crap ATM
+## from _gzip import \
+##      HTTPGzipProcessor
 import httplib
 if hasattr(httplib, 'HTTPS'):
-    from _urllib2_support import HTTPSHandler
+    from _http import HTTPSHandler
 del httplib

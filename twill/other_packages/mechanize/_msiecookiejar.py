@@ -11,13 +11,12 @@ COPYING.txt included with the distribution).
 
 # XXX names and comments are not great here
 
-import os, re, string, time, struct, logging
+import os, re, time, struct, logging
 if os.name == "nt":
     import _winreg
 
 from _clientcookie import FileCookieJar, CookieJar, Cookie, \
      MISSING_FILENAME_TEXT, LoadError
-from _util import startswith
 
 debug = logging.getLogger("mechanize").debug
 
@@ -50,7 +49,7 @@ def epoch_time_offset_from_win32_filetime(filetime):
     return divmod((filetime - WIN32_EPOCH), 10000000L)[0]
 
 def binary_to_char(c): return "%02X" % ord(c)
-def binary_to_str(d): return string.join(map(binary_to_char, list(d)), "")
+def binary_to_str(d): return "".join(map(binary_to_char, list(d)))
 
 class MSIEBase:
     magic_re = re.compile(r"Client UrlCache MMF Ver \d\.\d.*")
@@ -153,7 +152,7 @@ class MSIEBase:
             else:
                 discard = False
             domain = cookie["DOMAIN"]
-            initial_dot = startswith(domain, ".")
+            initial_dot = domain.startswith(".")
             if initial_dot:
                 domain_specified = True
             else:
@@ -201,7 +200,7 @@ class MSIEBase:
         now = int(time.time())
 
         if username is None:
-            username = string.lower(os.environ['USERNAME'])
+            username = os.environ['USERNAME'].lower()
 
         cookie_dir = os.path.dirname(filename)
 

@@ -9,43 +9,21 @@ COPYING.txt included with the distribution).
 
 """
 
-import urllib2, string, bisect, urlparse
-
-from _util import startswith, isstringlike
-from _request import Request
-
+import urllib2, bisect, urlparse, httplib, types
+try:
+    import threading as _threading
+except ImportError:
+    import dummy_threading as _threading
 try:
     set
 except NameError:
     import sets
     set = sets.Set
 
-def methnames(obj):
-    """Return method names of class instance.
-
-    dir(obj) doesn't work across Python versions, this does.
-
-    """
-    return methnames_of_instance_as_dict(obj).keys()
-
-def methnames_of_instance_as_dict(inst):
-    names = {}
-    names.update(methnames_of_class_as_dict(inst.__class__))
-    for methname in dir(inst):
-        candidate = getattr(inst, methname)
-        if callable(candidate):
-            names[methname] = None
-    return names
-
-def methnames_of_class_as_dict(klass):
-    names = {}
-    for methname in dir(klass):
-        candidate = getattr(klass, methname)
-        if callable(candidate):
-            names[methname] = None
-    for baseclass in klass.__bases__:
-        names.update(methnames_of_class_as_dict(baseclass))
-    return names
+import _http
+import _upgrade
+from _util import isstringlike
+from _request import Request
 
 
 class OpenerDirector(urllib2.OpenerDirector):
@@ -81,7 +59,7 @@ class OpenerDirector(urllib2.OpenerDirector):
 
         for handler in self.handlers:
             added = False
-            for meth in methnames(handler):
+            for meth in dir(handler):
                 if meth in ["redirect_request", "do_open", "proxy_open"]:
                     # oops, coincidental match
                     continue
@@ -99,8 +77,8 @@ class OpenerDirector(urllib2.OpenerDirector):
                 scheme = meth[:ii]
                 condition = meth[ii+1:]
 
-                if startswith(condition, "error"):
-                    jj = string.find(meth[ii+1:], "_") + ii + 1
+                if condition.startswith("error"):
+                    jj = meth[ii+1:].find("_") + ii + 1
                     kind = meth[jj+1:]
                     try:
                         kind = int(kind)
@@ -265,3 +243,93 @@ class OpenerDirector(urllib2.OpenerDirector):
             raise IOError("incomplete retrieval error",
                           "got only %d bytes out of %d" % (read,size))
         return result
+
+
+class OpenerFactory:
+    """This class's interface is quite likely to change."""
+
+    default_classes = [
+        # handlers
+        urllib2.ProxyHandler,
+        urllib2.UnknownHandler,
+        _http.HTTPHandler,  # derived from new AbstractHTTPHandler
+        urllib2.HTTPDefaultErrorHandler,
+        _http.HTTPRedirectHandler,  # bugfixed
+        urllib2.FTPHandler,
+        urllib2.FileHandler,
+        # processors
+        _upgrade.HTTPRequestUpgradeProcessor,
+        _http.HTTPCookieProcessor,
+        _http.HTTPErrorProcessor,
+        ]
+    if hasattr(httplib, 'HTTPS'):
+        default_classes.append(_http.HTTPSHandler)
+    handlers = []
+    replacement_handlers = []
+
+    def __init__(self, klass=OpenerDirector):
+        self.klass = klass
+
+    def build_opener(self, *handlers):
+        """Create an opener object from a list of handlers and processors.
+
+        The opener will use several default handlers and processors, including
+        support for HTTP and FTP.
+
+        If any of the handlers passed as arguments are subclasses of the
+        default handlers, the default handlers will not be used.
+
+        """
+        opener = self.klass()
+        default_classes = list(self.default_classes)
+        skip = []
+        for klass in default_classes:
+            for check in handlers:
+                if type(check) == types.ClassType:
+                    if issubclass(check, klass):
+                        skip.append(klass)
+                elif type(check) == types.InstanceType:
+                    if isinstance(check, klass):
+                        skip.append(klass)
+        for klass in skip:
+            default_classes.remove(klass)
+
+        for klass in default_classes:
+            opener.add_handler(klass())
+        for h in handlers:
+            if type(h) == types.ClassType:
+                h = h()
+            opener.add_handler(h)
+
+        return opener
+
+
+build_opener = OpenerFactory().build_opener
+
+_opener = None
+urlopen_lock = _threading.Lock()
+def urlopen(url, data=None):
+    global _opener
+    if _opener is None:
+        urlopen_lock.acquire()
+        try:
+            if _opener is None:
+                _opener = build_opener()
+        finally:
+            urlopen_lock.release()
+    return _opener.open(url, data)
+
+def urlretrieve(url, filename=None, reporthook=None, data=None):
+    global _opener
+    if _opener is None:
+        urlopen_lock.acquire()
+        try:
+            if _opener is None:
+                _opener = build_opener()
+        finally:
+            urlopen_lock.release()
+    return _opener.retrieve(url, filename, reporthook, data)
+
+def install_opener(opener):
+    global _opener
+    _opener = opener

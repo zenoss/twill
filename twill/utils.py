@@ -10,17 +10,24 @@ import base64
 import urllib2
 
 import mechanize, ClientForm
-from mechanize._util import getheaders, time
+from mechanize._util import time
 from mechanize._http import HTTPRefreshProcessor
 from mechanize import BrowserStateError
 
 class FakeResponse:
-    def __init__(self, data, url):
+    def __init__(self, data, url, info):
         self.fp = StringIO(data)
         self.url = url
+        self._info = info
 
     def read(self, *args):
         return self.fp.read(*args)
+
+    def seek(self, *args):
+        return self.fp.seek(*args)
+
+    def info(self):
+        return self._info
 
     def geturl(self):
         return self.url
@@ -352,35 +359,52 @@ class ConfigurableParsingFactory(mechanize.Factory):
     """
     
     def __init__(self):
-        ### create the two sets of factories to use.
-        self.basic_ff = mechanize.FormsFactory()
-        self.basic_lf = mechanize.LinksFactory()
-#        self.basic_gt = mechanize.pp_get_title
+        self.basic_factory = mechanize.DefaultFactory()
+        self.soup_factory = mechanize.RobustFactory()
 
-        self.bs_ff = mechanize.RobustFormsFactory()
-        self.bs_lf = mechanize.RobustLinksFactory()
-#        self.bs_gt = mechanize.bs_get_title
-
-        self._is_html_p = mechanize._html.make_is_html(True)
-        
-        self.reset()
+        self.set_response(None)
 
     def set_request_class(self, request_class):
-        self.basic_ff.request_class = request_class
-        self.bs_ff.request_class = request_class
+        self.basic_factory.set_request_class(request_class)
+        self.soup_factory.set_request_class(request_class)
 
-    def reset(self):
-        self._html = self._orig_html = self._url = None
-        self._encoding = None
-        
-        self._links = self._forms = self._title = None
+    def set_response(self, response):
+        if not response:
+            self.factory = None
+            self._orig_html = self._html = self._url = None
+            return
 
-    def parse_html(self, response, encoding):
-        self._url = response.geturl()
+        ###
+
+        if self.use_BS():
+            self.factory = self.soup_factory
+        else:
+            self.factory = self.basic_factory
+        self._cleanup_html(response)
+
+    def links(self):
+        return self.factory.links()
+    
+    def forms(self):
+        return self.factory.forms()
+
+    def _get_title(self):
+        return self.factory.title
+    title = property(_get_title)
+
+    def _get_encoding(self):
+        return self.factory.encoding
+    encoding = property(_get_encoding)
+
+    def _get_is_html(self):
+        return self.factory.is_html
+    is_html = property(_get_is_html)
+
+    def _cleanup_html(self, response):
         response.seek(0)
         self._orig_html = response.read()
+        self._url = response.geturl()
         response.seek(0)
-        self._encoding = encoding
 
         self._html = self._orig_html
 
@@ -391,55 +415,14 @@ class ConfigurableParsingFactory(mechanize.Factory):
             if new_html:
                 self._html = new_html
 
+        self.factory.set_response(FakeResponse(self._html, self._url,
+                                               response.info()))
+
     def use_BS(self):
         from twill.commands import _options
         flag = _options.get('use_BeautifulSoup')
 
         return flag
-
-    def forms(self):
-        if self._forms is None:
-            response = FakeResponse(self._html, self._url)
-
-            from twill.commands import _options
-            if _options.get('allow_parse_errors'):
-                ignore_errors = True
-            else:
-                ignore_errors = False
-
-            if self.use_BS():
-                parse_fn = self.bs_ff.parse_response
-                self.bs_ff.ignore_errors = ignore_errors
-            else:
-                parse_fn = self.basic_ff.parse_response
-                self.basic_ff.ignore_errors = ignore_errors
-                
-            self._forms = parse_fn(response, self._encoding)
-
-        return self._forms
-
-    def links(self):
-        if self._links is None:
-            if self.use_BS():
-                parse_fn = self.bs_lf.links
-            else:
-                parse_fn = self.basic_lf.links
-                
-            self._links = parse_fn(StringIO(self._html), self._url,
-                                   self._encoding)
-            self._links = list(self._links)
-            
-        return self._links
-
-    def title(self):
-        if self._title is None:
-            if self.use_BS():
-                parse_fn = self.bs_gt
-            else:
-                parse_fn = self.basic_gt
-            self._title = parse_fn(StringIO(self._html), self._encoding)
-
-        return self._title
 
 ###
 
@@ -476,7 +459,7 @@ class FunctioningHTTPRefreshProcessor(HTTPRefreshProcessor):
         code, msg, hdrs = response.code, response.msg, response.info()
 
         if code == 200 and hdrs.has_key("refresh") and do_refresh:
-            refresh = getheaders(hdrs, "refresh")[0]
+            refresh = hdrs.getheaders("refresh")[0]
             
             if _debug_print_refresh:
                 print>>OUT, "equiv-refresh DEBUG: code 200, hdrs has 'refresh'"

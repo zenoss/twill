@@ -10,7 +10,7 @@ from utils import run_tidy, StringIO, \
      FixedHTTPBasicAuthHandler, FunctioningHTTPRefreshProcessor
 
 def build_http_handler():
-    from mechanize._urllib2_support import HTTPHandler
+    from mechanize._urllib2 import HTTPHandler
 
     class MyHTTPHandler(HTTPHandler):
         def http_open(self, req):

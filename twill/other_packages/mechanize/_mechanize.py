@@ -13,10 +13,11 @@ import urllib2, urlparse, sys, copy, re
 
 from _useragent import UserAgent
 from _html import DefaultFactory
-from _util import response_seek_wrapper, closeable_response
+from _response import response_seek_wrapper, closeable_response
+import _upgrade
 import _request
 
-__version__ = (0, 1, 2, "b", None)  # 0.1.2b
+__version__ = (0, 1, 3, None, None)  # 0.1.3
 
 class BrowserStateError(Exception): pass
 class LinkNotFoundError(Exception): pass
@@ -46,45 +47,9 @@ class History:
         del self._history[:]
     def close(self):
         for request, response in self._history:
-            if response:
+            if response is not None:
                 response.close()
         del self._history[:]
-
-# Horrible, but needed, at least until fork urllib2.  Even then, may want
-# to preseve urllib2 compatibility.
-def upgrade_response(response):
-    # a urllib2 handler constructed the response, i.e. the response is an
-    # urllib.addinfourl, instead of a _Util.closeable_response as returned
-    # by e.g. mechanize.HTTPHandler
-    try:
-        code = response.code
-    except AttributeError:
-        code = None
-    try:
-        msg = response.msg
-    except AttributeError:
-        msg = None
-
-    # may have already-.read() data from .seek() cache
-    data = None
-    get_data = getattr(response, "get_data", None)
-    if get_data:
-        data = get_data()
-
-    response = closeable_response(
-        response.fp, response.info(), response.geturl(), code, msg)
-    response = response_seek_wrapper(response)
-    if data:
-        response.set_data(data)
-    return response
-class ResponseUpgradeProcessor(urllib2.BaseHandler):
-    # upgrade responses to be .close()able without becoming unusable
-    handler_order = 0  # before anything else
-    def any_response(self, request, response):
-        if not hasattr(response, 'closeable_response'):
-            response = upgrade_response(response)
-        return response
-
 
 class Browser(UserAgent):
     """Browser-like class with support for history, forms and links.
@@ -102,7 +67,7 @@ class Browser(UserAgent):
     """
 
     handler_classes = UserAgent.handler_classes.copy()
-    handler_classes["_response_upgrade"] = ResponseUpgradeProcessor
+    handler_classes["_response_upgrade"] = _upgrade.ResponseUpgradeProcessor
     default_others = copy.copy(UserAgent.default_others)
     default_others.append("_response_upgrade")
 
@@ -240,7 +205,7 @@ class Browser(UserAgent):
         if not hasattr(response, "seek"):
             response = response_seek_wrapper(response)
         if not hasattr(response, "closeable_response"):
-            response = upgrade_response(response)
+            response = _upgrade.upgrade_response(response)
         else:
             response = copy.copy(response)
 
@@ -276,6 +241,48 @@ class Browser(UserAgent):
     def clear_history(self):
         self._history.clear()
 
+    def set_cookie(self, cookie_string):
+        """Request to set a cookie.
+
+        Note that it is NOT necessary to call this method under ordinary
+        circumstances: cookie handling is normally entirely automatic.  The
+        intended use case is rather to simulate the setting of a cookie by
+        client script in a web page (e.g. JavaScript).  In that case, use of
+        this method is necessary because mechanize currently does not support
+        JavaScript, VBScript, etc.
+
+        The cookie is added in the same way as if it had arrived with the
+        current response, as a result of the current request.  This means that,
+        for example, it is not appropriate to set the cookie based on the
+        current request, no cookie will be set.
+
+        The cookie will be returned automatically with subsequent responses
+        made by the Browser instance whenever that's appropriate.
+
+        cookie_string should be a valid value of the Set-Cookie header.
+
+        For example:
+
+        browser.set_cookie(
+            "sid=abcdef; expires=Wednesday, 09-Nov-06 23:12:40 GMT")
+
+        Currently, this method does not allow for adding RFC 2986 cookies.
+        This limitation will be lifted if anybody requests it.
+
+        """
+        if self._response is None:
+            raise BrowserStateError("not viewing any document")
+        if self.request.get_type() not in ["http", "https"]:
+            raise BrowserStateError("can't set cookie for non-HTTP/HTTPS "
+                                    "transactions")
+        cookiejar = self._ua_handlers["_cookies"].cookiejar
+        response = self.response()  # copy
+        headers = response.info()
+        if "Set-cookie" in headers:
+            del headers["Set-cookie"]
+        headers["Set-cookie"] = cookie_string
+        cookiejar.extract_cookies(response, self.request)
+
     def links(self, **kwds):
         """Return iterable over links (mechanize.Link objects)."""
         if not self.viewing_html():
@@ -294,8 +301,7 @@ class Browser(UserAgent):
         """
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
-        f = self._factory.forms()
-        return f
+        return self._factory.forms()
 
     def viewing_html(self):
         """Return whether the current response contains HTML data."""

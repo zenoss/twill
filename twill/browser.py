@@ -44,8 +44,7 @@ class TwillBrowser(object):
         # Create the mechanize browser.
         #
         
-        #b = PatchedMechanizeBrowser(factory=factory)
-        b = PatchedMechanizeBrowser(history=HistoryStack())
+        b = PatchedMechanizeBrowser(history=HistoryStack(), factory=factory)
 
         self._browser = b
         

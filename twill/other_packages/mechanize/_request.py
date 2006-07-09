@@ -8,15 +8,17 @@ COPYING.txt included with the distribution).
 
 """
 
-import urllib2, string
+import urllib2
+import urllib
 
 from _clientcookie import request_host
 
 
 class Request(urllib2.Request):
     def __init__(self, url, data=None, headers={},
-             origin_req_host=None, unverifiable=False):
+                 origin_req_host=None, unverifiable=False):
         urllib2.Request.__init__(self, url, data, headers)
+        self.selector = None
         self.unredirected_hdrs = {}
 
         # All the terminology below comes from RFC 2965.
@@ -31,6 +33,11 @@ class Request(urllib2.Request):
             origin_req_host = request_host(self)
         self.origin_req_host = origin_req_host
 
+    def get_selector(self):
+        if self.selector is None:
+            self.selector, self.__r_selector = urllib.splittag(self.__r_host)
+        return self.selector
+
     def get_origin_req_host(self):
         return self.origin_req_host
 
@@ -39,14 +46,12 @@ class Request(urllib2.Request):
 
     def add_unredirected_header(self, key, val):
         """Add a header that will not be added to a redirected request."""
-        self.unredirected_hdrs[string.capitalize(key)] = val
+        self.unredirected_hdrs[key.capitalize()] = val
 
     def has_header(self, header_name):
         """True iff request has named header (regular or unredirected)."""
-        if (self.headers.has_key(header_name) or
-            self.unredirected_hdrs.has_key(header_name)):
-            return True
-        return False
+        return (header_name in self.headers or
+                header_name in self.unredirected_hdrs)
 
     def get_header(self, header_name, default=None):
         return self.headers.get(
