@@ -1,3 +1,7 @@
+2006-07-09  Titus Brown  <t@issola.caltech.edu>
+
+	* Finished fixing up the HTML processing code to the latest mechanize.
+
 2006-07-07  Titus Brown  <t@issola.caltech.edu>
 
 	* added newline '\n' processing in arguments.  still need to test.

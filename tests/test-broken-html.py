@@ -139,7 +139,8 @@ def test_effed_up_forms():
 
     commands.go(url)
     commands.go('/effed_up_forms')
-    assert not b._browser.forms()       # @CTB shouldn't be 'not'
+    forms = list(b._browser.forms())
+    assert not forms                    # @CTB shouldn't be 'not'
 
 def test_effed_up_forms2():
     """

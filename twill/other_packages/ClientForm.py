@@ -910,15 +910,14 @@ def ParseResponse(response, select_default=False,
     own risk: there is no well-defined interface.
 
     """
-    forms = ParseFile(response, response.geturl(), select_default,
-                     False,
+    return ParseFile(response, response.geturl(), select_default,
+                     ignore_errors,
                      form_parser_class,
                      request_class,
                      entitydefs,
                      backwards_compat,
                      encoding,
                      )
-    return forms
 
 def ParseFile(file, base_uri, select_default=False,
               ignore_errors=False,  # ignored!
@@ -945,13 +944,21 @@ def ParseFile(file, base_uri, select_default=False,
         deprecation("operating in backwards-compatibility mode")
     fp = form_parser_class(entitydefs, encoding)
     while 1:
-        data = file.read(CHUNK)
-        try:
-            fp.feed(data)
-        except ParseError, e:
-            e.base_uri = base_uri
-            raise
-        if len(data) != CHUNK: break
+        if ignore_errors:
+            data = file.read(1)
+            try:
+                fp.feed(data)
+            except ParseError, e:
+                pass
+            if len(data) != 1: break
+        else:
+            data = file.read(CHUNK)
+            try:
+                fp.feed(data)
+            except ParseError, e:
+                e.base_uri = base_uri
+                raise
+            if len(data) != CHUNK: break
     if fp.base is not None:
         # HTML BASE element takes precedence over document URI
         base_uri = fp.base
@@ -989,7 +996,6 @@ def ParseFile(file, base_uri, select_default=False,
         forms.append(form)
     for form in forms:
         form.fixup()
-
     return forms
 
 

@@ -376,6 +376,12 @@ class ConfigurableParsingFactory(mechanize.Factory):
 
         ###
 
+        from twill.commands import _options
+        flag = _options.get('allow_parse_errors')
+        self.ignore_form_parse_errors = flag
+
+        ###
+
         if self.use_BS():
             self.factory = self.soup_factory
         else:
@@ -386,7 +392,7 @@ class ConfigurableParsingFactory(mechanize.Factory):
         return self.factory.links()
     
     def forms(self):
-        return self.factory.forms()
+        return self.factory.forms(self.ignore_form_parse_errors)
 
     def _get_title(self):
         return self.factory.title

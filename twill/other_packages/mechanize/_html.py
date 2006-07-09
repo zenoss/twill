@@ -227,11 +227,12 @@ class FormsFactory:
         self._response = response
         self.encoding = encoding
 
-    def forms(self):
+    def forms(self, ignore_errors):
         import ClientForm
         encoding = self.encoding
         return ClientForm.ParseResponse(
             self._response,
+            ignore_errors = ignore_errors,
             select_default=self.select_default,
             form_parser_class=self.form_parser_class,
             request_class=self.request_class,
@@ -518,11 +519,11 @@ class Factory:
         finally:
             self._response.seek(0)
 
-    def forms(self):
+    def forms(self, ignore_errors=False):
         """Return iterable over ClientForm.HTMLForm-like objects."""
         if self._forms_genf is None:
             self._forms_genf = CachingGeneratorFunction(
-                self._forms_factory.forms())
+                self._forms_factory.forms(ignore_errors))
         return self._forms_genf()
 
     def links(self):
