@@ -525,12 +525,15 @@ def gather_filenames(arglist):
 
     for filename in arglist:
         if os.path.isdir(filename):
+            thislist = []
             for (dirpath, dirnames, filenames) in os.walk(filename):
-                filenames.sort()
                 for f in filenames:
                     if _is_valid_filename(f):
                         f = os.path.join(dirpath, f)
-                        l.append(f)
+                        thislist.append(f)
+                        
+            thislist.sort()
+            l.extend(thislist)
         else:
             l.append(filename)
 

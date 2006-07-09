@@ -1,5 +1,8 @@
 2006-07-09  Titus Brown  <t@issola.caltech.edu>
 
+	* Updated gather code to properly deal with lexical ordering in
+	  directory hierarchies.
+
 	* Finished fixing up the HTML processing code to the latest mechanize.
 
 2006-07-07  Titus Brown  <t@issola.caltech.edu>
