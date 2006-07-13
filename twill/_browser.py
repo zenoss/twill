@@ -1,9 +1,11 @@
+"""
+A subclass of the mechanize browser patched to fix various bits.
+"""
+
 # wwwsearch imports
 import mechanize
 from mechanize import Browser as MechanizeBrowser
 from mechanize import BrowserStateError, LinkNotFoundError
-import ClientCookie, ClientForm
-from ClientCookie._Util import response_seek_wrapper
 
 import wsgi_intercept
 from utils import run_tidy, StringIO, \

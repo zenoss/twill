@@ -12,7 +12,7 @@ import re
 import urlparse
 
 # wwwsearch imports
-import mechanize, ClientCookie, ClientForm
+import mechanize, ClientForm
 from mechanize import BrowserStateError, LinkNotFoundError
 
 # twill package imports
@@ -55,8 +55,8 @@ class TwillBrowser(object):
         # create & set a cookie jar.
         #
         
-        policy = ClientCookie.DefaultCookiePolicy(rfc2965=True)
-        cj = ClientCookie.LWPCookieJar(policy=policy)
+        policy = mechanize.DefaultCookiePolicy(rfc2965=True)
+        cj = mechanize.LWPCookieJar(policy=policy)
         self._browser.set_cookiejar(cj)
         self.cj = cj
 
@@ -422,14 +422,14 @@ class TwillBrowser(object):
                   (ctl.name, ctl.value)
             
             if isinstance(ctl, ClientForm.ImageControl):
-                request = ctl._click(form, (1,1), "", ClientCookie.Request)
+                request = ctl._click(form, (1,1), "", mechanize.Request)
             else:
-                request = ctl._click(form, True, "", ClientCookie.Request)
+                request = ctl._click(form, True, "", mechanize.Request)
                 
         else:
             # submit w/o submit button.
             request = form._click(None, None, None, None, 0, None,
-                                  "", ClientCookie.Request)
+                                  "", mechanize.Request)
 
         #
         # add referer information.  this may require upgrading the

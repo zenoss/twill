@@ -1,3 +1,7 @@
+2006-07-12  Titus Brown  <t@issola.caltech.edu>
+
+	* removed ClientCookie dependencies
+
 2006-07-09  Titus Brown  <t@issola.caltech.edu>
 
 	* Updated gather code to properly deal with lexical ordering in
