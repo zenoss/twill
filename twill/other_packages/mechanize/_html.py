@@ -315,11 +315,10 @@ else:
                            lambda(x):'<!' + x.group(1) + '>')
                           ]
 
-        def __init__(self, encoding, text=None, avoidParserProblems=True,
-                     initialTextIsEverything=True):
+        def __init__(self, encoding, text=None):
             self._encoding = encoding
-            BeautifulSoup.BeautifulSoup.__init__(
-                self, text, avoidParserProblems, initialTextIsEverything)
+            ### @CTB
+            BeautifulSoup.BeautifulSoup.__init__(self, text)
 
         def handle_charref(self, ref):
             t = unescape("&#%s;"%ref, self._entitydefs, self._encoding)
@@ -343,7 +342,6 @@ class RobustLinksFactory:
                  link_class=Link,
                  urltags=None,
                  ):
-        import BeautifulSoup
         if link_parser_class is None:
             link_parser_class = MechanizeBs
         self.link_parser_class = link_parser_class
@@ -386,7 +384,7 @@ class RobustLinksFactory:
                     continue
                 url = clean_url(url, encoding)
                 text = link.firstText(lambda t: True)
-                if text is BeautifulSoup.Null:
+                if text is None:
                     # follow _pullparser's weird behaviour rigidly
                     if link.name == "a":
                         text = ""
@@ -419,9 +417,8 @@ class RobustTitleFactory:
         self._encoding = encoding
 
     def title(self):
-        import BeautifulSoup
         title = self._bs.first("title")
-        if title == BeautifulSoup.Null:
+        if title == None:
             return None
         else:
             return title.firstText(lambda t: True)
@@ -575,7 +572,6 @@ class RobustFactory(Factory):
         self._soup_class = soup_class
 
     def set_response(self, response):
-        import BeautifulSoup
         Factory.set_response(self, response)
         if response is not None:
             data = response.read()
