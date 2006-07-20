@@ -415,6 +415,8 @@ def formvalue(formname, fieldname, value):
 
     'formvalue' is available as 'fv' as well.
     """
+    import ClientForm
+    
     form = browser.get_form(formname)
     if not form:
         raise TwillAssertionError("no matching forms!")
@@ -427,8 +429,8 @@ def formvalue(formname, fieldname, value):
         print>>OUT, 'forcing read-only control to writeable'
         control.readonly = False
         
-    if control.readonly:
-        print>>OUT, 'control is read-only; nothing done.'
+    if control.readonly or isinstance(control, ClientForm.IgnoreControl):
+        print>>OUT, 'control is read-only or ignorable; nothing done.'
         return
 
     set_form_control_value(control, value)

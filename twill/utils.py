@@ -38,7 +38,10 @@ class ResultWrapper:
     unified form.  Returned by 'journey'-wrapped functions.
     """
     def __init__(self, http_code, url, page):
-        self.http_code = int(http_code)
+        if http_code is not None:
+            self.http_code = int(http_code)
+        else:
+            self.http_code = 200
         self.url = url
         self.page = page
 
