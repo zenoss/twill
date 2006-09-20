@@ -1,3 +1,9 @@
+2006-09-20  Titus Brown  <t@issola.caltech.edu>
+
+	* Bumped version to 0.9.
+
+	* Switched references to urllib2 over to mechanize, per JJL.
+
 2006-07-12  Titus Brown  <t@issola.caltech.edu>
 
 	* removed ClientCookie dependencies
