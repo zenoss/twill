@@ -7,8 +7,6 @@ import os
 import tempfile
 import base64
 
-import urllib2
-
 import mechanize, ClientForm
 from mechanize._util import time
 from mechanize._http import HTTPRefreshProcessor
@@ -435,7 +433,7 @@ class ConfigurableParsingFactory(mechanize.Factory):
 
 ###
 
-class FixedHTTPBasicAuthHandler(urllib2.HTTPBasicAuthHandler):
+class FixedHTTPBasicAuthHandler(mechanize.HTTPBasicAuthHandler):
     """
     Fix a bug that exists through Python 2.4 (but NOT in 2.5!)
     """

@@ -3,7 +3,7 @@ Implementation of all of the individual 'twill' commands available through
 twill-sh.
 """
 
-import urllib2, sys
+import sys, mechanize
 
 OUT=None
 ERR=sys.stderr
@@ -581,15 +581,15 @@ def add_auth(realm, uri, user, passwd):
     if _options['with_default_realm']:
         realm = None
 
-        if browser.creds.__class__ == urllib2.HTTPPasswordMgr:
+        if browser.creds.__class__ == mechanize.HTTPPasswordMgr:
             passwds = browser.creds.passwd
-            browser.creds = urllib2.HTTPPasswordMgrWithDefaultRealm()
+            browser.creds = mechanize.HTTPPasswordMgrWithDefaultRealm()
             browser.creds.passwd = passwds
             print>>OUT, 'Changed to using HTTPPasswordMgrWithDefaultRealm'
     else:
-        if browser.creds.__class__ == urllib2.HTTPPasswordMgrWithDefaultRealm:
+        if browser.creds.__class__ == mechanize.HTTPPasswordMgrWithDefaultRealm:
             passwds = browser.creds.passwd
-            browser.creds = urllib2.HTTPPasswordMgr()
+            browser.creds = mechanize.HTTPPasswordMgr()
             browser.creds.passwd = passwds
             print>>OUT, 'Changed to using HTTPPasswordMgr'
 

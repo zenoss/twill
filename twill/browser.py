@@ -7,7 +7,6 @@ See _browser.py for mechanize code.
 OUT=None
 
 # Python imports
-import urllib2
 import re
 import urlparse
 
@@ -67,7 +66,7 @@ class TwillBrowser(object):
         self._browser.set_handle_robots(None)
 
         # create an HTTP auth handler
-        self.creds = urllib2.HTTPPasswordMgr()
+        self.creds = mechanize.HTTPPasswordMgr()
 
         # do handle HTTP-EQUIV properly.
         self._browser.set_handle_equiv(True)
@@ -257,7 +256,6 @@ class TwillBrowser(object):
         formname = str(formname)
         forms = self._browser.forms()
         forms = [ i for i in forms ]
-        print 'forms now', forms
 
         # first try ID
         for f in forms:
@@ -481,14 +479,14 @@ class TwillBrowser(object):
     def _journey(self, func_name, *args, **kwargs):
         """
         'func_name' should be the name of a mechanize method that either
-        returns a 'result' object or raises a urllib2.HTTPError, e.g.
+        returns a 'result' object or raises a HTTPError, e.g.
         one of 'open', 'reload', 'back', or 'follow_link'.
 
         journey then runs that function with the given arguments and turns
         the results into a nice friendly standard ResultWrapper object, which
         is stored as 'self.result'.
 
-        All exceptions other than urllib2.HTTPError are unhandled.
+        All exceptions other than HTTPError are unhandled.
         
         (Idea stolen straight from PBP.)
         """
@@ -499,7 +497,7 @@ class TwillBrowser(object):
         func = getattr(self._browser, func_name)
         try:
             r = func(*args, **kwargs)
-        except urllib2.HTTPError, e:
+        except mechanize.HTTPError, e:
             r = e
 
         # seek back to 0 if a seek() function is present.

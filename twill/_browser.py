@@ -24,7 +24,7 @@ class PatchedMechanizeBrowser(MechanizeBrowser):
     """
     A patched version of the mechanize browser class.  Currently
     installs the WSGI intercept handler & fixes a problem with
-    urllib2 Basic Authentication.
+    mechanize/urllib2 Basic Authentication.
     """
     def __init__(self, *args, **kwargs):
         # install WSGI intercept handler.
