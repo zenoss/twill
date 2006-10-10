@@ -21,7 +21,7 @@ Commands:
 import twill, twill.utils
 import re
 
-__all__ = [ 'fv_match', 'fv_multi', 'fv_multi_sub' ]
+__all__ = [ 'fv_match', 'fv_multi_match', 'fv_multi', 'fv_multi_sub' ]
 
 def fv_match(formname, regexp, value):
     """
@@ -57,6 +57,42 @@ def fv_match(formname, regexp, value):
             twill.utils.set_form_control_value(control, value)
 
         print 'set %d values total' % (n,)
+
+def fv_multi_match(formname, regexp, *values):
+    """
+    >> fv_multi_match <formname> <field regexp> <value> [<value> [<value>..]]
+
+    Set value of each consecutive matching form field with the next specified
+    value.  If there are no more values, use the last for all remaining form
+    fields
+    """
+    state = twill.get_browser()
+    
+    form = state.get_form(formname)
+    if not form:
+        print 'no such form', formname
+        return
+
+    regexp = re.compile(regexp)
+
+    matches = [ ctl for ctl in form.controls if regexp.search(str(ctl.name)) ]
+
+    if matches:
+        print '-- matches %d, values %d' % (len(matches), len(values))
+
+        n = 0
+        for control in matches:
+            state.clicked(form, control)
+            if control.readonly:
+                continue
+            try:
+                twill.utils.set_form_control_value(control, values[n])
+            except IndexError, e:
+                twill.utils.set_form_control_value(control, values[-1])
+            n += 1
+
+        print 'set %d values total' % (n,)
+
 
 def fv_multi(formname, *pairs):
     """
