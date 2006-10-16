@@ -1,11 +1,11 @@
 import sys
 
-# import quixote & check version.
 try:
-    import quixote
+    import pkg_resources
 except ImportError:
-    raise Exception("you must have quixote 2.3 to run the tests")
-assert quixote.__version__ == '2.3', "you must have quixote 2.3 to run the tests"
+    raise Exception("you must have setuptools installed to run the tests")
+
+pkg_resources.require('quixote>=2.3')
 
 from quixote.server.simple_server import run
 from cStringIO import StringIO

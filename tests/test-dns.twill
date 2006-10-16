@@ -4,17 +4,21 @@ extend_with dns_check
 dns_resolves amazon.com 207.171.166.102		# amazon.com ==> any of 2
 dns_resolves amazon.com 72.21.206.5
 
-dns_resolves idyll.org. 131.215.34.116
-dns_resolves idyll.org. joiry.net.		# same IP addr?
+# for twill testing
+#twill-test-1.ignore             A       192.168.1.1
+#twill-test-2.ignore             A       192.168.1.2
+#twill-test-3.ignore             CNAME   twill-test-1.ignore.idyll.org.
+#twill-test-4.ignore             MX 10   twill-test-2.ignore.idyll.org.
 
-dns_mx idyll.org. mail.idyll.org.		# '.'s are handled
-dns_mx idyll.org mail.idyll.org.
-dns_mx idyll.org. mail.idyll.org
+dns_resolves twill-test-1.ignore.idyll.org 192.168.1.1
+dns_resolves twill-test-2.ignore.idyll.org 192.168.1.2
+dns_cname twill-test-3.ignore.idyll.org twill-test-1.ignore.idyll.org
 
-dns_a amazon.com 207.171.166.102		# explicit 'A' records.
-dns_a amazon.com 72.21.206.5
+dns_resolves twill-test-3.ignore.idyll.org twill-test-1.ignore.idyll.org
 
-dns_cname www.idyll.org. idyll.org.		# explicit 'CNAME' records.
-dns_cname www.idyll.org. idyll.org. teckla.idyll.org
+# '.'s are handled
+dns_mx twill-test-4.ignore.idyll.org. twill-test-2.ignore.idyll.org
+dns_mx twill-test-4.ignore.idyll.org twill-test-2.ignore.idyll.org.
+dns_mx twill-test-4.ignore.idyll.org. twill-test-2.ignore.idyll.org.
 
 dns_ns idyll.org nsa.idyll.org
