@@ -1,3 +1,7 @@
+2006-10-17  Titus Brown  <t@localhost.localdomain>
+
+	* Fix to BS parsing problem (?)
+
 2006-10-16  Titus Brown  <t@localhost.localdomain>
 
 	* Changed assertions in test-broken-html.py to refer to tidy.
