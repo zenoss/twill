@@ -1054,7 +1054,7 @@ class BeautifulStoneSoup(Tag, SGMLParser):
 
     def endData(self, containerClass=NavigableString):
         if self.currentData:
-            currentData = ''.join(self.currentData)
+            currentData = ''.join(str(self.currentData))
             if currentData.endswith('<') and self.convertHTMLEntities:
                 currentData = currentData[:-1] + '&lt;'
             if not currentData.strip():
