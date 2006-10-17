@@ -61,7 +61,7 @@ def test_tidy():
 
     forms = [ i for i in b._browser.forms() ]
     assert len(forms) == 1, \
-           "there should be one correctable form on this page"
+	"you must have 'tidy' installed for this test to pass"
 
     ###
 
@@ -156,7 +156,7 @@ def test_effed_up_forms2():
     b = commands.get_browser()
     forms = [ i for i in b._browser.forms() ]
     form = forms[0]
-    assert len(form.controls) == 3
+    assert len(form.controls) == 3, "you must have 'tidy' installed for this test to pass"
 
     # with a more correct form parser this would work like the above.
     commands.config('use_tidy', '0')

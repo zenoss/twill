@@ -1,3 +1,9 @@
+2006-10-16  Titus Brown  <t@localhost.localdomain>
+
+	* Changed assertions in test-broken-html.py to refer to tidy.
+
+	* Put a pkg_resources.require('dnspython>=1.4') in for test-dns.py
+
 2006-10-15  Titus Brown  <t@vallista.idyll.org>
 
 	* Switched over to using pkg_resources.require for quixote version
