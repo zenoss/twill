@@ -1,3 +1,84 @@
+__all__ = [
+    'AbstractBasicAuthHandler',
+    'AbstractDigestAuthHandler',
+    'BaseHandler',
+    'Browser',
+    'BrowserStateError',
+    'CacheFTPHandler',
+    'ContentTooShortError',
+    'Cookie',
+    'CookieJar',
+    'CookiePolicy',
+    'DefaultCookiePolicy',
+    'DefaultFactory',
+    'FTPHandler',
+    'Factory',
+    'FileCookieJar',
+    'FileHandler',
+    'FormNotFoundError',
+    'FormsFactory',
+    'GopherError',
+    'GopherHandler',
+    'HTTPBasicAuthHandler',
+    'HTTPCookieProcessor',
+    'HTTPDefaultErrorHandler',
+    'HTTPDigestAuthHandler',
+    'HTTPEquivProcessor',
+    'HTTPError',
+    'HTTPErrorProcessor',
+    'HTTPHandler',
+    'HTTPPasswordMgr',
+    'HTTPPasswordMgrWithDefaultRealm',
+    'HTTPProxyPasswordMgr',
+    'HTTPRedirectDebugProcessor',
+    'HTTPRedirectHandler',
+    'HTTPRefererProcessor',
+    'HTTPRefreshProcessor',
+    'HTTPRequestUpgradeProcessor',
+    'HTTPResponseDebugProcessor',
+    'HTTPRobotRulesProcessor',
+    'HTTPSClientCertMgr',
+    'HTTPSHandler',
+    'HeadParser',
+    'History',
+    'LWPCookieJar',
+    'Link',
+    'LinkNotFoundError',
+    'LinksFactory',
+    'LoadError',
+    'MSIECookieJar',
+    'MozillaCookieJar',
+    'OpenerDirector',
+    'OpenerFactory',
+    'ProxyBasicAuthHandler',
+    'ProxyDigestAuthHandler',
+    'ProxyHandler',
+    'Request',
+    'ResponseUpgradeProcessor',
+    'RobotExclusionError',
+    'RobustFactory',
+    'RobustFormsFactory',
+    'RobustLinksFactory',
+    'RobustTitleFactory',
+    'SeekableProcessor',
+    'TitleFactory',
+    'URLError',
+    'USE_BARE_EXCEPT',
+    'UnknownHandler',
+    'UserAgent',
+    'UserAgentBase',
+    'XHTMLCompatibleHeadParser',
+    '__version__',
+    'build_opener',
+    'install_opener',
+    'lwp_cookie_str',
+    'make_response',
+    'request_host',
+    'response_seek_wrapper',
+    'str2time',
+    'urlopen',
+    'urlretrieve']
+
 from _mechanize import __version__
 
 # high-level stateful browser-style interface
@@ -6,7 +87,7 @@ from _mechanize import \
      BrowserStateError, LinkNotFoundError, FormNotFoundError
 
 # configurable URL-opener interface
-from _useragent import UserAgent
+from _useragent import UserAgentBase, UserAgent
 from _html import \
      Link, \
      Factory, DefaultFactory, RobustFactory, \
@@ -18,6 +99,7 @@ from _html import \
 from _urllib2 import *
 
 # misc
+from _opener import ContentTooShortError, OpenerFactory, urlretrieve
 from _util import http2time as str2time
 from _response import response_seek_wrapper, make_response
 from _http import HeadParser

@@ -9,15 +9,16 @@ included with the distribution).
 
 """
 
-import urllib2, urlparse, sys, copy, re
+import urllib2, sys, copy, re
 
-from _useragent import UserAgent
+from _useragent import UserAgentBase
 from _html import DefaultFactory
 from _response import response_seek_wrapper, closeable_response
 import _upgrade
 import _request
+import _rfc3986
 
-__version__ = (0, 1, 3, None, None)  # 0.1.3
+__version__ = (0, 1, 4, "b", None)  # 0.1.4b
 
 class BrowserStateError(Exception): pass
 class LinkNotFoundError(Exception): pass
@@ -51,7 +52,8 @@ class History:
                 response.close()
         del self._history[:]
 
-class Browser(UserAgent):
+
+class Browser(UserAgentBase):
     """Browser-like class with support for history, forms and links.
 
     BrowserStateError is raised whenever the browser is in the wrong state to
@@ -66,9 +68,9 @@ class Browser(UserAgent):
 
     """
 
-    handler_classes = UserAgent.handler_classes.copy()
+    handler_classes = UserAgentBase.handler_classes.copy()
     handler_classes["_response_upgrade"] = _upgrade.ResponseUpgradeProcessor
-    default_others = copy.copy(UserAgent.default_others)
+    default_others = copy.copy(UserAgentBase.default_others)
     default_others.append("_response_upgrade")
 
     def __init__(self,
@@ -81,8 +83,8 @@ class Browser(UserAgent):
         Only named arguments should be passed to this constructor.
 
         factory: object implementing the mechanize.Factory interface.
-        history: object implementing the mechanize.History interface.  Note this
-         interface is still experimental and may change in future.
+        history: object implementing the mechanize.History interface.  Note
+         this interface is still experimental and may change in future.
         request_class: Request class to use.  Defaults to mechanize.Request
          by default for Pythons older than 2.4, urllib2.Request otherwise.
 
@@ -98,8 +100,6 @@ class Browser(UserAgent):
         if history is None:
             history = History()
         self._history = history
-        self.request = self._response = None
-        self.form = None
 
         if request_class is None:
             if not hasattr(urllib2.Request, "add_unredirected_header"):
@@ -113,48 +113,84 @@ class Browser(UserAgent):
         self._factory = factory
         self.request_class = request_class
 
-        UserAgent.__init__(self)  # do this last to avoid __getattr__ problems
+        self.request = None
+        self.set_response(None)
+
+        # do this last to avoid __getattr__ problems
+        UserAgentBase.__init__(self)
 
     def close(self):
+        UserAgentBase.close(self)
         if self._response is not None:
             self._response.close()    
-        UserAgent.close(self)
         if self._history is not None:
             self._history.close()
             self._history = None
+
+        # make use after .close easy to spot
+        self.form = None
         self.request = self._response = None
+        self.request = self.response = self.set_response = None
+        self.geturl =  self.reload = self.back = None
+        self.clear_history = self.set_cookie = self.links = self.forms = None
+        self.viewing_html = self.encoding = self.title = None
+        self.select_form = self.click = self.submit = self.click_link = None
+        self.follow_link = self.find_link = None
+
+    def open_novisit(self, url, data=None):
+        """Open a URL without visiting it.
+
+        The browser state (including .request, .response(), history, forms and
+        links) are all left unchanged by calling this function.
+
+        The interface is the same as for .open().
+
+        This is useful for things like fetching images.
+
+        See also .retrieve().
+
+        """
+        return self._mech_open(url, data, visit=False)
 
     def open(self, url, data=None):
-        if self._response is not None:
-            self._response.close()
         return self._mech_open(url, data)
 
-    def _mech_open(self, url, data=None, update_history=True):
+    def _mech_open(self, url, data=None, update_history=True, visit=None):
         try:
             url.get_full_url
         except AttributeError:
             # string URL -- convert to absolute URL if required
-            scheme, netloc = urlparse.urlparse(url)[:2]
-            if not scheme:
+            scheme, authority = _rfc3986.urlsplit(url)[:2]
+            if scheme is None:
                 # relative URL
-                assert not netloc, "malformed URL"
                 if self._response is None:
                     raise BrowserStateError(
-                        "can't fetch relative URL: not viewing any document")
-                url = urlparse.urljoin(self._response.geturl(), url)
+                        "can't fetch relative reference: "
+                        "not viewing any document")
+                url = _rfc3986.urljoin(self._response.geturl(), url)
 
-        if self.request is not None and update_history:
-            self._history.add(self.request, self._response)
-        self._response = None
-        # we want self.request to be assigned even if UserAgent.open fails
-        self.request = self._request(url, data)
-        self._previous_scheme = self.request.get_type()
+        request = self._request(url, data, visit)
+        visit = request.visit
+        if visit is None:
+            visit = True
+
+        if visit:
+            if self._response is not None:
+                self._response.close()
+            if self.request is not None and update_history:
+                self._history.add(self.request, self._response)
+            self._response = None
+            # we want self.request to be assigned even if UserAgentBase.open
+            # fails
+            self.request = request
 
         success = True
         try:
-            response = UserAgent.open(self, self.request, data)
+            response = UserAgentBase.open(self, request, data)
         except urllib2.HTTPError, error:
             success = False
+            if error.fp is None:  # not a response
+                raise
             response = error
 ##         except (IOError, socket.error, OSError), error:
 ##             # Yes, urllib2 really does raise all these :-((
@@ -167,10 +203,16 @@ class Browser(UserAgent):
 ##             # Python core, a fix would need some backwards-compat. hack to be
 ##             # acceptable.
 ##             raise
-        self.set_response(response)
+
+        if visit:
+            self.set_response(response)
+            response = copy.copy(self._response)
+        elif response is not None:
+            response = _upgrade.upgrade_response(response)
+
         if not success:
-            raise error
-        return copy.copy(self._response)
+            raise response
+        return response
 
     def __str__(self):
         text = []
@@ -194,23 +236,23 @@ class Browser(UserAgent):
         return copy.copy(self._response)
 
     def set_response(self, response):
-        """Replace current response with (a copy of) response."""
+        """Replace current response with (a copy of) response.
+
+        response may be None.
+        """
         # sanity check, necessary but far from sufficient
-        if not (hasattr(response, "info") and hasattr(response, "geturl") and
-                hasattr(response, "read")):
+        if not (response is None or
+                (hasattr(response, "info") and hasattr(response, "geturl") and
+                 hasattr(response, "read")
+                 )
+                ):
             raise ValueError("not a response object")
 
         self.form = None
-
-        if not hasattr(response, "seek"):
-            response = response_seek_wrapper(response)
-        if not hasattr(response, "closeable_response"):
+        if response is not None:
             response = _upgrade.upgrade_response(response)
-        else:
-            response = copy.copy(response)
-
         self._response = response
-        self._factory.set_response(self._response)
+        self._factory.set_response(response)
 
     def geturl(self):
         """Get URL of current document."""
@@ -236,6 +278,8 @@ class Browser(UserAgent):
             self._response.close()
         self.request, response = self._history.back(n, self._response)
         self.set_response(response)
+        if not response.read_complete:
+            self.reload()
         return response
 
     def clear_history(self):
@@ -391,9 +435,9 @@ class Browser(UserAgent):
             original_scheme in ["http", "https"] and
             not (original_scheme == "https" and scheme != "https")):
             # strip URL fragment (RFC 2616 14.36)
-            parts = urlparse.urlparse(self.request.get_full_url())
-            parts = parts[:-1]+("",)
-            referer = urlparse.urlunparse(parts)
+            parts = _rfc3986.urlsplit(self.request.get_full_url())
+            parts = parts[:-1]+(None,)
+            referer = _rfc3986.urlunsplit(parts)
             request.add_unredirected_header("Referer", referer)
         return request
 

@@ -27,11 +27,8 @@ COPYING.txt included with the distribution).
 """
 
 # XXX
-# Remove unescape_attr method
 # Remove parser testing hack
 # safeUrl()-ize action
-# Really should merge CC, CF, pp and mechanize as soon as mechanize
-#  goes to beta...
 # Add url attribute to ParseError
 # Switch to unicode throughout (would be 0.3.x)
 #  See Wichert Akkerman's 2004-01-22 message to c.l.py.
@@ -104,7 +101,6 @@ else:
 
 import sys, urllib, urllib2, types, mimetools, copy, urlparse, \
        htmlentitydefs, re, random
-from urlparse import urljoin
 from cStringIO import StringIO
 
 try:
@@ -116,7 +112,7 @@ else:
     def deprecation(message):
         warnings.warn(message, DeprecationWarning, stacklevel=2)
 
-VERSION = "0.2.3"
+VERSION = "0.2.4"
 
 CHUNK = 1024  # size of chunks fed to parser, in bytes
 
@@ -126,6 +122,10 @@ class Missing: pass
 
 _compress_re = re.compile(r"\s+")
 def compress_text(text): return _compress_re.sub(" ", text.strip())
+
+def normalize_line_endings(text):
+    return re.sub(r"(?:(?<!\r)\n)|(?:\r(?!\n))", "\r\n", text)
+
 
 # This version of urlencode is from my Python 1.5.2 back-port of the
 # Python 2.1 CVS maintenance branch of urllib.  It will accept a sequence
@@ -640,6 +640,16 @@ class _AbstractFormParser:
 
     def handle_data(self, data):
         debug("%s", data)
+
+        # according to http://www.w3.org/TR/html4/appendix/notes.html#h-B.3.1
+        # line break immediately after start tags or immediately before end
+        # tags must be ignored, but real browsers only ignore a line break
+        # after a start tag, so we'll do that.
+        if data[0:2] == "\r\n":
+            data = data[2:]
+        if data[0:1] in ["\n", "\r"]:
+            data = data[1:]
+
         if self._option is not None:
             # self._option is a dictionary of the OPTION element's HTML
             # attributes, but it has two special keys, one of which is the
@@ -650,6 +660,7 @@ class _AbstractFormParser:
         elif self._textarea is not None:
             map = self._textarea
             key = "value"
+            data = normalize_line_endings(data)
         # not if within option or textarea
         elif self._current_label is not None:
             map = self._current_label
@@ -796,14 +807,30 @@ else:
 import sgmllib
 # monkeypatch to fix http://www.python.org/sf/803422 :-(
 sgmllib.charref = re.compile("&#(x?[0-9a-fA-F]+)[^0-9a-fA-F]")
+
 class _AbstractSgmllibParser(_AbstractFormParser):
+
     def do_option(self, attrs):
         _AbstractFormParser._start_option(self, attrs)
 
-    def unescape_attr_if_required(self, name):
-        return self.unescape_attr(name)
-    def unescape_attrs_if_required(self, attrs):
-        return self.unescape_attrs(attrs)
+    if sys.version_info[:2] >= (2,5):
+        # we override this attr to decode hex charrefs
+        entity_or_charref = re.compile(
+            '&(?:([a-zA-Z][-.a-zA-Z0-9]*)|#(x?[0-9a-fA-F]+))(;?)')
+        def convert_entityref(self, name):
+            return unescape("&%s;" % name, self._entitydefs, self._encoding)
+        def convert_charref(self, name):
+            return unescape_charref("%s" % name, self._encoding)
+        def unescape_attr_if_required(self, name):
+            return name  # sgmllib already did it
+        def unescape_attrs_if_required(self, attrs):
+            return attrs  # ditto
+    else:
+        def unescape_attr_if_required(self, name):
+            return self.unescape_attr(name)
+        def unescape_attrs_if_required(self, attrs):
+            return self.unescape_attrs(attrs)
+
 
 class FormParser(_AbstractSgmllibParser, sgmllib.SGMLParser):
     """Good for tolerance of incorrect HTML, bad for XHTML."""
@@ -811,13 +838,14 @@ class FormParser(_AbstractSgmllibParser, sgmllib.SGMLParser):
         sgmllib.SGMLParser.__init__(self)
         _AbstractFormParser.__init__(self, entitydefs, encoding)
 
-try:
-    if sys.version_info[:2] < (2, 2):
-        raise ImportError  # BeautifulSoup uses generators
-    import BeautifulSoup
-except ImportError:
-    pass
-else:
+
+# sigh, must support mechanize by allowing dynamic creation of classes based on
+# its bundled copy of BeautifulSoup (which was necessary because of dependency
+# problems)
+
+def _create_bs_classes(bs,
+                       icbinbs,
+                       ):
     class _AbstractBSFormParser(_AbstractSgmllibParser):
         bs_base_class = None
         def __init__(self, entitydefs=None, encoding=DEFAULT_ENCODING):
@@ -827,29 +855,49 @@ else:
             _AbstractFormParser.handle_data(self, data)
             self.bs_base_class.handle_data(self, data)
 
-    class RobustFormParser(_AbstractBSFormParser, BeautifulSoup.BeautifulSoup):
+    class RobustFormParser(_AbstractBSFormParser, bs):
         """Tries to be highly tolerant of incorrect HTML."""
-        bs_base_class = BeautifulSoup.BeautifulSoup
-    class NestingRobustFormParser(_AbstractBSFormParser,
-                                  BeautifulSoup.ICantBelieveItsBeautifulSoup):
+        pass
+    RobustFormParser.bs_base_class = bs
+    class NestingRobustFormParser(_AbstractBSFormParser, icbinbs):
         """Tries to be highly tolerant of incorrect HTML.
 
         Different from RobustFormParser in that it more often guesses nesting
         above missing end tags (see BeautifulSoup docs).
 
         """
-        bs_base_class = BeautifulSoup.ICantBelieveItsBeautifulSoup
+        pass
+    NestingRobustFormParser.bs_base_class = icbinbs
+
+    return RobustFormParser, NestingRobustFormParser
+
+try:
+    if sys.version_info[:2] < (2, 2):
+        raise ImportError  # BeautifulSoup uses generators
+    import BeautifulSoup
+except ImportError:
+    pass
+else:
+    RobustFormParser, NestingRobustFormParser = _create_bs_classes(
+        BeautifulSoup.BeautifulSoup, BeautifulSoup.ICantBelieveItsBeautifulSoup
+        )
+
 
 #FormParser = XHTMLCompatibleFormParser  # testing hack
 #FormParser = RobustFormParser  # testing hack
 
 def ParseResponse(response, select_default=False,
-                  ignore_errors=False,  # ignored!
+                  ignore_errors=False,
                   form_parser_class=FormParser,
                   request_class=urllib2.Request,
                   entitydefs=None,
                   backwards_compat=True,
                   encoding=DEFAULT_ENCODING,
+
+                  # private
+                  _urljoin=urlparse.urljoin,
+                  _urlparse=urlparse.urlparse,
+                  _urlunparse=urlparse.urlunparse,
                   ):
     """Parse HTTP response and return a list of HTMLForm instances.
 
@@ -917,15 +965,25 @@ def ParseResponse(response, select_default=False,
                      entitydefs,
                      backwards_compat,
                      encoding,
+                     _urljoin=_urljoin,
+                     _urlparse=_urlparse,
+                     _urlunparse=_urlunparse,
                      )
 
 def ParseFile(file, base_uri, select_default=False,
-              ignore_errors=False,  # ignored!
+              ignore_errors=False,
               form_parser_class=FormParser,
               request_class=urllib2.Request,
               entitydefs=None,
               backwards_compat=True,
               encoding=DEFAULT_ENCODING,
+
+              # these private arguments ars here as a hack to allow mechanize
+              # to follow RFC 3986.  ClientForm should do the same really --
+              # perhaps it's time to merge ClientForm with mechanize...
+              _urljoin=urlparse.urljoin,
+              _urlparse=urlparse.urlparse,
+              _urlunparse=urlparse.urlunparse,
               ):
     """Parse HTML and return a list of HTMLForm instances.
 
@@ -950,7 +1008,8 @@ def ParseFile(file, base_uri, select_default=False,
                 fp.feed(data)
             except ParseError, e:
                 pass
-            if len(data) != 1: break
+            if len(data) != 1:
+                break
         else:
             data = file.read(CHUNK)
             try:
@@ -978,7 +1037,7 @@ def ParseFile(file, base_uri, select_default=False,
         if action is None:
             action = base_uri
         else:
-            action = urljoin(base_uri, action)
+            action = _urljoin(base_uri, action)
         action = fp.unescape_attr_if_required(action)
         name = fp.unescape_attr_if_required(name)
         attrs = fp.unescape_attrs_if_required(attrs)
@@ -986,6 +1045,8 @@ def ParseFile(file, base_uri, select_default=False,
         form = HTMLForm(
             action, method, enctype, name, attrs, request_class,
             forms, labels, id_to_labels, backwards_compat)
+        form._urlparse = _urlparse
+        form._urlunparse = _urlunparse
         for ii in range(len(controls)):
             type, name, attrs = controls[ii]
             attrs = fp.unescape_attrs_if_required(attrs)
@@ -1178,6 +1239,9 @@ class ScalarControl(Control):
         self.attrs = attrs.copy()
 
         self._clicked = False
+
+        self._urlparse = urlparse.urlparse
+        self._urlunparse = urlparse.urlunparse
 
     def __getattr__(self, name):
         if name == "value":
@@ -1387,10 +1451,10 @@ class IsindexControl(ScalarControl):
         # This doesn't seem to be specified in HTML 4.01 spec. (ISINDEX is
         # deprecated in 4.01, but it should still say how to submit it).
         # Submission of ISINDEX is explained in the HTML 3.2 spec, though.
-        parts = urlparse.urlparse(form.action)
+        parts = self._urlparse(form.action)
         rest, (query, frag) = parts[:-2], parts[-2:]
         parts = rest + (urllib.quote_plus(self.value), "")
-        url = urlparse.urlunparse(parts)
+        url = self._urlunparse(parts)
         req_data = url, None, []
 
         if return_type == "pairs":
@@ -1913,6 +1977,8 @@ class ListControl(Control):
     def __getattr__(self, name):
         if name == "value":
             compat = self._form.backwards_compat
+            if self.name is None:
+                return []
             return [o.name for o in self.items if o.selected and
                     (not o.disabled or compat)]
         else:
@@ -2082,7 +2148,7 @@ class ListControl(Control):
         return [o.name for o in self.items]
 
     def _totally_ordered_pairs(self):
-        if self.disabled:
+        if self.disabled or self.name is None:
             return []
         else:
             return [(o._index, self.name, o.name) for o in self.items
@@ -2624,6 +2690,9 @@ class HTMLForm:
 
         self.backwards_compat = backwards_compat  # note __setattr__
 
+        self._urlunparse = urlparse.urlunparse
+        self._urlparse = urlparse.urlparse
+
     def __getattr__(self, name):
         if name == "backwards_compat":
             return self._backwards_compat
@@ -2682,6 +2751,8 @@ class HTMLForm:
         else:
             control = klass(type, name, a, index)
         control.add_to_form(self)
+        control._urlparse = self._urlparse
+        control._urlunparse = self._urlunparse
 
     def fixup(self):
         """Normalise form after all controls have been added.
@@ -3170,7 +3241,7 @@ class HTMLForm:
         """Return a tuple (url, data, headers)."""
         method = self.method.upper()
         #scheme, netloc, path, parameters, query, frag = urlparse.urlparse(self.action)
-        parts = urlparse.urlparse(self.action)
+        parts = self._urlparse(self.action)
         rest, (query, frag) = parts[:-2], parts[-2:]
 
         if method == "GET":
@@ -3178,11 +3249,11 @@ class HTMLForm:
                 raise ValueError(
                     "unknown GET form encoding type '%s'" % self.enctype)
             parts = rest + (urlencode(self._pairs()), "")
-            uri = urlparse.urlunparse(parts)
+            uri = self._urlunparse(parts)
             return uri, None, []
         elif method == "POST":
             parts = rest + (query, "")
-            uri = urlparse.urlunparse(parts)
+            uri = self._urlunparse(parts)
             if self.enctype == "application/x-www-form-urlencoded":
                 return (uri, urlencode(self._pairs()),
                         [("Content-type", self.enctype)])

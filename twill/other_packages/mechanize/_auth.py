@@ -11,9 +11,9 @@ included with the distribution).
 
 """
 
-import re, base64, urlparse, posixpath, md5, sha, sys
+import re, base64, urlparse, posixpath, md5, sha, sys, time, os
 
-from urllib2 import BaseHandler
+from urllib2 import BaseHandler, parse_keqv_list, parse_http_list
 from urllib import getproxies, unquote, splittype, splituser, splitpasswd, \
      splitport
 
