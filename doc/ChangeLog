@@ -1,3 +1,7 @@
+2006-10-19  Titus Brown  <t@localhost.localdomain>
+
+	* Updated mechanize & ClientForm to svn latest.
+
 2006-10-17  Titus Brown  <t@localhost.localdomain>
 
 	* Fix to BS parsing problem (?)
