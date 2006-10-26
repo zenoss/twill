@@ -1,3 +1,8 @@
+2006-10-26  Titus Brown  <t@localhost.localdomain>
+
+	* Added TWILL_TEST_PORT in for running tests on something other
+	  than port 8080.
+
 2006-10-19  Titus Brown  <t@localhost.localdomain>
 
 	* Updated mechanize & ClientForm to svn latest.

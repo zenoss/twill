@@ -68,7 +68,7 @@ def execute_twill_shell(filename, inp=None, initial_url=None,
             sys.stdin = old
     
 
-def run_server(create_fn, PORT=8080):
+def run_server(create_fn, PORT=None):
     """
     Run a Quixote simple_server on localhost:PORT by forking & then
     _exit.  All output is captured & thrown away..
@@ -76,6 +76,9 @@ def run_server(create_fn, PORT=8080):
     The parent process returns the URL on which the server is running.
     """
     global child_pid
+
+    if PORT is None:
+        PORT = int(os.environ.get('TWILL_TEST_PORT', '8080'))
     
     pid = os.fork()
     if pid != 0:
