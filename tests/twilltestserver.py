@@ -306,7 +306,8 @@ hello, world.
             l = []
             for name in ('item', 'item_a', 'item_b', 'item_c'):
                 if request.form.get(name):
-                    l.append(name)
+                    val = request.form[name]
+                    l.append('%s=%s' % (name, val))
 
             s += "NAMETEST: ==%s==<p>" % " AND ".join(l)
 

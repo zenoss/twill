@@ -1,5 +1,9 @@
 2006-11-01  Titus Brown  <t@localhost.localdomain>
 
+	* Added Andy Chamber's formfill patch.
+
+	* Added tests for Andy Chambers's formfill patch.
+
 	* Fixed bug in mechanize/_html.py links parsing.
 
 2006-10-26  Titus Brown  <t@localhost.localdomain>

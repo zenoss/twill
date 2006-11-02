@@ -47,4 +47,20 @@ show
 
 ###
 
+# test fv_match and fv_multi_match
+
+fv_match the_form item_ X
+submit
+find "item_a=X AND item_b=X AND item_c=X"
+
+fv_multi_match the_form item_ 1 2 3
+submit
+find "item_a=1 AND item_b=2 AND item_c=3"
+
+fv_multi_match the_form item_ 1 2
+submit
+find "item_a=1 AND item_b=2 AND item_c=2"
+
+###
+
 no_require
