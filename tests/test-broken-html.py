@@ -9,6 +9,12 @@ import twilltestlib
 from tests import url
 from twill import commands
 
+def test_links_parsing():
+    commands.config('use_tidy', '0')
+    commands.go('/broken_linktext')
+    commands.follow('some text')
+    commands.config('use_tidy', '1')
+
 def test_raw():
     """
     test parsing of raw, unfixed HTML.

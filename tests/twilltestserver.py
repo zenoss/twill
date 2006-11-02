@@ -5,6 +5,9 @@ Quixote test app for twill.
 import sys
 import os
 
+import pkg_resources
+pkg_resources.require('Quixote>=2.4')
+
 from quixote.publish import Publisher
 from quixote.errors import AccessError
 from quixote.session import Session, SessionManager
@@ -93,7 +96,8 @@ class TwillTest(Directory):
                   "test_checkbox", "test_simple_checkbox","echo",
                   "test_checkboxes",
                   'tidy_fixable_html', 'BS_fixable_html', 'unfixable_html',
-                  'effed_up_forms', 'effed_up_forms2']
+                  'effed_up_forms', 'effed_up_forms2',
+                  'broken_linktext']
 
     def __init__(self):
         self.restricted = Restricted()
@@ -160,8 +164,15 @@ class TwillTest(Directory):
    </div>
    </form>
 </div>
-"""        
+"""
 
+    def broken_linktext(self):
+        return """
+<a href="/">
+<span>some text</span>
+</a>
+"""
+    
     def test_refresh(self):
         return """\
 <meta http-equiv="refresh" content="2; url=./login">
