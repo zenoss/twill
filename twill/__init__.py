@@ -40,12 +40,12 @@ thisdir = os.path.dirname(__file__)
 
 # add extensions directory at the *end* of sys.path.  This means that
 # user extensions will take priority over twill extensions.
-extensions = os.path.join(thisdir, 'extensions/')
+extensions = os.path.join(thisdir, 'extensions')
 sys.path.append(extensions)
 
 # add other_packages in at the *beginning*, so that the correct
 # (patched) versions of pyparsing and mechanize get imported.
-wwwsearchlib = os.path.join(thisdir, 'other_packages/')
+wwwsearchlib = os.path.join(thisdir, 'other_packages')
 sys.path.insert(0, wwwsearchlib)
 
 # the two core components of twill:
