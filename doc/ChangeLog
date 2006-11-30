@@ -1,4 +1,16 @@
+2006-11-29  Titus Brown  <t@localhost.localdomain>
+
+	* Fixed test-form.twill to match new output format.
+
+	* Patched __init__.py to remove UNIX-specific '/' from the
+	  sys.path insert statement.  (Ramon Felciano)
+
+	* Patched wsgi_intercept: REMOTE_ADDRESS ==> REMOTE_ADDR.
+
 2006-11-01  Titus Brown  <t@localhost.localdomain>
+
+	* formvalue now returns an informative error message when
+	  a file upload field is touched (Matthew Singer)
 
 	* Added Andy Chamber's formfill patch.
 
