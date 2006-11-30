@@ -149,7 +149,7 @@ def make_environ(inp, host, port, script_name):
                      "SERVER_PORT" : str(port),
                      "SERVER_PROTOCOL" : protocol,
 
-                     "REMOTE_ADDRESS" : '127.0.0.1',
+                     "REMOTE_ADDR" : '127.0.0.1',
                      })
 
     #
