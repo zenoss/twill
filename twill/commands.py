@@ -426,12 +426,15 @@ def formvalue(formname, fieldname, value):
     browser.clicked(form, control)
 
     if control.readonly and _options['readonly_controls_writeable']:
-        print>>OUT, 'forcing read-only control to writeable'
+        print>>OUT, 'forcing read-only form field to writeable'
         control.readonly = False
         
     if control.readonly or isinstance(control, ClientForm.IgnoreControl):
-        print>>OUT, 'control is read-only or ignorable; nothing done.'
+        print>>OUT, 'form field is read-only or ignorable; nothing done.'
         return
+
+    if isinstance(control, ClientForm.FileControl):
+        raise Exception('form field is for file upload; use "formfile" instead')
 
     set_form_control_value(control, value)
 
