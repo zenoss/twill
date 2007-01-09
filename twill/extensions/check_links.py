@@ -50,6 +50,9 @@ def check_links(pattern = '', visited={}):
     visit.
     """
     from twill import commands
+
+    if DEBUG:
+        print 'in check_links'
     
     OUT = commands.OUT
     browser = commands.browser
@@ -70,7 +73,14 @@ def check_links(pattern = '', visited={}):
     #
 
     collected_urls = {}
-    for link in browser._browser.links():
+
+    links = list(browser._browser.links())
+    if not links:
+        if DEBUG:
+            print>>OUT, "no links to check!?"
+        return
+        
+    for link in links:
         url = link.absolute_url
         url = url.split('#', 1)[0]      # get rid of subpage pointers
 
@@ -84,6 +94,8 @@ def check_links(pattern = '', visited={}):
                 collected_urls[url] = link
                 if DEBUG:
                     print>>OUT, "Gathered URL %s -- matched regexp" % (url,)
+            elif DEBUG:
+                print>>OUT, "URL %s doesn't match regexp" % (url,)
         else:
             collected_urls[url] = link
             if DEBUG:

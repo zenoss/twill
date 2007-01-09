@@ -1,3 +1,9 @@
+2007-01-09  Titus Brown  <t@localhost.localdomain>
+
+	* Added complete_fv to formvalue completion patch.
+
+	* Added formvalue completion patch (Seo Sanghyeon).
+
 2006-11-29  Titus Brown  <t@localhost.localdomain>
 
 	* Fixed test-form.twill to match new output format.

@@ -158,6 +158,7 @@ class TwillCommandLoop(Singleton, cmd.Cmd):
             formname = args[0]
             return self.provide_field(formname, text)
         return []
+    complete_fv = complete_formvalue
 
     def provide_formname(self, prefix):
         names = []
