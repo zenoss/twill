@@ -148,6 +148,45 @@ class TwillCommandLoop(Singleton, cmd.Cmd):
         """
         return self.names
 
+    def complete_formvalue(self, text, line, begin, end):
+        # formvalue <formname> <field> <value>
+        cmd, args = parse.parse_command(line + '.', {}, {})
+        place = len(args)
+        if place == 1:
+            return self.provide_formname(text)
+        elif place == 2:
+            formname = args[0]
+            return self.provide_field(formname, text)
+        return []
+
+    def provide_formname(self, prefix):
+        names = []
+        forms = commands.browser._browser.forms()
+        for f in forms:
+            id = f.attrs.get('id')
+            if id and id.startswith(prefix):
+                names.append(id)
+                continue
+            name = f.name
+            if name and name.startswith(prefix):
+                names.append(name)
+        return names
+
+    def provide_field(self, formname, prefix):
+        names = []
+        form = commands.browser.get_form(formname)
+        if not form:
+            return []
+        for c in form.controls:
+            id = c.id
+            if id and id.startswith(prefix):
+                names.append(id)
+                continue
+            name = c.name
+            if name and name.startswith(prefix):
+                names.append(name)
+        return names
+
     def _set_prompt(self):
         "Set the prompt to the current page."
         url = commands.browser.get_url()
