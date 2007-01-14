@@ -42,12 +42,12 @@ def test_raw():
 
     ###
 
-    commands.go('/unfixable_html')
-    try:
-        b._browser.forms()
-        assert 0, "this page has a parse error."
-    except ClientForm.ParseError:
-        pass
+#    commands.go('/unfixable_html')
+#    try:
+#        b._browser.forms()
+#        assert 0, "this page has a parse error."
+#    except ClientForm.ParseError:
+#        pass
 
 def test_tidy():
     """
@@ -78,12 +78,12 @@ def test_tidy():
 
     ###
 
-    commands.go('/unfixable_html')
-    try:
-        b._browser.forms()
-        assert 0, "this page has a parse error."
-    except ClientForm.ParseError:
-        pass
+#    commands.go('/unfixable_html')
+#    try:
+#        b._browser.forms()
+#        assert 0, "this page has a parse error."
+#    except ClientForm.ParseError:
+#        pass
 
 def test_BeautifulSoup():
     """
@@ -114,12 +114,13 @@ def test_BeautifulSoup():
 
     ###
 
-    commands.go('/unfixable_html')
-    try:
-        b._browser.forms()
-        assert 0, "this page has a parse error."
-    except ClientForm.ParseError:
-        pass
+#   this no longer breaks... @CTB
+#    commands.go('/unfixable_html')
+#    try:
+#        b._browser.forms()
+#        assert 0, "this page has a parse error."
+#    except ClientForm.ParseError:
+#        pass
 
 def test_allow_parse_errors():
     """
@@ -136,9 +137,9 @@ def test_allow_parse_errors():
     commands.go('/unfixable_html')
     b._browser.forms()
 
-def test_effed_up_forms():
+def test_global_form():
     """
-    @CTB should succeed, doesn't for now
+    test the handling of global form elements
     """
     b = commands.get_browser()
     commands.config('use_tidy', '0')
@@ -146,7 +147,8 @@ def test_effed_up_forms():
     commands.go(url)
     commands.go('/effed_up_forms')
     forms = list(b._browser.forms())
-    assert not forms                    # @CTB shouldn't be 'not'
+    assert len(forms) == 1
+    assert b._browser.global_form()
 
 def test_effed_up_forms2():
     """

@@ -18,7 +18,7 @@ import _upgrade
 import _request
 import _rfc3986
 
-__version__ = (0, 1, 4, "b", None)  # 0.1.4b
+__version__ = (0, 1, 6, "b", None)  # 0.1.6b
 
 class BrowserStateError(Exception): pass
 class LinkNotFoundError(Exception): pass
@@ -114,7 +114,7 @@ class Browser(UserAgentBase):
         self.request_class = request_class
 
         self.request = None
-        self.set_response(None)
+        self._set_response(None, False)
 
         # do this last to avoid __getattr__ problems
         UserAgentBase.__init__(self)
@@ -175,14 +175,7 @@ class Browser(UserAgentBase):
             visit = True
 
         if visit:
-            if self._response is not None:
-                self._response.close()
-            if self.request is not None and update_history:
-                self._history.add(self.request, self._response)
-            self._response = None
-            # we want self.request to be assigned even if UserAgentBase.open
-            # fails
-            self.request = request
+            self._visit_request(request, update_history)
 
         success = True
         try:
@@ -205,7 +198,7 @@ class Browser(UserAgentBase):
 ##             raise
 
         if visit:
-            self.set_response(response)
+            self._set_response(response, False)
             response = copy.copy(self._response)
         elif response is not None:
             response = _upgrade.upgrade_response(response)
@@ -239,7 +232,12 @@ class Browser(UserAgentBase):
         """Replace current response with (a copy of) response.
 
         response may be None.
+
+        This is intended mostly for HTML-preprocessing.
         """
+        self._set_response(response, True)
+
+    def _set_response(self, response, close_current):
         # sanity check, necessary but far from sufficient
         if not (response is None or
                 (hasattr(response, "info") and hasattr(response, "geturl") and
@@ -251,8 +249,31 @@ class Browser(UserAgentBase):
         self.form = None
         if response is not None:
             response = _upgrade.upgrade_response(response)
+        if close_current and self._response is not None:
+            self._response.close()
         self._response = response
         self._factory.set_response(response)
+
+    def visit_response(self, response, request=None):
+        """Visit the response, as if it had been .open()ed.
+
+        Unlike .set_response(), this updates history rather than replacing the
+        current response.
+        """
+        if request is None:
+            request = _request.Request(response.geturl())
+        self._visit_request(request, True)
+        self._set_response(response, False)
+
+    def _visit_request(self, request, update_history):
+        if self._response is not None:
+            self._response.close()
+        if self.request is not None and update_history:
+            self._history.add(self.request, self._response)
+        self._response = None
+        # we want self.request to be assigned even if UserAgentBase.open
+        # fails
+        self.request = request
 
     def geturl(self):
         """Get URL of current document."""
@@ -279,8 +300,8 @@ class Browser(UserAgentBase):
         self.request, response = self._history.back(n, self._response)
         self.set_response(response)
         if not response.read_complete:
-            self.reload()
-        return response
+            return self.reload()
+        return copy.copy(response)
 
     def clear_history(self):
         self._history.clear()
@@ -322,8 +343,6 @@ class Browser(UserAgentBase):
         cookiejar = self._ua_handlers["_cookies"].cookiejar
         response = self.response()  # copy
         headers = response.info()
-        if "Set-cookie" in headers:
-            del headers["Set-cookie"]
         headers["Set-cookie"] = cookie_string
         cookiejar.extract_cookies(response, self.request)
 
@@ -346,6 +365,24 @@ class Browser(UserAgentBase):
         if not self.viewing_html():
             raise BrowserStateError("not viewing HTML")
         return self._factory.forms()
+
+    def global_form(self):
+        """Return the global form object, or None if the factory implementation
+        did not supply one.
+
+        The "global" form object contains all controls that are not descendants of
+        any FORM element.
+
+        The returned form object implements the ClientForm.HTMLForm interface.
+
+        This is a separate method since the global form is not regarded as part
+        of the sequence of forms in the document -- mostly for
+        backwards-compatibility.
+
+        """
+        if not self.viewing_html():
+            raise BrowserStateError("not viewing HTML")
+        return self._factory.global_form
 
     def viewing_html(self):
         """Return whether the current response contains HTML data."""
@@ -378,6 +415,10 @@ class Browser(UserAgentBase):
         If a form is selected, the Browser object supports the HTMLForm
         interface, so you can call methods like .set_value(), .set(), and
         .click().
+
+        Another way to select a form is to assign to the .form attribute.  The
+        form assigned should be one of the objects returned by the .forms()
+        method.
 
         At least one of the name, predicate and nr arguments must be supplied.
         If no matching form is found, mechanize.FormNotFoundError is raised.
@@ -545,9 +586,6 @@ class Browser(UserAgentBase):
                 "%s instance has no attribute %s (perhaps you forgot to "
                 ".select_form()?)" % (self.__class__, name))
         return getattr(form, name)
-
-#---------------------------------------------------
-# Private methods.
 
     def _filter_links(self, links,
                     text=None, text_regex=None,

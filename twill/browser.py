@@ -222,6 +222,9 @@ class TwillBrowser(object):
         """
         Pretty-print all of the forms.
         """
+        global_form = self._browser.global_form()
+        if global_form:
+            print_form(-1, global_form, OUT)
         for n, f in enumerate(self._browser.forms()):
             print_form(n, f, OUT)
 
@@ -256,6 +259,7 @@ class TwillBrowser(object):
         formname = str(formname)
         forms = self._browser.forms()
         forms = [ i for i in forms ]
+        forms.insert(0, self._browser.global_form())
 
         # first try ID
         for f in forms:
@@ -272,7 +276,7 @@ class TwillBrowser(object):
         # ok, try number
         try:
             formnum = int(formname)
-            return forms[formnum - 1]
+            return forms[formnum]
         except ValueError:              # int() failed
             pass
         except IndexError:              # formnum was incorrect

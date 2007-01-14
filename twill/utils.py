@@ -387,13 +387,18 @@ class ConfigurableParsingFactory(mechanize.Factory):
             self.factory = self.soup_factory
         else:
             self.factory = self.basic_factory
-        self._cleanup_html(response)
+        cleaned_response = self._cleanup_html(response)
+        self.factory.set_response(cleaned_response)
 
     def links(self):
         return self.factory.links()
     
     def forms(self):
         return self.factory.forms(self.ignore_form_parse_errors)
+
+    def get_global_form(self):
+        return self.factory.global_form
+    global_form = property(get_global_form)
 
     def _get_title(self):
         return self.factory.title
@@ -422,8 +427,7 @@ class ConfigurableParsingFactory(mechanize.Factory):
             if new_html:
                 self._html = new_html
 
-        self.factory.set_response(FakeResponse(self._html, self._url,
-                                               response.info()))
+        return FakeResponse(self._html, self._url, response.info())
 
     def use_BS(self):
         from twill.commands import _options

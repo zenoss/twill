@@ -1,3 +1,9 @@
+2007-01-14  Titus Brown  <t@localhost.localdomain>
+
+	* Updated mechanize and ClientForm to latest svn; patched to pass
+	  twill tests.  Preserved originals in mechanize/_html.py.jjl,
+	  ClientForm.py.jjl.
+
 2007-01-09  Titus Brown  <t@localhost.localdomain>
 
 	* Added complete_fv to formvalue completion patch.

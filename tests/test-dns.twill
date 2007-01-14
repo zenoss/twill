@@ -1,9 +1,6 @@
 debug commands 1
 extend_with dns_check
 
-dns_resolves amazon.com 207.171.166.102		# amazon.com ==> any of 2
-dns_resolves amazon.com 72.21.206.5
-
 # for twill testing
 #twill-test-1.ignore             A       192.168.1.1
 #twill-test-2.ignore             A       192.168.1.2

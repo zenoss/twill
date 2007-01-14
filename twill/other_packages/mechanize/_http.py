@@ -25,7 +25,7 @@ from _headersutil import is_html
 from _clientcookie import CookieJar, request_host
 import _rfc3986
 
-debug = logging.getLogger("mechanize.cookies").debug
+debug = logging.getLogger("mechanize").debug
 
 
 CHUNK = 1024  # size of chunks fed to HTML HEAD parser, in bytes
@@ -99,6 +99,7 @@ class HTTPRedirectHandler(BaseHandler):
             newurl = headers.getheaders('uri')[0]
         else:
             return
+        newurl = _rfc3986.clean_url(newurl, "latin-1")
         newurl = _rfc3986.urljoin(req.get_full_url(), newurl)
 
         # XXX Probably want to forget about the state of the current
@@ -469,8 +470,8 @@ def clean_refresh_url(url):
     # e.g. Firefox 1.5 does (something like) this
     if ((url.startswith('"') and url.endswith('"')) or
         (url.startswith("'") and url.endswith("'"))):
-        return url[1:-1]
-    return url
+        url = url[1:-1]
+    return _rfc3986.clean_url(url, "latin-1")  # XXX encoding
 
 def parse_refresh_header(refresh):
     """
