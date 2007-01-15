@@ -220,12 +220,12 @@ class TwillBrowser(object):
 
     def showforms(self):
         """
-        Pretty-print all of the forms.
+        Pretty-print all of the forms.  Include the global form (form
+        elements outside of <form> pairs) as forms[0] iff present.
         """
-        global_form = self._browser.global_form()
-        if global_form:
-            print_form(-1, global_form, OUT)
-        for n, f in enumerate(self._browser.forms()):
+        forms = self.get_all_forms()
+        
+        for n, f in enumerate(forms):
             print_form(n, f, OUT)
 
     def showlinks(self):
@@ -252,15 +252,27 @@ class TwillBrowser(object):
             
         print>>OUT, ''
 
+    def get_all_forms(self):
+        """
+        Return a list of all of the forms, with global_form at index 0
+        iff present.
+        """
+        global_form = self._browser.global_form()
+        forms = list(self._browser.forms())
+
+        if global_form:
+            forms.insert(0, global_form)
+            
+        return forms
+
     def get_form(self, formname):
         """
         Return the first form that matches 'formname'.
         """
         formname = str(formname)
-        forms = self._browser.forms()
-        forms = [ i for i in forms ]
-        forms.insert(0, self._browser.global_form())
-
+        
+        forms = self.get_all_forms()
+        
         # first try ID
         for f in forms:
             id = f.attrs.get("id")
@@ -384,14 +396,14 @@ class TwillBrowser(object):
         if fieldname is not None:
             fieldname = str(fieldname)
         
-        if not self._browser.forms():
+        if not self.get_all_forms():
             raise Exception("no forms on this page!")
         
         ctl = None
         
         form = self._browser.form
         if form is None:
-            forms = [ i for i in self._browser.forms() ]
+            forms = [ i for i in self.get_all_forms() ]
             if len(forms) == 1:
                 form = forms[0]
             else:

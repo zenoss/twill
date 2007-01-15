@@ -208,7 +208,7 @@ class FormsFactory:
         self.encoding = encoding
         self.global_form = None
 
-    def forms(self, ignore_errors=False):
+    def forms(self):
         import ClientForm
         encoding = self.encoding
         try:
@@ -218,7 +218,6 @@ class FormsFactory:
                 form_parser_class=self.form_parser_class,
                 request_class=self.request_class,
                 encoding=encoding,
-                ignore_errors=ignore_errors,
                 _urljoin=_rfc3986.urljoin,
                 _urlparse=_rfc3986.urlsplit,
                 _urlunparse=_rfc3986.urlunsplit,
@@ -523,7 +522,7 @@ class Factory:
             self.forms()
             return self.global_form
 
-    def forms(self, ignore_errors=False):
+    def forms(self):
         """Return iterable over ClientForm.HTMLForm-like objects.
 
         Raises mechanize.ParseError on failure.
@@ -533,7 +532,7 @@ class Factory:
         if self._forms_genf is None:
             try:
                 self._forms_genf = CachingGeneratorFunction(
-                    self._forms_factory.forms(ignore_errors=ignore_errors))
+                    self._forms_factory.forms())
             except:  # XXXX define exception!
                 self.set_response(self._response)
                 raise

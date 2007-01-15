@@ -1,5 +1,10 @@
 2007-01-14  Titus Brown  <t@localhost.localdomain>
 
+	* global_form is now form[0] if present.
+
+	* Deprecated allow_parse_errors config option; isn't needed for
+	  latest mechanize.
+
 	* Updated mechanize and ClientForm to latest svn; patched to pass
 	  twill tests.  Preserved originals in mechanize/_html.py.jjl,
 	  ClientForm.py.jjl.

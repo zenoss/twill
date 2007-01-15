@@ -930,7 +930,6 @@ def ParseResponseEx(response,
                     request_class=urllib2.Request,
                     entitydefs=None,
                     encoding=DEFAULT_ENCODING,
-                    ignore_errors=False,
 
                     # private
                     _urljoin=urlparse.urljoin,
@@ -948,7 +947,7 @@ def ParseResponseEx(response,
     """
     return _ParseFileEx(response, response.geturl(),
                         select_default,
-                        ignore_errors,
+                        False,
                         form_parser_class,
                         request_class,
                         entitydefs,
@@ -982,7 +981,7 @@ def ParseFileEx(file, base_uri,
     """
     return _ParseFileEx(file, base_uri,
                         select_default,
-                        ignore_errors,
+                        False,
                         form_parser_class,
                         request_class,
                         entitydefs,
@@ -1086,25 +1085,16 @@ def _ParseFileEx(file, base_uri,
     if backwards_compat:
         deprecation("operating in backwards-compatibility mode")
     fp = form_parser_class(entitydefs, encoding)
-
+    
     file.seek(0)
-
+    
     while 1:
         data = file.read(CHUNK)
-        
-        if ignore_errors:
-            for i in data:
-                try:
-                    fp.feed(i)
-                except:
-                    pass
-        else:
-            try:
-                fp.feed(data)
-            except ParseError, e:
-                e.base_uri = base_uri
-                raise
-            
+        try:
+            fp.feed(data)
+        except ParseError, e:
+            e.base_uri = base_uri
+            raise
         if len(data) != CHUNK: break
     if fp.base is not None:
         # HTML BASE element takes precedence over document URI

@@ -774,12 +774,14 @@ def config(key=None, value=None):
     So far:
 
      * 'acknowledge_equiv_refresh', default 1 -- follow HTTP-EQUIV=REFRESH
-     * 'allow_parse_errors', default 1 -- be very tolerant when parsing html
      * 'readonly_controls_writeable', default 0 -- make ro controls writeable
      * 'require_tidy', default 0 -- *require* that tidy be installed
      * 'use_BeautifulSoup', default 1 -- use the BeautifulSoup parser
      * 'use_tidy', default 1 -- use tidy, if it's installed
      * 'with_default_realm', default 0 -- use a default realm for HTTP AUTH
+
+    Deprecated:
+     * 'allow_parse_errors' has been removed.
     """
     import utils
     
