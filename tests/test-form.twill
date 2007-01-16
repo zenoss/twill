@@ -22,7 +22,8 @@ find "SELECTTEST: ==val=="
 ###
 
 formclear 1
-submit
+fv 1 submit_button click
+submit submit_button
 find "NO FORM"
 
 ###
@@ -109,6 +110,7 @@ fv 1 checkboxtest on
 #
 
 go /test_checkbox
+fv 1 post click
 submit
 find "CHECKBOXTEST: ==False=="
 
