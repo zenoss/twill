@@ -16,7 +16,8 @@ import urllib
 _server_url = None
 
 testdir = os.path.dirname(__file__)
-sys.path.insert(0, os.path.join(testdir, '../'))
+print 'testdir is:', testdir
+sys.path.insert(0, os.path.abspath(os.path.join(testdir, '..')))
 
 import twill
 
@@ -77,21 +78,23 @@ def run_server(create_fn, PORT=None):
 
     The parent process returns the URL on which the server is running.
     """
+    import time, tempfile
     global _server_url
 
     if PORT is None:
         PORT = int(os.environ.get('TWILL_TEST_PORT', '8080'))
-	
-	print 'STARTING:', sys.executable, 'tests/twilltestserver.py', os.getcwd()
-	process = subprocess.Popen([sys.executable, '-u', 'twilltestserver.py'], \
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0)
-    
-	import time
-	time.sleep(1)
-	print '***==>', process.stdout.readline()	
 
-        _server_url = 'http://localhost:%d/' % (PORT,)
-	return _server_url
+    outfd = tempfile.mkstemp('twilltst')[0]
+	
+    print 'STARTING:', sys.executable, 'tests/twilltestserver.py', os.getcwd()
+    process = subprocess.Popen([sys.executable, '-u', 'twilltestserver.py'],
+                               stderr=subprocess.STDOUT,
+                               stdout=outfd)
+   
+    time.sleep(1)
+
+    _server_url = 'http://localhost:%d/' % (PORT,)
+    return _server_url
 	
 def kill_server():
     """

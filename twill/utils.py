@@ -7,6 +7,8 @@ import os
 import tempfile
 import base64
 
+import subprocess
+
 import mechanize, ClientForm
 from mechanize._util import time
 from mechanize._http import HTTPRefreshProcessor
@@ -258,7 +260,7 @@ def unique_match(matches):
 # stuff to run 'tidy'...
 #
 
-_tidy_cmd = "tidy -q -ashtml -o %(output)s -f %(err)s %(input)s > %(err)s 2> %(err)s"
+_tidy_cmd = ["tidy", "-q", "-ashtml"]
 
 def run_tidy(html):
     """
@@ -272,81 +274,29 @@ def run_tidy(html):
     from commands import _options
     require_tidy = _options.get('require_tidy')
 
-    # build the input filename.
-    (fd, inp_filename) = tempfile.mkstemp('.tidy')
-    os.write(fd, html)
-    os.close(fd)
-
-    # build the output filename.
-    (fd, out_filename) = tempfile.mkstemp('.tidy.out')
-    os.close(fd)
-    os.unlink(out_filename)
-
-    # build the error filename.
-    (fd, err_filename) = tempfile.mkstemp('.tidy.err')
-    os.close(fd)
-    
-    # build the command to run
-    cmd = _tidy_cmd % dict(input=inp_filename, err=err_filename,
-                           output=out_filename)
 
     #
     # run the command
     #
     
-    success = False
-    try:
-        os.system(cmd)
-        success = True
-    except Exception:
-        pass
-
-    #
-    # get the cleaned-up HTML
-    #
-
     clean_html = None
+    try:
+        process = subprocess.Popen(_tidy_cmd, stdin=subprocess.PIPE,
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE, bufsize=0, shell=False)
+        (stdout, stderr) = process.communicate(html)
+
+        clean_html = stdout
+        errors = stderr
+
+        success = True
+    except OSError:
+        success = False
+        pass
+
     errors = None
-    if success:
-        try:
-            fp = open(out_filename)
-            try:
-                clean_html = fp.read()
-            finally:
-                fp.close()
-        except IOError:
-            pass
-
-        try:
-            fp = open(err_filename)
-            try:
-                errors = fp.read().strip()
-            finally:
-                fp.close()
-        except IOError:
-            pass
-
-        # complain if no output file: that means we couldn't run tidy...
-        if clean_html is None and require_tidy:
+    if (not success or clean_html is None) and require_tidy:
             raise Exception("cannot run 'tidy'; \n\t%s\n" % (errors,))
-
-    #
-    # remove temp files
-    #
-    try:
-        os.unlink(inp_filename)
-    except OSError:
-        pass
-
-    try:
-        os.unlink(out_filename)
-    except OSError:
-        pass
-
-    try:
-        os.unlink(err_filename)
-    except OSError:
-        pass
 
     return (clean_html, errors)
 

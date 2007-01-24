@@ -1,3 +1,7 @@
+2007-01-24  Titus Brown  <t@localhost.localdomain>
+
+	* Made twill tests work under Windows-cygwin too!
+
 2007-01-23  Titus Brown  <t@localhost.localdomain>
 
 	* Made twill tests work under Windows+cygwin by switching to

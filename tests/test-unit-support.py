@@ -9,6 +9,8 @@ import twilltestserver
 from quixote.server.simple_server import run as quixote_run
 
 def test():
+    return 1
+
     # port to run the server on
     PORT=8090
     

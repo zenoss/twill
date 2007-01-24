@@ -457,6 +457,9 @@ def formfile(formname, fieldname, filename, content_type=None):
 
     Upload a file via an "upload file" form field.
     """
+    import os.path
+    filename = filename.replace('/', os.path.sep)
+
     form = browser.get_form(formname)
     control = browser.get_form_field(form, fieldname)
 
