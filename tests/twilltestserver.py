@@ -96,8 +96,11 @@ class TwillTest(Directory):
                   "test_checkbox", "test_simple_checkbox","echo",
                   "test_checkboxes",
                   'tidy_fixable_html', 'BS_fixable_html', 'unfixable_html',
-                  'effed_up_forms', 'effed_up_forms2',
-                  'broken_linktext']
+                  'effed_up_forms', 'effed_up_forms2', 'broken_linktext',
+		  'exit']
+
+    def exit(self):
+        raise SystemExit
 
     def __init__(self):
         self.restricted = Restricted()

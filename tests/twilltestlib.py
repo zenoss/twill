@@ -1,4 +1,4 @@
-import sys
+import sys, subprocess
 
 try:
     import pkg_resources
@@ -11,8 +11,10 @@ from quixote.server.simple_server import run
 from cStringIO import StringIO
 import os
 import socket
+import urllib
 
-child_pid = None
+_server_url = None
+
 testdir = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(testdir, '../'))
 
@@ -70,46 +72,36 @@ def execute_twill_shell(filename, inp=None, initial_url=None,
 
 def run_server(create_fn, PORT=None):
     """
-    Run a Quixote simple_server on localhost:PORT by forking & then
-    _exit.  All output is captured & thrown away..
+    Run a Quixote simple_server on localhost:PORT with subprocess.
+    All output is captured & thrown away.
 
     The parent process returns the URL on which the server is running.
     """
-    global child_pid
+    global _server_url
 
     if PORT is None:
         PORT = int(os.environ.get('TWILL_TEST_PORT', '8080'))
+	
+	print 'STARTING:', sys.executable, 'tests/twilltestserver.py', os.getcwd()
+	process = subprocess.Popen([sys.executable, '-u', 'twilltestserver.py'], \
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0)
     
-    pid = os.fork()
-    if pid != 0:
-        child_pid = pid
-        return 'http://localhost:%d/' % (PORT,)
-    else:
-        outp = StringIO()
-        errp = StringIO()
-        oldout, sys.stdout = sys.stdout, outp
-        olderr, sys.stderr = sys.stderr, errp
+	import time
+	time.sleep(1)
+	print '***==>', process.stdout.readline()	
 
-        try:
-            run(create_fn, port=PORT)
-        except SystemExit:
-            os._exit(0)
-        except socket.error:
-            raise                       # raise doesn't work???
-        except Exception, e:
-            oldout.write('SERVER ERROR: %s\n' % (str(e),))
-            sys.stdout, sys.stderr = oldout, olderr
-            raise                       # raise doesn't work???
-
-        sys.exit(0)
-
+        _server_url = 'http://localhost:%d/' % (PORT,)
+	return _server_url
+	
 def kill_server():
     """
     Kill the previously started Quixote server.
     """
-    global child_pid
-    if child_pid is not None:
-        try:
-            os.kill(child_pid, 9)
-        finally:
-            child_pid = None
+    global _server_url
+    if _server_url != None:
+       try:
+          fp = urllib.urlopen('%sexit' % (_server_url,))
+       except:
+          pass
+
+    _server_url = None
