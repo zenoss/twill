@@ -1,5 +1,8 @@
 2007-01-29  Titus Brown  <t@localhost.localdomain>
 
+	* Removed BeautifulSoup.py in favor of the one included with
+	  mechanize.
+
 	* Added pages 'show_environ' and 'show_post' to twilltestserver.
 
 	* Added commands 'add_extra_header', 'show_extra_headers', and
