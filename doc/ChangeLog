@@ -3,7 +3,7 @@
 	* Added pages 'show_environ' and 'show_post' to twilltestserver.
 
 	* Added commands 'add_extra_header', 'show_extra_headers', and
-	  'clear_extra_headers', + tests & docs.
+	  'clear_extra_headers', + tests & docs.  (Shaun Walbridge)
 
 	* Always display proper form number in showforms.
 

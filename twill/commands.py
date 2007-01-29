@@ -757,13 +757,18 @@ def reset_error():
 
 def add_extra_header(header_key, header_value):
     """
-    >> add_header
+    >> add_header <name> <value>
+
+    Add an HTTP header to each HTTP request.  See 'show_extra_headers' and
+    'clear_extra_headers'.
     """
     browser._browser.addheaders += [(header_key, header_value)]
 
 def show_extra_headers():
     """
     >> show_extra_headers
+
+    Show any extra headers being added to each HTTP request.
     """
     l = browser._browser.addheaders
 
@@ -780,6 +785,9 @@ def show_extra_headers():
 def clear_extra_headers():
     """
     >> clear_extra_headers
+
+    Remove all user-defined HTTP headers.  See 'add_extra_header' and
+    'show_extra_headers'.
     """
     browser._browser.addheaders = []
 
