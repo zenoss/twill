@@ -1,10 +1,12 @@
 """
 Various ugly utility functions for twill.
+
+Apart from various simple utility functions, twill's robust parsing
+code is implemented in the ConfigurableParsingFactory class.
 """
 
 from cStringIO import StringIO
 import os
-import tempfile
 import base64
 
 import subprocess
