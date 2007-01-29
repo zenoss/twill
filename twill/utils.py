@@ -72,7 +72,7 @@ def print_form(n, f, OUT):
     Pretty-print the given form, assigned # n.
     """
     if f.name:
-        print>>OUT, '\nForm name=%s' % (f.name,)
+        print>>OUT, '\nForm name=%s (#%d)' % (f.name, n + 1)
     else:
         print>>OUT, '\nForm #%d' % (n + 1,)
 
