@@ -226,7 +226,7 @@ class TwillBrowser(object):
         forms = self.get_all_forms()
         
         for n, f in enumerate(forms):
-            print_form(n, f, OUT)
+            print_form(n - 1, f, OUT)
 
     def showlinks(self):
         """
