@@ -84,9 +84,6 @@ You are logged in as "%s".
 """ % (session.id, session.n, session.user)
 
 class TwillTest(Directory):
-    """
-    Do some simple session manipulations.
-    """
     _q_exports = ['logout', 'increment', 'incrementfail', "", 'restricted',
                   'login', ('test spaces', 'test_spaces'), 'test_spaces',
                   'simpleform', 'upload_file', 'http_auth', 'formpostredirect',
@@ -97,7 +94,25 @@ class TwillTest(Directory):
                   "test_checkboxes",
                   'tidy_fixable_html', 'BS_fixable_html', 'unfixable_html',
                   'effed_up_forms', 'effed_up_forms2', 'broken_linktext',
-		  'exit']
+		  'exit', 'display_post', 'display_environ']
+
+    def display_post(self):
+        s = ""
+
+        request = get_request()
+        for k, v in request.form.items():
+            s += "k: '''%s''' : '''%s'''<p>\n" % (k, v,)
+
+        return s
+
+    def display_environ(self):
+        s = ""
+
+        request = get_request()
+        for k, v in request.environ.items():
+            s += "k: '''%s''' : '''%s'''<p>\n" % (k, v,)
+
+        return s
 
     def exit(self):
         raise SystemExit

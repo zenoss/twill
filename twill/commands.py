@@ -55,6 +55,9 @@ __all__ = ['reset_browser',
            'reset_output',
            'redirect_error',
            'reset_error',
+           'add_extra_header',
+           'show_extra_headers',
+           'clear_extra_headers'
            ]
 
 import re, getpass, time
@@ -751,6 +754,34 @@ def reset_error():
     """
     import twill
     twill.set_errout(None)
+
+def add_extra_header(header_key, header_value):
+    """
+    >> add_header
+    """
+    browser._browser.addheaders += [(header_key, header_value)]
+
+def show_extra_headers():
+    """
+    >> show_extra_headers
+    """
+    l = browser._browser.addheaders
+
+    if l:
+        print 'The following HTTP headers are added to each request:'
+    
+        for k, v in l:
+            print '  "%s" = "%s"' % (k, v,)
+            
+        print ''
+    else:
+        print '** no extra HTTP headers **'
+
+def clear_extra_headers():
+    """
+    >> clear_extra_headers
+    """
+    browser._browser.addheaders = []
 
 ### options
 

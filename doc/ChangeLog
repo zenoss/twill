@@ -1,3 +1,12 @@
+2007-01-29  Titus Brown  <t@localhost.localdomain>
+
+	* Added pages 'show_environ' and 'show_post' to twilltestserver.
+
+	* Added commands 'add_extra_header', 'show_extra_headers', and
+	  'clear_extra_headers', + tests & docs.
+
+	* Always display proper form number in showforms.
+
 2007-01-24  Titus Brown  <t@localhost.localdomain>
 
 	* Made twill tests work under Windows-cygwin too!

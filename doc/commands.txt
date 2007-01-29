@@ -163,6 +163,13 @@ is set to True, ignore 'realm'.
 
 **config** [*<key>* [*<value>*]] -- show/set configuration options.
 
+**add_extra_headers** *<name>* *<value>* -- add an extra HTTP header to
+each HTTP request.
+
+**show_extra_headers** -- show the headers being added to each HTTP request.
+
+**clear_extra_headers** -- clear the headers being added to each HTTP request.
+
 Special variables
 =================
 
