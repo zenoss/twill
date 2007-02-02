@@ -17,7 +17,7 @@ go $init
 code 200
 
 # miscellaneous gunk for better code coverage
-save_html /dev/null
+#save_html /dev/null  # doesn't work on Windows... <sigh>
 sleep 0
 agent test
 
