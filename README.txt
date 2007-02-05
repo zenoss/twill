@@ -11,7 +11,8 @@ The latest release as well as all documentation is always online at
 http://twill.idyll.org/.  You can also find
 information on mailing lists, bug fixes, and new releases there.
 
-twill is Copyright (C) 2005, 2006 C. Titus Brown, and is available under the
-LGPL.
+twill is Copyright (C) 2005, 2006, 2007 by C. Titus Brown, and is
+available for use, modification, and distribution under the MIT
+license.
 
 Contact titus@caltech.edu with questions or comments.
