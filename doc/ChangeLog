@@ -1,3 +1,7 @@
+2007-02-08  Titus Brown  <t@localhost.localdomain>
+
+	* Global forms no longer show up IF EMPTY.
+
 2007-02-04  Titus Brown  <t@localhost.localdomain>
 
 	* Switched to MIT license.

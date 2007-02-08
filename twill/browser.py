@@ -260,7 +260,7 @@ class TwillBrowser(object):
         global_form = self._browser.global_form()
         forms = list(self._browser.forms())
 
-        if global_form:
+        if global_form.controls:
             forms.insert(0, global_form)
             
         return forms
@@ -287,7 +287,7 @@ class TwillBrowser(object):
 
         # ok, try number
         try:
-            formnum = int(formname)
+            formnum = int(formname) - 1
             return forms[formnum]
         except ValueError:              # int() failed
             pass
