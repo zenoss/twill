@@ -1,3 +1,10 @@
+2007-02-14  Titus Brown  <t@localhost.localdomain>
+
+	* Added a basic check for Web server to tests: tests no longer
+	  run if the test Web server isn't available.
+
+	* Added get_browser() to twill.commands exports.
+
 2007-02-08  Titus Brown  <t@localhost.localdomain>
 
 	* Global forms no longer show up IF EMPTY.

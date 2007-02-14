@@ -70,6 +70,8 @@ def message(session):
 <body>
 Hello, world!
 <p>
+These are the twill tests.
+<p>
 Your session ID is %s; this is visit #%d.
 <p>
 You are logged in as "%s".
