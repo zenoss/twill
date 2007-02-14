@@ -9,7 +9,8 @@ OUT=None
 ERR=sys.stderr
 
 # export:
-__all__ = ['reset_browser',
+__all__ = ['get_browser',
+           'reset_browser',
            'extend_with',
            'exit',
            'go',
