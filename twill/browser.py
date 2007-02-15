@@ -226,7 +226,7 @@ class TwillBrowser(object):
         forms = self.get_all_forms()
         
         for n, f in enumerate(forms):
-            print_form(n - 1, f, OUT)
+            print_form(n, f, OUT)
 
     def showlinks(self):
         """
@@ -287,8 +287,9 @@ class TwillBrowser(object):
 
         # ok, try number
         try:
-            formnum = int(formname) - 1
-            return forms[formnum]
+            formnum = int(formname)
+            if formnum >= 1 and formnum <= len(forms):
+                return forms[formnum - 1]
         except ValueError:              # int() failed
             pass
         except IndexError:              # formnum was incorrect
