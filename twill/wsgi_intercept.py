@@ -158,6 +158,8 @@ def make_environ(inp, host, port, script_name):
 
     if query_string:
         environ['QUERY_STRING'] = query_string
+    else:
+        environ['QUERY_STRING'] = ''
         
     if content_type:
         environ['CONTENT_TYPE'] = content_type
@@ -216,9 +218,6 @@ class wsgi_fake_socket:
           3. build an environment dict out of the traffic in inp;
           4. run the WSGI app & grab the result object;
           5. concatenate & return the result(s) read from the result object.
-
-        @CTB: 'start_response' should return a function that writes
-        directly to self.result, too.
         """
 
         # dynamically construct the start_response function for no good reason.
@@ -243,7 +242,8 @@ class wsgi_fake_socket:
         environ = make_environ(inp, self.host, self.port, self.script_name)
 
         # run the application.
-        self.result = iter(self.app(environ, start_response))
+        app_result = self.app(environ, start_response)
+        self.result = iter(app_result)
 
         ###
 
@@ -273,6 +273,10 @@ class wsgi_fake_socket:
         except StopIteration:
             pass
 
+        if hasattr(app_result, 'close'):
+            print 'closing...'
+            app_result.close()
+            
         if debuglevel >= 2:
             print "***", self.output.getvalue(), "***"
 

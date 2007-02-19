@@ -15,7 +15,7 @@ setup(name = 'twill',
       
       description = 'twill Web browsing language',
       author = 'C. Titus Brown',
-      author_email = 'titus@caltech.edu',
+      author_email = 'titus@idyll.org',
       license='MIT',
 
       packages = ['twill', 'twill.other_packages',

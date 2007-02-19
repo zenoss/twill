@@ -2,6 +2,11 @@
 Test the WSGI intercept code.
 """
 
+try:
+    from paste.lint import middleware as wsgi_lint
+except ImportError:
+    wsgi_lint = lambda x: x             # ignore lack of paste.lint ;)
+    
 import twill
 
 _app_was_hit = False
@@ -49,11 +54,15 @@ def test_intercept():
     global _app_was_hit
     _app_was_hit = False
 
-    twill.add_wsgi_intercept('localhost', 80, lambda: simple_app)
+    twill.add_wsgi_intercept('localhost', 80, lambda: wsgi_lint(simple_app))
     assert not _app_was_hit
+    print 'go'
     twill.commands.go('http://localhost:80/')
+    twill.commands.show()
+    print 'find'
     twill.commands.find("WSGI intercept successful")
     assert _app_was_hit
+    print 'remove'
     twill.remove_wsgi_intercept('localhost', 80)
 
 def test_wrapper_intercept():
@@ -70,9 +79,12 @@ def test_wrapper_intercept():
 
     wrap_app = wrapper_app(write_app)
 
-    twill.add_wsgi_intercept('localhost', 80, lambda: wrap_app)
+    twill.add_wsgi_intercept('localhost', 80, lambda: wsgi_lint(wrap_app))
     assert not _app_was_hit
+    print 'go'
     twill.commands.go('http://localhost:80/')
+    print 'find'
     twill.commands.find("WSGI intercept successful")
     assert _app_was_hit
+    print 'remove'
     twill.remove_wsgi_intercept('localhost', 80)
