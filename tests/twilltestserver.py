@@ -93,10 +93,31 @@ class TwillTest(Directory):
                   "testform", "testformaction",
                   "test_refresh", "test_refresh2",
                   "test_checkbox", "test_simple_checkbox","echo",
-                  "test_checkboxes",
+                  "test_checkboxes", 'test_global_form',
                   'tidy_fixable_html', 'BS_fixable_html', 'unfixable_html',
                   'effed_up_forms', 'effed_up_forms2', 'broken_linktext',
 		  'exit', 'display_post', 'display_environ']
+
+    def test_global_form(self):
+        return """
+<html>
+<body>
+
+<div>
+<input type="text" name="hello">
+</div>
+
+<form>
+<input type="text2" name="hello2">
+</form>
+
+<div>
+<input type="text3" name="hello3">
+</form>
+
+</body>
+</html>
+"""
 
     def display_post(self):
         s = ""

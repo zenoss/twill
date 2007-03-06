@@ -441,6 +441,14 @@ class Browser(UserAgentBase):
             raise ValueError(
                 "at least one argument must be supplied to specify form")
 
+        global_form = self.global_form()
+        if global_form.controls:
+            if name is not None and name == global_form.name:
+                self.form = global_form
+            if predicate is not None and predicate(global_form):
+                self.form = global_form
+            return
+
         orig_nr = nr
         for form in self.forms():
             if name is not None and name != form.name:
