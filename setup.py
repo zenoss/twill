@@ -10,8 +10,8 @@ except ImportError:
 
 setup(name = 'twill',
       
-      version = '0.9a3',
-      download_url = 'http://darcs.idyll.org/~t/projects/twill-0.8.5.tar.gz',
+      version = '0.9b1',
+      download_url = 'http://darcs.idyll.org/~t/projects/twill-0.9b1.tar.gz',
       
       description = 'twill Web browsing language',
       author = 'C. Titus Brown',
