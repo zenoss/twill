@@ -101,21 +101,25 @@ class TwillTest(Directory):
     def test_global_form(self):
         return """
 <html>
-<body>
+ <head>
+  <title>Broken</title>
+ </head>
+ <body>
+  <div>
+  <input name="global_form_entry" type="text">
+  </div>
 
-<div>
-<input type="text" name="hello">
-</div>
+  <form name="login" method="post">
+  <input type=text name=hello>
+  <input type=submit>
+  </form>
 
-<form>
-<input type="text2" name="hello2">
-</form>
+  <form name="login" method="post" action="http://iorich.caltech.edu:8080/display_post">
+  <input type=text name=hello>
+  <input type=submit>
+  </form>
 
-<div>
-<input type="text3" name="hello3">
-</form>
-
-</body>
+ </body>
 </html>
 """
 
