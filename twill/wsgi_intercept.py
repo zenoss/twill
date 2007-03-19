@@ -274,7 +274,6 @@ class wsgi_fake_socket:
             pass
 
         if hasattr(app_result, 'close'):
-            print 'closing...'
             app_result.close()
             
         if debuglevel >= 2:
