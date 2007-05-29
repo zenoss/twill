@@ -12,6 +12,13 @@ import urllib2
 def setup_module():
     pass
 
+def ensure_fail_on_gopher_import():
+    try:
+        from mechanize import GopherError
+        assert 0, "GopherError and gopherlib are no longer in python 2.6"
+    except ImportError:
+        pass
+
 def test():
     # reset
     twill.commands.reset_browser()

@@ -58,7 +58,8 @@ __all__ = ['get_browser',
            'reset_error',
            'add_extra_header',
            'show_extra_headers',
-           'clear_extra_headers'
+           'clear_extra_headers',
+           'info'
            ]
 
 import re, getpass, time
@@ -849,3 +850,39 @@ def config(key=None, value=None):
         else:
             value = utils.make_boolean(value)
             _options[key] = value
+
+def info():
+    """
+    >> info
+
+    Report information on current page.
+    """
+    current_url = browser.get_url()
+    if current_url is None:
+        print "We're not on a page!"
+        return
+    
+    from mechanize._headersutil import is_html
+    content_type = browser._browser._response.info().getheaders("content-type")
+    check_html = is_html(content_type, current_url)
+
+    code = browser.get_code()
+
+
+    print >>OUT, '\nPage information:'
+    print >>OUT, '\tURL:', current_url
+    print >>OUT, '\tHTTP code:', code
+    print >>OUT, '\tContent type:', content_type[0],
+    if check_html:
+        print >>OUT, '(HTML)'
+    else:
+        print ''
+    if check_html:
+        title = browser.get_title()
+        print >>OUT, '\tPage title:', title
+
+        forms = browser.get_all_forms()
+        if len(forms):
+            print >>OUT, '\tThis page contains %d form(s)' % (len(forms),)
+            
+    print >>OUT, ''

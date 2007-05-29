@@ -1,3 +1,9 @@
+2007-05-28  Titus Brown  <t@iorich.caltech.edu>
+
+	* Added 'info' command, docs, and tests.
+
+	* Removed gopherlib references in mechanize; added test.
+
 2007-03-19  Titus Brown  <t@localhost.localdomain>
 
 	* Fixed bug in my patch to mechanize 'select_form'.

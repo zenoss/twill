@@ -42,6 +42,8 @@ Display
 
 **echo** *<string>* -- echo the string to the screen.
 
+**info** -- display information about the current page.
+
 **redirect_output** *<filename>* -- append all twill output to the given file.
 
 **reset_output** -- display all output to the screen.
