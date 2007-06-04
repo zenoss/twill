@@ -263,6 +263,7 @@ def unique_match(matches):
 #
 
 _tidy_cmd = ["tidy", "-q", "-ashtml"]
+_tidy_exists = True
 
 def run_tidy(html):
     """
@@ -271,34 +272,38 @@ def run_tidy(html):
     Return a 2-tuple (output, errors).  (None, None) will be returned if
     'tidy' doesn't exist or otherwise fails.
     """
-    global _tidy_cmd
+    global _tidy_cmd, _tidy_exists
 
     from commands import _options
     require_tidy = _options.get('require_tidy')
 
-
+    if not _tidy_exists:
+        if require_tidy:
+            raise Exception("tidy does not exist and require_tidy is set")
+        return (None, None)
+    
     #
-    # run the command
+    # run the command, if we think it exists
     #
     
     clean_html = None
-    try:
-        process = subprocess.Popen(_tidy_cmd, stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE, bufsize=0, shell=False)
-        (stdout, stderr) = process.communicate(html)
+    if _tidy_exists:
+        try:
+            process = subprocess.Popen(_tidy_cmd, stdin=subprocess.PIPE,
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, bufsize=0,
+                                       shell=False)
+        
+            (stdout, stderr) = process.communicate(html)
 
-        clean_html = stdout
-        errors = stderr
-
-        success = True
-    except OSError:
-        success = False
-        pass
+            clean_html = stdout
+            errors = stderr
+        except OSError:
+            _tidy_exists = False
 
     errors = None
-    if (not success or clean_html is None) and require_tidy:
-            raise Exception("cannot run 'tidy'; \n\t%s\n" % (errors,))
+    if require_tidy and clean_html is None:
+        raise Exception("tidy does not exist and require_tidy is set")
 
     return (clean_html, errors)
 

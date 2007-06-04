@@ -1,3 +1,12 @@
+2007-06-04  Titus Brown  <t@iorich.caltech.edu>
+
+	* Patched subprocess pipe freeing problem (Chris Abraham).  (This
+	  is a moderately serious bug for long-running programs that use
+	  subprocess to try to run programs that don't exist.)
+
+	  My patch modifies run_tidy to remember if subprocess failed because
+	  tidy didn't exist.
+
 2007-05-28  Titus Brown  <t@iorich.caltech.edu>
 
 	* Added 'info' command, docs, and tests.
