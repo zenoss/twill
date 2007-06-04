@@ -27,6 +27,12 @@ import _rfc3986
 
 debug = logging.getLogger("mechanize").debug
 
+# monkeypatch urllib2.HTTPError to show URL
+## def urllib2_str(self):
+##     return 'HTTP Error %s: %s (%s)' % (
+##         self.code, self.msg, self.geturl())
+## urllib2.HTTPError.__str__ = urllib2_str
+
 
 CHUNK = 1024  # size of chunks fed to HTML HEAD parser, in bytes
 DEFAULT_ENCODING = 'latin-1'
@@ -77,16 +83,16 @@ class HTTPRedirectHandler(BaseHandler):
             # from the user (of urllib2, in this case).  In practice,
             # essentially all clients do redirect in this case, so we do
             # the same.
-            try:
-                visit = req.visit
-            except AttributeError:
-                visit = None
-            return Request(newurl,
-                           headers=req.headers,
-                           origin_req_host=req.get_origin_req_host(),
-                           unverifiable=True,
-                           visit=visit,
-                           )
+            # XXX really refresh redirections should be visiting; tricky to
+            #  fix, so this will wait until post-stable release
+            new = Request(newurl,
+                          headers=req.headers,
+                          origin_req_host=req.get_origin_req_host(),
+                          unverifiable=True,
+                          visit=False,
+                          )
+            new._origin_req = getattr(req, "_origin_req", req)
+            return new
         else:
             raise HTTPError(req.get_full_url(), code, msg, headers, fp)
 
@@ -414,6 +420,15 @@ else:
                 return request
 
             host = request.get_host()
+
+            # robots.txt requests don't need to be allowed by robots.txt :-)
+            origin_req = getattr(request, "_origin_req", None)
+            if (origin_req is not None and
+                origin_req.get_selector() == "/robots.txt" and
+                origin_req.get_host() == host
+                ):
+                return request
+
             if host != self._host:
                 self.rfp = self.rfp_class()
                 try:
@@ -429,6 +444,7 @@ else:
             if self.rfp.can_fetch(ua, request.get_full_url()):
                 return request
             else:
+                # XXX This should really have raised URLError.  Too late now...
                 msg = "request disallowed by robots.txt"
                 raise RobotExclusionError(
                     request,
@@ -446,7 +462,7 @@ class HTTPRefererProcessor(BaseHandler):
     HTTPRefererProcessor to fetch a series of URLs extracted from a single
     page, this will break).
 
-    There's a proper implementation of this in module mechanize.
+    There's a proper implementation of this in mechanize.Browser.
 
     """
     def __init__(self):
@@ -576,6 +592,23 @@ class HTTPErrorProcessor(BaseHandler):
         return response
 
     https_response = http_response
+
+
+class HTTPDefaultErrorHandler(BaseHandler):
+    def http_error_default(self, req, fp, code, msg, hdrs):
+        # why these error methods took the code, msg, headers args in the first
+        # place rather than a response object, I don't know, but to avoid
+        # multiple wrapping, we're discarding them
+
+        if isinstance(fp, urllib2.HTTPError):
+            response = fp
+        else:
+            response = urllib2.HTTPError(
+                req.get_full_url(), code, msg, hdrs, fp)
+        assert code == response.code
+        assert msg == response.msg
+        assert hdrs == response.hdrs
+        raise response
 
 
 class AbstractHTTPHandler(BaseHandler):

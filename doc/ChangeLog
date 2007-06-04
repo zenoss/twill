@@ -1,5 +1,7 @@
 2007-06-04  Titus Brown  <t@iorich.caltech.edu>
 
+	* Updated mechanize to latest.
+
 	* Patched subprocess pipe freeing problem (Chris Abraham).  (This
 	  is a moderately serious bug for long-running programs that use
 	  subprocess to try to run programs that don't exist.)

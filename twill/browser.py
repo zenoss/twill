@@ -384,6 +384,8 @@ class TwillBrowser(object):
                 return False
 
             self._browser.select_form(predicate=choose_this_form)
+            assert self._browser.form == form
+
             self.last_submit_button = None
 
         # record the last submit button clicked.
