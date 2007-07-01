@@ -1,6 +1,9 @@
 2007-07-01  C. Titus Brown  <t@chreotha>
 
-	* All raised exceptions now inherit from TwillException.
+	* Fixed a problem with __matchlist__ in match_parse extension
+  	  (Sheryl).
+
+	* All raised exceptions now inherit from TwillException (Kevin Turner).
 
 	* Eliminated FakeResponse and switched to using
 	  mechanize.make_response (Jacob Hallan, JJL).
