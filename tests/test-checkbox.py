@@ -1,10 +1,8 @@
-
 import twilltestlib
 import twill
 from twill import namespaces, commands
 from twill.errors import TwillAssertionError
-from mechanize import BrowserStateError
-import ClientForm
+from _mechanize_dist import BrowserStateError, ClientForm
 from tests import url
 
 def test_select_multiple():

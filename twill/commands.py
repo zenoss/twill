@@ -3,7 +3,10 @@ Implementation of all of the individual 'twill' commands available through
 twill-sh.
 """
 
-import sys, mechanize
+import sys
+import _mechanize_dist as mechanize
+from _mechanize_dist import ClientForm
+from _mechanize_dist._headersutil import is_html
 
 OUT=None
 ERR=sys.stderr
@@ -420,8 +423,6 @@ def formvalue(formname, fieldname, value):
 
     'formvalue' is available as 'fv' as well.
     """
-    import ClientForm
-    
     form = browser.get_form(formname)
     if not form:
         raise TwillAssertionError("no matching forms!")
@@ -862,7 +863,6 @@ def info():
         print "We're not on a page!"
         return
     
-    from mechanize._headersutil import is_html
     content_type = browser._browser._response.info().getheaders("content-type")
     check_html = is_html(content_type, current_url)
 

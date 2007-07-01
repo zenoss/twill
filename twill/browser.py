@@ -11,8 +11,8 @@ import re
 import urlparse
 
 # wwwsearch imports
-import mechanize, ClientForm
-from mechanize import BrowserStateError, LinkNotFoundError
+import _mechanize_dist as mechanize
+from _mechanize_dist import BrowserStateError, LinkNotFoundError, ClientForm
 
 # twill package imports
 from _browser import PatchedMechanizeBrowser

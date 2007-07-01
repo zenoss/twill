@@ -1,5 +1,8 @@
 2007-07-01  C. Titus Brown  <t@chreotha>
 
+	* Moved 'mechanize' to '_mechanize_dist', 'ClientForm' to
+	'_mechanize_dist.ClientForm', as requested for Debian dists.
+
 	* Fixed a problem with __matchlist__ in match_parse extension
   	  (Sheryl).
 

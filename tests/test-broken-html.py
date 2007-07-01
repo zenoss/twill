@@ -3,7 +3,7 @@
 parser) can parse.
 """
 
-import ClientForm
+from _mechanize_dist import ClientForm
 
 import twilltestlib
 from tests import url

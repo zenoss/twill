@@ -11,10 +11,11 @@ import base64
 
 import subprocess
 
-import mechanize, ClientForm
-from mechanize._util import time
-from mechanize._http import HTTPRefreshProcessor
-from mechanize import BrowserStateError
+import _mechanize_dist as mechanize
+from _mechanize_dist import ClientForm
+from _mechanize_dist._util import time
+from _mechanize_dist._http import HTTPRefreshProcessor
+from _mechanize_dist import BrowserStateError
 
 class ResultWrapper:
     """
