@@ -380,15 +380,14 @@ class RobustLinksFactory:
                     continue
                 url = _rfc3986.clean_url(url, encoding)
                 text = link.fetchText(lambda t: True)
-                if text is _beautifulsoup.Null:
+                if not text:
                     # follow _pullparser's weird behaviour rigidly
                     if link.name == "a":
                         text = ""
                     else:
                         text = None
                 else:
-                    text = " ".join(text)
-                    text = self.compress_re.sub(" ", text.strip())
+                    text = self.compress_re.sub(" ", " ".join(text).strip())
                 yield Link(base_url, url, text, link.name, attrs)
 
 

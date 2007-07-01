@@ -379,7 +379,7 @@ class Browser(UserAgentBase):
 
         The cookie is added in the same way as if it had arrived with the
         current response, as a result of the current request.  This means that,
-        for example, it is not appropriate to set the cookie based on the
+        for example, if it is not appropriate to set the cookie based on the
         current request, no cookie will be set.
 
         The cookie will be returned automatically with subsequent responses
@@ -452,7 +452,6 @@ class Browser(UserAgentBase):
         return self._factory.is_html
 
     def encoding(self):
-        """"""
         if self._response is None:
             raise BrowserStateError("not viewing any document")
         return self._factory.encoding
@@ -493,7 +492,10 @@ class Browser(UserAgentBase):
         nr, if supplied, is the sequence number of the form (where 0 is the
         first).  Note that control 0 is the first form matching all the other
         arguments (if supplied); it is not necessarily the first control in the
-        form.
+        form.  The "global form" (consisting of all form controls not contained
+        in any FORM element) is considered not to be part of this sequence and
+        to have no name, so will not be matched unless both name and nr are
+        None.
 
         """
         if not self.viewing_html():
@@ -502,12 +504,11 @@ class Browser(UserAgentBase):
             raise ValueError(
                 "at least one argument must be supplied to specify form")
 
-        global_form = self.global_form()
-        if global_form.controls:
-            if (name is not None and name == global_form.name) or \
-               (predicate is not None and predicate(global_form)):
-                self.form = global_form
-                return
+        global_form = self._factory.global_form
+        if nr is None and name is None and \
+               predicate is not None and predicate(global_form):
+            self.form = global_form
+            return
 
         orig_nr = nr
         for form in self.forms():
