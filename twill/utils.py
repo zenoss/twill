@@ -16,24 +16,6 @@ from mechanize._util import time
 from mechanize._http import HTTPRefreshProcessor
 from mechanize import BrowserStateError
 
-class FakeResponse:
-    def __init__(self, data, url, info):
-        self.fp = StringIO(data)
-        self.url = url
-        self._info = info
-
-    def read(self, *args):
-        return self.fp.read(*args)
-
-    def seek(self, *args):
-        return self.fp.seek(*args)
-
-    def info(self):
-        return self._info
-
-    def geturl(self):
-        return self.url
-
 class ResultWrapper:
     """
     Deal with mechanize/urllib2/whatever results, and present them in a
@@ -378,8 +360,10 @@ class ConfigurableParsingFactory(mechanize.Factory):
             if new_html:
                 self._html = new_html
 
-        return FakeResponse(self._html, self._url, response.info())
-
+        return mechanize.make_response(self._html, response._headers.items(),
+                                       response._url, response.code,
+                                       response.msg)
+                                       
     def use_BS(self):
         from twill.commands import _options
         flag = _options.get('use_BeautifulSoup')

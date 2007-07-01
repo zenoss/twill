@@ -354,6 +354,9 @@ def main():
                 success.append(filename)
             except Exception, e:
                 if options.fail:
+#                    import pdb
+#                    _, _, tb = sys.exc_info()
+#                    pdb.post_mortem(tb)
                     raise
                 else:
                     print '** UNHANDLED EXCEPTION:', str(e)
