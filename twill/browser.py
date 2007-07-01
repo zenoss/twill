@@ -18,6 +18,7 @@ from mechanize import BrowserStateError, LinkNotFoundError
 from _browser import PatchedMechanizeBrowser
 from utils import trunc, print_form, ConfigurableParsingFactory, \
      ResultWrapper, unique_match, HistoryStack
+from errors import TwillException
      
 
 #
@@ -113,8 +114,7 @@ class TwillBrowser(object):
                 self._journey('open', u)
                 success = True
                 break
-            except IOError:
-                raise
+            except IOError:             # @CTB test this!
                 pass
 
         if success:
@@ -363,9 +363,9 @@ class TwillBrowser(object):
         # error out?
         if found is None:
             if not found_multiple:
-                raise Exception('no field matches "%s"' % (fieldname,))
+                raise TwillException('no field matches "%s"' % (fieldname,))
             else:
-                raise Exception('multiple matches to "%s"' % (fieldname,))
+                raise TwillException('multiple matches to "%s"' % (fieldname,))
 
         return found
 
@@ -400,7 +400,7 @@ class TwillBrowser(object):
             fieldname = str(fieldname)
         
         if not self.get_all_forms():
-            raise Exception("no forms on this page!")
+            raise TwillException("no forms on this page!")
         
         ctl = None
         
@@ -410,7 +410,7 @@ class TwillBrowser(object):
             if len(forms) == 1:
                 form = forms[0]
             else:
-                raise Exception("more than one form; you must select one (use 'fv') before submitting")
+                raise TwillException("more than one form; you must select one (use 'fv') before submitting")
 
         # no fieldname?  see if we can use the last submit button clicked...
         if not fieldname:
@@ -530,7 +530,7 @@ class TwillBrowser(object):
 
         ## special case refresh loops!?
         if code == 'refresh':
-            raise Exception("infinite refresh loop discovered; aborting.\nTry turning off acknowledge_equiv_refresh...")
+            raise TwillException("infinite refresh loop discovered; aborting.\nTry turning off acknowledge_equiv_refresh...")
 
         self.result = ResultWrapper(code, r.geturl(), r.read())
 

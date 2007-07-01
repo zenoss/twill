@@ -1,5 +1,7 @@
 2007-07-01  C. Titus Brown  <t@chreotha>
 
+	* All raised exceptions now inherit from TwillException.
+
 	* Eliminated FakeResponse and switched to using
 	  mechanize.make_response (Jacob Hallan, JJL).
 

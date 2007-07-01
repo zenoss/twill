@@ -143,7 +143,7 @@ def make_boolean(value):
             return True
         return False
 
-    raise Exception("unable to convert '%s' into true/false..." % (value,))
+    raise TwillException("unable to convert '%s' into true/false" % (value,))
 
 def set_form_control_value(control, val):
     """
@@ -261,7 +261,7 @@ def run_tidy(html):
 
     if not _tidy_exists:
         if require_tidy:
-            raise Exception("tidy does not exist and require_tidy is set")
+            raise TwillException("tidy does not exist and require_tidy is set")
         return (None, None)
     
     #
@@ -285,7 +285,7 @@ def run_tidy(html):
 
     errors = None
     if require_tidy and clean_html is None:
-        raise Exception("tidy does not exist and require_tidy is set")
+        raise TwillException("tidy does not exist and require_tidy is set")
 
     return (clean_html, errors)
 

@@ -66,7 +66,7 @@ import re, getpass, time
 
 from browser import TwillBrowser
 
-from errors import TwillAssertionError
+from errors import TwillException, TwillAssertionError
 import utils
 from utils import set_form_control_value, run_tidy
 from namespaces import get_twill_glocals
@@ -439,7 +439,7 @@ def formvalue(formname, fieldname, value):
         return
 
     if isinstance(control, ClientForm.FileControl):
-        raise Exception('form field is for file upload; use "formfile" instead')
+        raise TwillException('form field is for file upload; use "formfile" instead')
 
     set_form_control_value(control, value)
 
@@ -469,7 +469,7 @@ def formfile(formname, fieldname, filename, content_type=None):
     control = browser.get_form_field(form, fieldname)
 
     if not control.is_of_kind('file'):
-        raise Exception('ERROR: field is not a file upload field!')
+        raise TwillException('ERROR: field is not a file upload field!')
 
     browser.clicked(form, control)
     fp = open(filename, 'rb')
@@ -645,7 +645,7 @@ def debug(what, level):
         else:
             parse.debug_print_commands(False)
     else:
-        raise Exception('unknown debugging type: "%s"' % (what,))
+        raise TwillException('unknown debugging type: "%s"' % (what,))
 
 def run(cmd):
     """
@@ -842,7 +842,7 @@ def config(key=None, value=None):
         if v is None:
             print>>OUT, '*** no such configuration key', key
             print>>OUT, 'valid keys are:', ";".join(_options.keys())
-            raise Exception('no such configuration key: %s' % (key,))
+            raise TwillException('no such configuration key: %s' % (key,))
         elif value is None:
             print>>OUT, ''
             print>>OUT, 'key %s: value %s' % (key, v)

@@ -71,15 +71,18 @@ def process_args(args, globals_dict, locals_dict):
     """
     newargs = []
     for arg in args:
-        # __variable substitution.  @CTB do we need this?
+        # __variable substitution.
         if arg.startswith('__'):
             try:
                 val = eval(arg, globals_dict, locals_dict)
             except NameError:           # not in dictionary; don't interpret.
                 val = arg
-                
-            newargs.append(val)
 
+            if isinstance(val, str):
+                newargs.append(val)
+            else:
+                newargs.extend(val)
+                
         # $variable substitution
         elif arg.startswith('$') and not arg.startswith('${'):
             try:
