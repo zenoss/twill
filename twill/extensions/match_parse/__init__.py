@@ -86,6 +86,6 @@ def popmatch(which):
      """
      global_dict, local_dict = get_twill_glocals()
      
-     match = local_dict['__matchlist__']
-     match.pop(int(which))
+     matchlist = local_dict['__matchlist__']
+     match = matchlist.pop(int(which))
      local_dict['__match__'] = match

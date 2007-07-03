@@ -1,3 +1,8 @@
+2007-07-02  C. Titus Brown  <t@chreotha>
+
+	* Fixed another problem match_parse: made popmatch work properly
+	  (Sheryl).
+
 2007-07-01  C. Titus Brown  <t@chreotha>
 
 	* Moved 'mechanize' to '_mechanize_dist', 'ClientForm' to
