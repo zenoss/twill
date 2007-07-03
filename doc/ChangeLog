@@ -1,5 +1,7 @@
 2007-07-02  C. Titus Brown  <t@chreotha>
 
+	* Fixed small documentation error in commands (Bill Mill).
+
 	* Fixed another problem match_parse: made popmatch work properly
 	  (Sheryl).
 
