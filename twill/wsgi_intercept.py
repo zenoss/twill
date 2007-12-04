@@ -268,8 +268,11 @@ class wsgi_fake_socket:
 
             if generator_data:
                 self.output.write(generator_data)
-                for data in self.result:
+
+                while 1:
+                    data = self.result.next()
                     self.output.write(data)
+                    
         except StopIteration:
             pass
 

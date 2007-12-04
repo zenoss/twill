@@ -88,3 +88,36 @@ def test_wrapper_intercept():
     assert _app_was_hit
     print 'remove'
     twill.remove_wsgi_intercept('localhost', 80)
+
+####
+
+class iterator_app:
+    """
+    Test some tricky iterator stuff in wsgi_intercept.
+    """
+
+    content = ['Hello, world']
+
+    def __call__(self, environ, start_response):
+        status = '200 OK'
+        response_headers = [('Content-type','text/plain')]
+        start_response(status, response_headers)
+        return self
+
+    def __iter__(self):
+        self._iter = iter(self.content)
+        return self
+
+    def next(self):
+        return self._iter.next()
+
+def test_iter_stuff():
+    twill.add_wsgi_intercept('localhost', 80, iterator_app)
+    print 'go'
+    twill.commands.go('http://localhost:80/')
+    print 'find'
+    twill.commands.show()
+    twill.commands.find("Hello, world")
+    twill.commands.notfind("Hello, worldHello, world")
+    print 'remove'
+    twill.remove_wsgi_intercept('localhost', 80)

@@ -1,3 +1,7 @@
+2007-12-04  Titus Brown  <t@iorich.caltech.edu>
+
+	* Fixed iterator double call (Antti Kaihola).
+
 2007-07-02  C. Titus Brown  <t@chreotha>
 
 	* Fixed small documentation error in commands (Bill Mill).
