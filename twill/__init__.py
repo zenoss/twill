@@ -57,7 +57,9 @@ from commands import get_browser
 
 def get_browser_state():
     import warnings
-    warnings.warn("get_browser_state is deprecated; use 'twill.get_browser() instead.", DeprecationWarning)
+    warnings.warn("""\
+get_browser_state is deprecated; use 'twill.get_browser() instead.
+""", DeprecationWarning)
     return get_browser()
 
 # initialize global dict

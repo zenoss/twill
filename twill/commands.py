@@ -238,7 +238,7 @@ def find(what, flags=''):
     else:
         match_str = m.group(0)
 
-    global_dict, local_dict = get_twill_glocals()
+    _, local_dict = get_twill_glocals()
     local_dict['__match__'] = match_str
 
 def notfind(what, flags=''):
@@ -529,7 +529,7 @@ def getinput(prompt):
     >> getinput <prompt>
     Get input, store it in '__input__'.
     """
-    global_dict, local_dict = get_twill_glocals()
+    _, local_dict = get_twill_glocals()
 
     inp = raw_input(prompt)
 
@@ -542,7 +542,7 @@ def getpassword(prompt):
     
     Get a password ("invisible input"), store it in '__password__'.
     """
-    global_dict, local_dict = get_twill_glocals()
+    _, local_dict = get_twill_glocals()
 
     inp = getpass.getpass(prompt)
 

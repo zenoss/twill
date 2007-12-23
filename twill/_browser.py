@@ -3,13 +3,10 @@ A subclass of the mechanize browser patched to fix various bits.
 """
 
 # wwwsearch imports
-import _mechanize_dist as mechanize
 from _mechanize_dist import Browser as MechanizeBrowser
-from _mechanize_dist import BrowserStateError, LinkNotFoundError
 
 import wsgi_intercept
-from utils import run_tidy, StringIO, \
-     FixedHTTPBasicAuthHandler, FunctioningHTTPRefreshProcessor
+from utils import FixedHTTPBasicAuthHandler, FunctioningHTTPRefreshProcessor
 
 def build_http_handler():
     from _mechanize_dist._urllib2 import HTTPHandler

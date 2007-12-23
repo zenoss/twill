@@ -8,7 +8,6 @@ OUT=None
 
 # Python imports
 import re
-import urlparse
 
 # wwwsearch imports
 import _mechanize_dist as mechanize
@@ -16,7 +15,7 @@ from _mechanize_dist import BrowserStateError, LinkNotFoundError, ClientForm
 
 # twill package imports
 from _browser import PatchedMechanizeBrowser
-from utils import trunc, print_form, ConfigurableParsingFactory, \
+from utils import print_form, ConfigurableParsingFactory, \
      ResultWrapper, unique_match, HistoryStack
 from errors import TwillException
      
@@ -410,7 +409,9 @@ class TwillBrowser(object):
             if len(forms) == 1:
                 form = forms[0]
             else:
-                raise TwillException("more than one form; you must select one (use 'fv') before submitting")
+                raise TwillException("""\
+more than one form; you must select one (use 'fv') before submitting\
+""")
 
         # no fieldname?  see if we can use the last submit button clicked...
         if not fieldname:
@@ -435,8 +436,9 @@ class TwillBrowser(object):
         
         if ctl:
             # submit w/button
-            print>>OUT, 'Note: submit is using submit button: name="%s", value="%s"' % \
-                  (ctl.name, ctl.value)
+            print>>OUT, """\
+Note: submit is using submit button: name="%s", value="%s"
+""" % (ctl.name, ctl.value)
             
             if isinstance(ctl, ClientForm.ImageControl):
                 request = ctl._click(form, (1,1), "", mechanize.Request)
@@ -486,7 +488,10 @@ class TwillBrowser(object):
         """
         Pretty-print all of the cookies.
         """
-        print>>OUT, '\nThere are %d cookie(s) in the cookiejar.\n' % (len(self.cj,))
+        print>>OUT, '''
+There are %d cookie(s) in the cookiejar.
+''' % (len(self.cj,))
+        
         if len(self.cj):
             for cookie in self.cj:
                 print>>OUT, '\t', cookie
@@ -530,7 +535,9 @@ class TwillBrowser(object):
 
         ## special case refresh loops!?
         if code == 'refresh':
-            raise TwillException("infinite refresh loop discovered; aborting.\nTry turning off acknowledge_equiv_refresh...")
+            raise TwillException("""\
+infinite refresh loop discovered; aborting.
+Try turning off acknowledge_equiv_refresh...""")
 
         self.result = ResultWrapper(code, r.geturl(), r.read())
 
