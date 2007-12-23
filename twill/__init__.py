@@ -14,7 +14,7 @@
 twill Web testing language & associated utilities.
 """
 
-__version__ = "0.9b1"
+__version__ = "0.9"
 
 #import warnings
 #warnings.defaultaction = "error"

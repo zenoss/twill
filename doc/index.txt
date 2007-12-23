@@ -14,10 +14,10 @@ twill is open source and written in Python.
 Downloading twill
 -----------------
 
-The latest release of twill is `twill 0.9b1`_, released Tuesday, March 6th,
-2007; it is available for download at
-http://darcs.idyll.org/~t/projects/twill-0.9b1.tar.gz.  You can also
-use Python's easy_install_ to install or upgrade twill.
+The latest release of twill is `twill 0.9 <ANNOUNCE-0.9.txt>`__,
+released Sunday, December 23rd, 2007; it is available for download at
+http://darcs.idyll.org/~t/projects/twill-0.9.tar.gz.  You can also use
+Python's easy_install_ to install or upgrade twill.
 
 twill works with Python 2.3 or later.
 
@@ -37,9 +37,6 @@ http://twill.idyll.org/.
 
 The in-development version of the docs can be found at
 http://darcs.idyll.org/~t/projects/twill/doc/.
-
-The development Web site, with a Trac tracker and wiki, is at
-http://twill.idyll.org/trac/.
 
 Documentation is available for the following topics:
 
@@ -133,7 +130,6 @@ Thanks, all!
 .. _archive: http://lists.idyll.org/pipermail/twill/
 
 .. _cmd: http://docs.python.org/lib/module-cmd.html
-.. _twill 0.9b1: ANNOUNCE-0.9b1.txt
 
 .. _MIT license: http://www.opensource.org/licenses/mit-license.php
 .. _easy_install: http://peak.telecommunity.com/DevCenter/EasyInstall
