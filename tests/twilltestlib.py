@@ -15,6 +15,11 @@ import urllib
 
 _server_url = None
 
+def get_url():
+    if _server_url is None:
+        raise Exception("server has not yet been started")
+    return _server_url
+
 testdir = os.path.dirname(__file__)
 print 'testdir is:', testdir
 sys.path.insert(0, os.path.abspath(os.path.join(testdir, '..')))
@@ -32,7 +37,7 @@ def pop_testdir():
 
 def execute_twill_script(filename, inp=None, initial_url=None):
     global testdir
-    
+
     if inp:
         inp_fp = StringIO(inp)
         old, sys.stdin = sys.stdin, inp_fp
@@ -94,7 +99,6 @@ def run_server(create_fn, PORT=None):
     time.sleep(1)
 
     _server_url = 'http://localhost:%d/' % (PORT,)
-    return _server_url
 	
 def kill_server():
     """

@@ -6,8 +6,11 @@ parser) can parse.
 from _mechanize_dist import ClientForm
 
 import twilltestlib
-from tests import url
 from twill import commands
+
+def setup_module():
+    global url
+    url = twilltestlib.get_url()
 
 def test_links_parsing():
     commands.config('use_tidy', '0')

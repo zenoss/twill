@@ -3,7 +3,10 @@ import twill
 from twill import namespaces, commands
 from twill.errors import TwillAssertionError
 from _mechanize_dist import BrowserStateError, ClientForm
-from tests import url
+
+def setup_module():
+    global url
+    url = twilltestlib.get_url()
 
 def test_select_multiple():
     namespaces.new_local_dict()

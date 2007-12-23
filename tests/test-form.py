@@ -3,9 +3,10 @@ import twill
 from twill import namespaces, commands
 from twill.errors import TwillAssertionError
 from _mechanize_dist import BrowserStateError, ClientForm
-from tests import url
 
 def test():
+    url = twilltestlib.get_url()
+            
     # test empty page get_title
     namespaces.new_local_dict()
     twill.commands.reset_browser()

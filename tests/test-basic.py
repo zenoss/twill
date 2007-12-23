@@ -6,10 +6,10 @@ This should really be broken out into multiple sub scripts...
 
 import os
 import twilltestlib
-from tests import url
 
 def setup_module():
-    pass
+    global url
+    url = twilltestlib.get_url()
 
 def test():
     inp = "unique1\nunique2\n"

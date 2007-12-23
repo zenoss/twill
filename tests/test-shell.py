@@ -4,12 +4,12 @@ Run through the test-basic script, but this time from the command interpreter.
 
 import sys, os
 import twilltestlib
-from tests import url
 from cStringIO import StringIO
 import twill.shell
 
 def setup_module():
-    pass
+    global url
+    url = twilltestlib.get_url()
 
 def test_shell_specific():    
     twilltestlib.execute_twill_shell('test-shell.twill', initial_url=url,

@@ -5,7 +5,6 @@ from twill import namespaces
 from twill.errors import TwillAssertionError, TwillNameError
 import twill.parse
 from cStringIO import StringIO
-from tests import url
 
 def setup_module():
     global _save_print
@@ -13,6 +12,8 @@ def setup_module():
     twill.parse.debug_print_commands(True)
 
 def test():
+    url = twilltestlib.get_url()
+
     # capture output
     fp = StringIO()
     twill.set_output(fp)

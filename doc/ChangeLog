@@ -1,6 +1,10 @@
+2007-12-23  Titus Brown  <t@iorich.caltech.edu>
+
+	* Updated tests to work with nose > 0.9.x.
+
 2007-12-04  Titus Brown  <t@iorich.caltech.edu>
 
-	* Fixed iterator double call (Antti Kaihola).
+	* Fixed iterator double call in wsgi_intercept (Antti Kaihola).
 
 2007-07-02  C. Titus Brown  <t@chreotha>
 

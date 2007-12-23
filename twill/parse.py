@@ -78,6 +78,9 @@ def process_args(args, globals_dict, locals_dict):
             except NameError:           # not in dictionary; don't interpret.
                 val = arg
 
+
+            print '*** VAL IS', val, 'FOR', arg
+            
             if isinstance(val, str):
                 newargs.append(val)
             else:
@@ -204,18 +207,16 @@ def _execute_script(inp, **kw):
     
     try:
 
-        n = 0
-        for line in inp:
-            n += 1
-
+        for n, line in enumerate(inp):
             if not line.strip():            # skip empty lines
                 continue
+
+            cmdinfo = "%s:%d" % (sourceinfo, n,)
+            print 'AT LINE:', cmdinfo
 
             cmd, args = parse_command(line, globals_dict, locals_dict)
             if cmd is None:
                 continue
-
-            cmdinfo = "%s:%d" % (sourceinfo, n,)
 
             try:
                 execute_command(cmd, args, globals_dict, locals_dict, cmdinfo)

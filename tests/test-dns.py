@@ -1,5 +1,4 @@
 import twilltestlib
-from tests import url
 
 import pkg_resources
 try:
@@ -10,6 +9,7 @@ except pkg_resources.DistributionNotFound:
    pass
 
 def test():
-    if not no_dns_python:
+   url = twilltestlib.get_url()
+
+   if not no_dns_python:
        twilltestlib.execute_twill_script('test-dns.twill', initial_url=url)
-    
