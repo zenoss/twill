@@ -18,9 +18,9 @@ in the top package directory.
 Licensing
 ~~~~~~~~~
 
-twill 0.8 is licensed under the `MIT license`_.  All code currently
-contained in twill is Copyright (C) 2005, 2006, 2007 C. Titus Brown
-<titus@idyll.org>.
+twill 0.8 and above are licensed under the `MIT license`_.  All code
+currently contained in twill is Copyright (C) 2005, 2006, 2007
+C. Titus Brown <titus@idyll.org>.
 
 In plain English: I own the code, but you're welcome to use it,
 subsume it into other projects, and distribute it freely.  However,
@@ -29,18 +29,17 @@ you must retain copyright attribution.
 pyparsing_, BeautifulSoup_, and mechanize_ are all included with
 twill, but are under their own licenses.
 
-.. _twill-latest.tar.gz: http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
 .. _MIT license: http://www.opensource.org/licenses/mit-license.php
 
 Developer releases
 ~~~~~~~~~~~~~~~~~~
 
 "Developer releases" incorporating all recent significant changes are
-made available in egg format at http://issola.caltech.edu/~t/dist/.
+made available at http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
 
 You can install them with easy_install by typing ::
 
-   easy_install -f http://issola.caltech.edu/~t/dist/ twill
+   easy_install -f http://darcs.idyll.org/~t/projects/twill-latest.tar.gz
 
 Obtaining twill with darcs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

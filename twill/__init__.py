@@ -1,14 +1,14 @@
 # This file is part of the twill source distribution.
 #
 # twill is a extensible scriptlet language for testing Web apps,
-# available at http://www.idyll.org/~t/www-tools/twill.html.
+# available at http://twill.idyll.org/.
 #
-# Contact author: C. Titus Brown, titus@caltech.edu.
+# Contact author: C. Titus Brown, titus@idyll.org.
 #
 # This program and all associated source code files are Copyright (C)
-# 2005 by C. Titus Brown.  It is under the Lesser GNU Public License;
+# 2005-2007 by C. Titus Brown.  It is released under the MIT license;
 # please see the included LICENSE.txt file for more information, or
-# contact Titus directly.
+# go to http://www.opensource.org/licenses/mit-license.php.
 
 """
 twill Web testing language & associated utilities.
