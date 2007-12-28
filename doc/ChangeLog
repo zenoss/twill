@@ -1,3 +1,7 @@
+2007-12-27  Titus Brown  <t@iorich.caltech.edu>
+
+	* Added better error message to 'url' (Matt Wilson).
+
 2007-12-23  Titus Brown  <t@iorich.caltech.edu>
 
 	* Updated version to 0.9.

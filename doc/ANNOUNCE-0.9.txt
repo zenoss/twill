@@ -40,10 +40,20 @@ addition to the existing simple command language, twill can easily be
 extended with Python.  twill also provides a fairly simple and
 well-documented wrapper around mechanize.
 
-twill does not understand JavaScript, I'm sorry to say.
+Note that twill does not understand JavaScript.
 
 ---
 
 Significant changes with 0.9:
 
- - 
+ - many small bugs were fixed, of course!
+
+ - patched subprocess pipe problem (Chris Abraham).  This fixes problems
+   with long-running twill processes.
+
+ - twill now "plays nice" with other versions of mechanize and ClientForm
+   (good for including it in distributions).
+
+ - Corrected license information => MIT in all files.
+
+ - new 'info' command gives human-readable page summary.

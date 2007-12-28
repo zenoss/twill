@@ -168,9 +168,14 @@ def url(should_be):
     m = None
     if current_url is not None:
         m = regexp.search(current_url)
+    else:
+        current_url = ''
 
     if not m:
-        raise TwillAssertionError("url does not match '%s'" % (should_be,))
+        raise TwillAssertionError("""\
+current url is '%s';
+does not match '%s'
+""" % (current_url, should_be,))
 
     if m.groups():
         match_str = m.group(1)
