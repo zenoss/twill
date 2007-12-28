@@ -15,7 +15,7 @@ Downloading twill
 -----------------
 
 The latest release of twill is `twill 0.9 <ANNOUNCE-0.9.txt>`__,
-released Sunday, December 23rd, 2007; it is available for download at
+released Thursday, December 27th, 2007; it is available for download at
 http://darcs.idyll.org/~t/projects/twill-0.9.tar.gz.  You can also use
 Python's easy_install_ to install or upgrade twill.
 
