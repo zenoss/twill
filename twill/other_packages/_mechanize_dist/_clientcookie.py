@@ -998,7 +998,10 @@ class CookieJar:
 
     """
 
-    non_word_re = re.compile(r"\W")
+    # Used to find invalid characters in cookie value.
+    # See http://curl.haxx.se/rfc/cookie_spec.html
+    non_word_re = re.compile(r"[;,\s]")
+
     quote_re = re.compile(r"([\"\\])")
     strict_domain_re = re.compile(r"\.?[^.]*")
     domain_re = re.compile(r"[^.]*")
