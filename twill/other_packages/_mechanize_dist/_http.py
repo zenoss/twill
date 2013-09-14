@@ -630,15 +630,20 @@ class AbstractHTTPHandler(BaseHandler):
                 request.add_unredirected_header(
                     'Content-type',
                     'application/x-www-form-urlencoded')
+            if not request.has_header('Content-length'):
+                request.add_unredirected_header(
+                    'Content-length', '%d' % len(data))
+
 
         scheme, sel = urllib.splittype(request.get_selector())
         sel_host, sel_path = urllib.splithost(sel)
-        if not request.has_header('Host'):
-            request.add_unredirected_header('Host', sel_host or host)
         for name, value in self.parent.addheaders:
             name = name.capitalize()
             if not request.has_header(name):
                 request.add_unredirected_header(name, value)
+
+        if not request.has_header('Host'):
+            request.add_unredirected_header('Host', sel_host or host)
 
         return request
 
@@ -670,6 +675,8 @@ class AbstractHTTPHandler(BaseHandler):
         headers["Connection"] = "close"
         headers = dict(
             [(name.title(), val) for name, val in headers.items()])
+        if hasattr(req, '_tunnel_host') and req._tunnel_host:
+            h.set_tunnel(req._tunnel_host)
         try:
             h.request(req.get_method(), req.get_selector(), req.data, headers)
             r = h.getresponse()
