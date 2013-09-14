@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 
-try:
-    from setuptools import setup
-except ImportError:
-    print '(WARNING: importing distutils, not setuptools!)'
-    from distutils.core import setup
+from distutils.core import setup
 
 #### twill info.
 
@@ -25,7 +21,7 @@ setup(name = 'twill',
 
       # allow both 
       entry_points = dict(console_scripts=['twill-sh = twill.shell:main'],),
-      scripts = ['twill-fork'],
+      scripts = ['twill-fork', 'twill-sh'],
       
       maintainer = 'C. Titus Brown',
       maintainer_email = 'titus@caltech.edu',

@@ -808,7 +808,8 @@ _orig_options = dict(readonly_controls_writeable=False,
                      require_BeautifulSoup=False,
                      allow_parse_errors=True,
                      with_default_realm=False,
-                     acknowledge_equiv_refresh=True
+                     acknowledge_equiv_refresh=True,
+                     ignore_base_href=False,
                      )
 
 _options = {}
