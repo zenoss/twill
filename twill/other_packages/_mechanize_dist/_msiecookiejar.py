@@ -252,8 +252,8 @@ class MSIEBase:
 ##             print
 
             if sig != "URL ":
-                assert (sig in ("HASH", "LEAK",
-                                self.padding, "\x00\x00\x00\x00"),
+                assert sig in ("HASH", "LEAK",
+                                self.padding, "\x00\x00\x00\x00",
                         "unrecognized MSIE index.dat record: %s" %
                         binary_to_str(sig))
                 if sig == "\x00\x00\x00\x00":
