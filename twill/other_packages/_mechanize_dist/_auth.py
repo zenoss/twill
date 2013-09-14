@@ -11,9 +11,9 @@ included with the distribution).
 
 """
 
-import re, base64, urlparse, posixpath, md5, sha, sys, copy
+import re, base64, urlparse, posixpath, md5, sha, sys, copy, os, time, random
 
-from urllib2 import BaseHandler
+from urllib2 import BaseHandler, HTTPError, parse_keqv_list, parse_http_list
 from urllib import getproxies, unquote, splittype, splituser, splitpasswd, \
      splitport
 
@@ -115,7 +115,7 @@ class ProxyHandler(BaseHandler):
             req.add_header('Proxy-authorization', 'Basic ' + creds)
         hostport = unquote(hostport)
         req.set_proxy(hostport, proxy_type)
-        if orig_type == proxy_type:
+        if orig_type == proxy_type or orig_type == 'https':
             # let other handlers take care of it
             return None
         else:

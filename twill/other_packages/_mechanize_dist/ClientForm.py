@@ -1096,7 +1096,8 @@ def _ParseFileEx(file, base_uri,
             e.base_uri = base_uri
             raise
         if len(data) != CHUNK: break
-    if fp.base is not None:
+    from twill.commands import _options
+    if fp.base is not None and not _options.get('ignore_base_href'):
         # HTML BASE element takes precedence over document URI
         base_uri = fp.base
     labels = []  # Label(label) for label in fp.labels]
