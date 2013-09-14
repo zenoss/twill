@@ -708,7 +708,7 @@ def title(what):
     Succeed if the regular expression is in the page title.
     """
     regexp = re.compile(what)
-    title = browser.get_title()
+    title = browser.get_title() or ''
 
     print>>OUT, "title is '%s'." % (title,)
 
