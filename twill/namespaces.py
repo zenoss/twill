@@ -2,7 +2,11 @@
 Global and local dictionaries, + initialization/utility functions.
 """
 
-global_dict = {}
+import threading
+
+
+thread_local = threading.local()
+
 
 def init_global_dict():
     """
@@ -11,15 +15,15 @@ def init_global_dict():
     This must be done after all the other modules are loaded, so that all
     of the commands are already defined.
     """
-    exec "from twill.commands import *" in global_dict
+    if not hasattr(thread_local, 'global_dict'):
+        thread_local.global_dict = {}
+
+    exec "from twill.commands import *" in thread_local.global_dict
     import twill.commands
     command_list = twill.commands.__all__
     
     import twill.parse
     twill.parse.command_list.extend(command_list)
-
-# local dictionaries.
-_local_dict_stack = []
 
 ###
 
@@ -29,8 +33,11 @@ def new_local_dict():
     """
     Initialize a new local dictionary & push it onto the stack.
     """
+    if not hasattr(thread_local, 'local_dict_stack'):
+        thread_local.local_dict_stack = []
+
     d = {}
-    _local_dict_stack.append(d)
+    thread_local.local_dict_stack.append(d)
 
     return d
 
@@ -38,7 +45,7 @@ def pop_local_dict():
     """
     Get rid of the current local dictionary.
     """
-    _local_dict_stack.pop()
+    thread_local.local_dict_stack.pop()
 
 ###
 
@@ -46,12 +53,15 @@ def get_twill_glocals():
     """
     Return global dict & current local dictionary.
     """
-    global global_dict, _local_dict_stack
-    assert global_dict is not None, "must initialize global namespace first!"
+    global thread_local
+    if not hasattr(thread_local, 'global_dict'):
+        init_global_dict()
 
-    if len(_local_dict_stack) == 0:
+    assert thread_local.global_dict is not None, "must initialize global namespace first!"
+
+    if len(thread_local.local_dict_stack) == 0:
         new_local_dict()
 
-    return global_dict, _local_dict_stack[-1]
+    return thread_local.global_dict, thread_local.local_dict_stack[-1]
 
 ###

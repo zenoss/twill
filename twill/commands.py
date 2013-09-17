@@ -4,6 +4,8 @@ twill-sh.
 """
 
 import sys
+import threading
+
 import _mechanize_dist as mechanize
 from _mechanize_dist import ClientForm
 from _mechanize_dist._headersutil import is_html
@@ -73,11 +75,17 @@ from errors import TwillException, TwillAssertionError
 import utils
 from utils import set_form_control_value, run_tidy
 from namespaces import get_twill_glocals
-        
-browser = TwillBrowser()
+
+
+thread_local = threading.local()
+
 
 def get_browser():
-    return browser
+    if not hasattr(thread_local, 'browser'):
+        thread_local.browser = TwillBrowser()
+
+    return thread_local.browser
+
 
 def reset_browser():
     """
@@ -85,9 +93,8 @@ def reset_browser():
 
     Reset the browser completely.
     """
-    global browser
-    browser._browser.close()
-    browser = TwillBrowser()
+    get_browser()._browser.close()
+    thread_local.browser = TwillBrowser()
 
     global _options
     _options = {}
@@ -109,8 +116,8 @@ def go(url):
     
     Visit the URL given.
     """
-    browser.go(url)
-    return browser.get_url()
+    get_browser().go(url)
+    return get_browser().get_url()
 
 def reload():
     """
@@ -118,8 +125,8 @@ def reload():
     
     Reload the current URL.
     """
-    browser.reload()
-    return browser.get_url()
+    get_browser().reload()
+    return get_browser().get_url()
 
 def code(should_be):
     """
@@ -128,7 +135,7 @@ def code(should_be):
     Check to make sure the response code for the last page is as given.
     """
     should_be = int(should_be)
-    if browser.get_code() != int(should_be):
+    if get_browser().get_code() != int(should_be):
         raise TwillAssertionError("code is %s != %s" % (browser.get_code(),
                                                         should_be))
 
@@ -142,7 +149,7 @@ def tidy_ok():
     If 'tidy' cannot be run, will fail silently (unless 'tidy_should_exist'
     option is true; see 'config' command).
     """
-    page = browser.get_html()
+    page = get_browser().get_html()
     if page is None:
         raise TwillAssertionError("not viewing HTML!")
         
@@ -163,7 +170,7 @@ def url(should_be):
     variable __match__ is set to the matching part of the URL.
     """
     regexp = re.compile(should_be)
-    current_url = browser.get_url()
+    current_url = get_browser().get_url()
 
     m = None
     if current_url is not None:
@@ -193,11 +200,11 @@ def follow(what):
     Find the first matching link on the page & visit it.
     """
     regexp = re.compile(what)
-    link = browser.find_link(regexp)
+    link = get_browser().find_link(regexp)
 
     if link:
-        browser.follow_link(link)
-        return browser.get_url()
+        get_browser().follow_link(link)
+        return get_browser().get_url()
 
     raise TwillAssertionError("no links match to '%s'" % (what,))
 
@@ -232,7 +239,7 @@ def find(what, flags=''):
     documentation.
     """
     regexp = re.compile(what, _parseFindFlags(flags))
-    page = browser.get_html()
+    page = get_browser().get_html()
 
     m = regexp.search(page)
     if not m:
@@ -253,7 +260,7 @@ def notfind(what, flags=''):
     Fail if the regular expression is on the page.
     """
     regexp = re.compile(what, _parseFindFlags(flags))
-    page = browser.get_html()
+    page = get_browser().get_html()
 
     if regexp.search(page):
         raise TwillAssertionError("match to '%s'" % (what,))
@@ -264,8 +271,8 @@ def back():
     
     Return to the previous page.
     """
-    browser.back()
-    return browser.get_url()
+    get_browser().back()
+    return get_browser().get_url()
 
 def show():
     """
@@ -273,7 +280,7 @@ def show():
     
     Show the HTML for the current page.
     """
-    html = browser.get_html()
+    html = get_browser().get_html()
     print>>OUT, html
     return html
 
@@ -294,13 +301,13 @@ def save_html(filename=None):
     Save the HTML for the current page into <filename>.  If no filename
     given, construct the filename from the URL.
     """
-    html = browser.get_html()
+    html = get_browser().get_html()
     if html is None:
         print>>OUT, "No page to save."
         return
 
     if filename is None:
-        url = browser.get_url()
+        url = get_browser().get_url()
         url = url.split('?')[0]
         filename = url.split('/')[-1]
         if filename is "":
@@ -342,7 +349,7 @@ def agent(what):
     """
     what = what.strip()
     agent = _agent_map.get(what, what)
-    browser.set_agent_string(agent)
+    get_browser().set_agent_string(agent)
 
 def submit(submit_button=None):
     """
@@ -360,7 +367,7 @@ def submit(submit_button=None):
     submit button clicked on by 'formvalue'.  If none can be found,
     submit submits the form with no submit button clicked.
     """
-    browser.submit(submit_button)
+    get_browser().submit(submit_button)
 
 def showforms():
     """
@@ -368,8 +375,8 @@ def showforms():
     
     Show all of the forms on the current page.
     """
-    browser.showforms()
-    return browser._browser.forms()
+    get_browser().showforms()
+    return get_browser()._browser.forms()
 
 def showlinks():
     """
@@ -377,8 +384,8 @@ def showlinks():
     
     Show all of the links on the current page.
     """
-    browser.showlinks()
-    return browser._browser.links()
+    get_browser().showlinks()
+    return get_browser()._browser.links()
 
 def showhistory():
     """
@@ -386,8 +393,8 @@ def showhistory():
 
     Show the browser history (what URLs were visited).
     """
-    browser.showhistory()
-    return browser._browser._history
+    get_browser().showhistory()
+    return get_browser()._browser._history
     
 def formclear(formname):
     """
@@ -395,7 +402,7 @@ def formclear(formname):
     
     Run 'clear' on all of the controls in this form.
     """
-    form = browser.get_form(formname)
+    form = get_browser().get_form(formname)
     for control in form.controls:
         if control.readonly:
             continue
@@ -428,13 +435,13 @@ def formvalue(formname, fieldname, value):
 
     'formvalue' is available as 'fv' as well.
     """
-    form = browser.get_form(formname)
+    form = get_browser().get_form(formname)
     if not form:
         raise TwillAssertionError("no matching forms!")
 
-    control = browser.get_form_field(form, fieldname)
+    control = get_browser().get_form_field(form, fieldname)
 
-    browser.clicked(form, control)
+    get_browser().clicked(form, control)
 
     if control.readonly and _options['readonly_controls_writeable']:
         print>>OUT, 'forcing read-only form field to writeable'
@@ -457,7 +464,7 @@ def formaction(formname, action):
 
     Sets action parameter on form to action_url
     """
-    form = browser.get_form(formname)
+    form = get_browser().get_form(formname)
     form.action = action
 
 fa = formaction
@@ -471,13 +478,13 @@ def formfile(formname, fieldname, filename, content_type=None):
     import os.path
     filename = filename.replace('/', os.path.sep)
 
-    form = browser.get_form(formname)
-    control = browser.get_form_field(form, fieldname)
+    form = get_browser().get_form(formname)
+    control = get_browser().get_form_field(form, fieldname)
 
     if not control.is_of_kind('file'):
         raise TwillException('ERROR: field is not a file upload field!')
 
-    browser.clicked(form, control)
+    get_browser().clicked(form, control)
     fp = open(filename, 'rb')
     control.add_file(fp, content_type, filename)
 
@@ -560,7 +567,7 @@ def save_cookies(filename):
 
     Save all of the current cookies to the given file.
     """
-    browser.save_cookies(filename)
+    get_browser().save_cookies(filename)
 
 def load_cookies(filename):
     """
@@ -568,7 +575,7 @@ def load_cookies(filename):
 
     Clear the cookie jar and load cookies from the given file.
     """
-    browser.load_cookies(filename)
+    get_browser().load_cookies(filename)
 
 def clear_cookies():
     """
@@ -576,7 +583,7 @@ def clear_cookies():
 
     Clear the cookie jar.
     """
-    browser.clear_cookies()
+    get_browser().clear_cookies()
 
 def show_cookies():
     """
@@ -584,7 +591,7 @@ def show_cookies():
 
     Show all of the cookies in the cookie jar.
     """
-    browser.show_cookies()
+    get_browser().show_cookies()
 
 def add_auth(realm, uri, user, passwd):
     """
@@ -598,19 +605,19 @@ def add_auth(realm, uri, user, passwd):
     if _options['with_default_realm']:
         realm = None
 
-        if browser.creds.__class__ == mechanize.HTTPPasswordMgr:
-            passwds = browser.creds.passwd
-            browser.creds = mechanize.HTTPPasswordMgrWithDefaultRealm()
-            browser.creds.passwd = passwds
+        if get_browser().creds.__class__ == mechanize.HTTPPasswordMgr:
+            passwds = get_browser().creds.passwd
+            get_browser().creds = mechanize.HTTPPasswordMgrWithDefaultRealm()
+            get_browser().creds.passwd = passwds
             print>>OUT, 'Changed to using HTTPPasswordMgrWithDefaultRealm'
     else:
-        if browser.creds.__class__ == mechanize.HTTPPasswordMgrWithDefaultRealm:
-            passwds = browser.creds.passwd
-            browser.creds = mechanize.HTTPPasswordMgr()
-            browser.creds.passwd = passwds
+        if get_browser().creds.__class__ == mechanize.HTTPPasswordMgrWithDefaultRealm:
+            passwds = get_browser().creds.passwd
+            get_browser().creds = mechanize.HTTPPasswordMgr()
+            get_browser().creds.passwd = passwds
             print>>OUT, 'Changed to using HTTPPasswordMgr'
 
-    browser.creds.add_password(realm, uri, user, passwd)
+    get_browser().creds.add_password(realm, uri, user, passwd)
 
     print>>OUT, "Added auth info: realm '%s' / URI '%s' / user '%s'" % (realm,
                                                                   uri,
@@ -639,7 +646,7 @@ def debug(what, level):
     print>>OUT, 'DEBUG: setting %s debugging to level %d' % (what, level)
     
     if what == "http":
-        browser._browser.set_debug_http(level)
+        get_browser()._browser.set_debug_http(level)
     elif what == 'equiv-refresh':
         if level:
             utils._debug_print_refresh = True
@@ -668,7 +675,7 @@ def run(cmd):
 
     # set __url__
     local_dict['__cmd__'] = cmd
-    local_dict['__url__'] = commands.browser.get_url()
+    local_dict['__url__'] = commands.get_browser().get_url()
 
     exec(cmd, global_dict, local_dict)
 
@@ -708,7 +715,7 @@ def title(what):
     Succeed if the regular expression is in the page title.
     """
     regexp = re.compile(what)
-    title = browser.get_title() or ''
+    title = get_browser().get_title() or ''
 
     print>>OUT, "title is '%s'." % (title,)
 
@@ -770,7 +777,7 @@ def add_extra_header(header_key, header_value):
     Add an HTTP header to each HTTP request.  See 'show_extra_headers' and
     'clear_extra_headers'.
     """
-    browser._browser.addheaders += [(header_key, header_value)]
+    get_browser()._browser.addheaders += [(header_key, header_value)]
 
 def show_extra_headers():
     """
@@ -778,7 +785,7 @@ def show_extra_headers():
 
     Show any extra headers being added to each HTTP request.
     """
-    l = browser._browser.addheaders
+    l = get_browser()._browser.addheaders
 
     if l:
         print 'The following HTTP headers are added to each request:'
@@ -797,7 +804,7 @@ def clear_extra_headers():
     Remove all user-defined HTTP headers.  See 'add_extra_header' and
     'show_extra_headers'.
     """
-    browser._browser.addheaders = []
+    get_browser()._browser.addheaders = []
 
 ### options
 
@@ -864,15 +871,15 @@ def info():
 
     Report information on current page.
     """
-    current_url = browser.get_url()
+    current_url = get_browser().get_url()
     if current_url is None:
         print "We're not on a page!"
         return
     
-    content_type = browser._browser._response.info().getheaders("content-type")
+    content_type = get_browser()._browser._response.info().getheaders("content-type")
     check_html = is_html(content_type, current_url)
 
-    code = browser.get_code()
+    code = get_browser().get_code()
 
 
     print >>OUT, '\nPage information:'
@@ -884,10 +891,10 @@ def info():
     else:
         print ''
     if check_html:
-        title = browser.get_title()
+        title = get_browser().get_title()
         print >>OUT, '\tPage title:', title
 
-        forms = browser.get_all_forms()
+        forms = get_browser().get_all_forms()
         if len(forms):
             print >>OUT, '\tThis page contains %d form(s)' % (len(forms),)
             
