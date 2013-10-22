@@ -6,7 +6,7 @@ from distutils.core import setup
 
 setup(name = 'twill',
       
-      version = '0.9z1',
+      version = '0.9z2',
       download_url = 'http://darcs.idyll.org/~t/projects/twill-0.9.tar.gz',
       
       description = 'twill Web browsing language',
