@@ -4,7 +4,7 @@ sureshvv's extension for slicing and dicing variables with regular expressions.
 
 import re
 from twill.namespaces import get_twill_glocals
-from twill.commands import browser
+from twill.commands import get_browser
 
 def showvar(which):
      """
@@ -25,7 +25,7 @@ def split(what):
 
      Sets __matchlist__ to re.split(regexp, page).
      """
-     page = browser.get_html()
+     page = get_browser().get_html()
 
      m = re.split(what, page)
 
@@ -38,7 +38,7 @@ def findall(what):
 
      Sets __matchlist__ to re.findall(regexp, page).
      """
-     page = browser.get_html()
+     page = get_browser().get_html()
 
      regexp = re.compile(what, re.DOTALL)
      m = regexp.findall(page)

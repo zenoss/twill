@@ -107,10 +107,10 @@ def require(what):
     # install the post-load hook function.
     #
 
-    if _require_post_load_hook not in commands.browser._post_load_hooks:
+    if _require_post_load_hook not in commands.get_browser()._post_load_hooks:
         if DEBUG:
             print>>commands.OUT, 'INSTALLING POST-LOAD HOOK'
-        commands.browser._post_load_hooks.append(_require_post_load_hook)
+        commands.get_browser()._post_load_hooks.append(_require_post_load_hook)
 
     #
     # add the requirement.
@@ -129,9 +129,9 @@ def no_require():
     """
     from twill import commands
     
-    l = commands.browser._post_load_hooks
+    l = commands.get_browser()._post_load_hooks
     l = [ fn for fn in l if fn != _require_post_load_hook ]
-    commands.browser._post_load_hooks = l
+    commands.get_browser()._post_load_hooks = l
 
     global _requirements
     _requirements = []
