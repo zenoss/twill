@@ -136,7 +136,7 @@ def code(should_be):
     """
     should_be = int(should_be)
     if get_browser().get_code() != int(should_be):
-        raise TwillAssertionError("code is %s != %s" % (browser.get_code(),
+        raise TwillAssertionError("code is %s != %s" % (get_browser().get_code(),
                                                         should_be))
 
 def tidy_ok():
