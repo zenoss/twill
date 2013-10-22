@@ -55,7 +55,7 @@ def check_links(pattern = '', visited={}):
         print 'in check_links'
     
     OUT = commands.OUT
-    browser = commands.browser
+    browser = commands.get_browser()
 
     #
     # compile the regexp
